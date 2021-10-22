@@ -6,6 +6,7 @@ import Home from './Home/index';
 import Test from './Home/HomeComponent/Test';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Styled from 'styled-components';
+import BookStore from './BookStore';
 
 
 const Stack = createStackNavigator();
@@ -48,7 +49,7 @@ const BottomNavigation = ({navigation}) => {
             </BottomTab.Screen>
             <BottomTab.Screen
                 name="BookStore"
-                component={TabPlaceholder}
+                component={BookStore}
                 options={{
                     tabBarLabel: '북스토어',
                     headerShown: false,

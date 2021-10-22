@@ -6,14 +6,6 @@ import Test from './HomeComponent/Test';
 
 const Stack = createStackNavigator();
 
-function HomeCmp({navigation}) {
-    return (
-        <HomeScreen/>
-
-    )
-
-}
-
 
 function Home ({navigation}) {
 
