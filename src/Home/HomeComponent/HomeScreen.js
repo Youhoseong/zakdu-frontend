@@ -1,13 +1,13 @@
 import { NavigationAction } from '@react-navigation/routers';
 import React from 'react';
-import {Button, View, Text} from 'react-native';
+import {Button, View, Text, useWindowDimensions} from 'react-native';
 
 
 
 
 
 function HomeScreen({navigation}) {
-
+    const {height, width} = useWindowDimensions();
     return (
         <View >
             <Text>Home Screddden</Text>
@@ -15,6 +15,9 @@ function HomeScreen({navigation}) {
                 title="Go to Details"
                 onPress={() => navigation.navigate('Test')}
             />
+            <Text>
+            {height}  {width}
+            </Text>
 
         </View>
     );

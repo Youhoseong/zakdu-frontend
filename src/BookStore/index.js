@@ -1,7 +1,8 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
-import {View, Text} from 'react-native';
-import DetailBook from './BookStoreComponent/DetailBook';
+
+import BookStoreTest from './BookStoreComponent/BookStoreTest';
+
 
 
 const Stack = createStackNavigator();
@@ -16,7 +17,7 @@ function BookStore ({navigation}) {
             options={{
                 title: '자세한 내용'
             }}>
-                {()=> <DetailBook bookId={2}/>}
+                {()=> <BookStoreTest />}
             </Stack.Screen>
 
             

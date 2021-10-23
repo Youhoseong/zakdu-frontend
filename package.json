@@ -20,6 +20,7 @@
     "react-native-gesture-handler": "^1.10.3",
     "react-native-image-modal": "^2.0.4",
     "react-native-image-viewing": "^0.2.1",
+    "react-native-modal": "^13.0.0",
     "react-native-reanimated": "^2.2.3",
     "react-native-responsive-dimensions": "^3.1.1",
     "react-native-safe-area-context": "^3.3.2",
