@@ -10,7 +10,7 @@ function HomeScreen({navigation}) {
 
     return (
         <View >
-            <Text>Home Screen</Text>
+            <Text>Home Screddden</Text>
             <Button
                 title="Go to Details"
                 onPress={() => navigation.navigate('Test')}

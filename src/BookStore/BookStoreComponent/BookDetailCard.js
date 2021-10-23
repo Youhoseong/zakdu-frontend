@@ -1,5 +1,5 @@
 import React, {useState, useRef} from 'react';
-import {View, Text, ScrollView , Image, Alert, StyleSheet} from 'react-native';
+import {View, Text, ScrollView, RefreshControl ,Image, Alert, StyleSheet} from 'react-native';
 import styled from 'styled-components/native';
 import {
     responsiveScreenHeight,
@@ -33,9 +33,9 @@ const styles = StyleSheet.create({
         backgroundColor:'#33CD6E',
         borderRadius: 20,
         width: responsiveScreenWidth(11),
-        paddingVertical: 8,
+        paddingVertical: 10,
         paddingHorizontal: 10,
-        marginVertical: responsiveScreenHeight(1)
+        
     },
 
     buyButtonText: {
@@ -46,9 +46,13 @@ const styles = StyleSheet.create({
 
     buyButtonView: {
         display: 'flex',
+        width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginTop: responsiveScreenHeight(7),
+        position: 'absolute',
+        bottom: 0,
+      
+
     }
 
     
@@ -63,7 +67,6 @@ function BookDetailCard ({index, item}) {
             <BookDetailTopHalf>
             
             <ImageModal
-                swipeToDismiss={false}
                 resizeMode='contain'
             
                 style={{
@@ -92,7 +95,7 @@ function BookDetailCard ({index, item}) {
                             borderBottomWidth: 1,
                             marginVertical: 15
                         }} />
-                    <Text
+                    <Text numberOfLines={10} 
                         style={{
                             textAlign: 'center',
                             fontSize: responsiveScreenFontSize(0.65),
