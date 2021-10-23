@@ -20,21 +20,31 @@ const BookDetailView = styled.ScrollView`
 `;
 
 const BookDetailTopHalf = styled.View`
-    width: ${responsiveScreenWidth(45)}px;
-    height: ${responsiveScreenHeight(50)}px;
+    width: ${responsiveScreenWidth(50)}px;
+    height: ${responsiveScreenHeight(35)}px;
     display: flex;
     flex-direction: row;
-   // border: solid;
-    margin: ${responsiveScreenHeight(5)}px auto;
+    //border: solid;
+    margin: ${responsiveScreenHeight(4)}px auto 0 auto;
 `;
+
+const BookDetailBottomHalf = styled.View`
+    width: ${responsiveScreenWidth(50)}px;
+    height: ${responsiveScreenHeight(50)}px;
+   // display: flex;
+   // flex-direction: row;
+  //  border: solid;
+    margin: ${responsiveScreenHeight(0)}px auto;
+`;
+
 
 const styles = StyleSheet.create({
     buyButton: {
         backgroundColor:'#33CD6E',
         borderRadius: 20,
-        width: responsiveScreenWidth(11),
-        paddingVertical: 10,
-        paddingHorizontal: 10,
+        width: responsiveScreenWidth(14),
+        paddingVertical: 13,
+        paddingHorizontal: 13,
         
     },
 
@@ -53,6 +63,16 @@ const styles = StyleSheet.create({
         bottom: 0,
       
 
+    },
+    imageModalStyle: {
+        width: responsiveScreenWidth(15),
+        height: '100%',
+        marginRight: responsiveScreenWidth(4),
+        shadowColor: '#C2C2C2',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.7,
+        shadowRadius: 3, 
+
     }
 
     
@@ -63,64 +83,75 @@ function BookDetailCard ({index, item}) {
 
     return (
         <BookDetailView>
-            <Text> index: {index}</Text>
+
             <BookDetailTopHalf>
-            
-            <ImageModal
-                resizeMode='contain'
-            
-                style={{
-                    width: responsiveScreenWidth(15),
-                    height: responsiveScreenHeight(30),
-                    marginRight: responsiveScreenWidth(4),
-                }}
-                source={item.image}
-            />
+
+                <View style={{
+                        width: '40%',
+                        height: responsiveScreenHeight(30),
+                }}>
+                    <ImageModal
+                        resizeMode='contain'
+                    
+                        style={styles.imageModalStyle}
+                        source={item.image}
+                    />
+                </View>
         
      
-            <View style={{
-                width: '60%',
-                height: responsiveScreenHeight(30),
-            }}>
-                    <Text
-                        style={{
-                            textAlign: 'center',
-                            fontSize: responsiveScreenFontSize(1.2),
-                        }}>
-                        {item.title}
-                    </Text>
-                    <View
-                        style={{
-                            borderBottomColor: '#CBCACA',
-                            borderBottomWidth: 1,
-                            marginVertical: 15
-                        }} />
-                    <Text numberOfLines={10} 
-                        style={{
-                            textAlign: 'center',
-                            fontSize: responsiveScreenFontSize(0.65),
+                <View style={{
+                    width: '60%',
+                    height: responsiveScreenHeight(30),
+                }}>
+                        <Text
+                            style={{
+                                textAlign: 'center',
+                                fontSize: responsiveScreenFontSize(1.2),
+                            }}>
+                            {item.title}
+                        </Text>
+                        <View
+                            style={{
+                                borderBottomColor: '#CBCACA',
+                                borderBottomWidth: 1,
+                                marginVertical: 15
+                            }} />
+                        <Text numberOfLines={10} 
+                            style={{
+                                textAlign: 'center',
+                                fontSize: responsiveScreenFontSize(0.65),
+
+                                lineHeight: 18
+                
+                            }}>
+                            {item.content}
+                        </Text>
+
+                        <View style={styles.buyButtonView}>
+                            <TouchableOpacity 
+                                style={styles.buyButton} 
+                                onPress={() => Alert.alert('Button with adjusted color pressed')}>
+                                <Text style={styles.buyButtonText}>부분 구매하기</Text>
+                            </TouchableOpacity>
+                            
+                            <TouchableOpacity 
+                                style={styles.buyButton} 
+                                onPress={() => Alert.alert('Button with adjusted color pressed')}>
+                                <Text style={styles.buyButtonText}>구매하기 </Text>
+                            </TouchableOpacity>
+                        </View>
             
-                        }}>
-                        {item.content}
-                    </Text>
 
-                    <View style={styles.buyButtonView}>
-                        <TouchableOpacity 
-                            style={styles.buyButton} 
-                            onPress={() => Alert.alert('Button with adjusted color pressed')}>
-                            <Text style={styles.buyButtonText}>부분 구매하기</Text>
-                        </TouchableOpacity>
-                        
-                        <TouchableOpacity 
-                            style={styles.buyButton} 
-                            onPress={() => Alert.alert('Button with adjusted color pressed')}>
-                            <Text style={styles.buyButtonText}>구매하기 </Text>
-                        </TouchableOpacity>
-                    </View>
-        
-
-            </View>
+                </View>
             </BookDetailTopHalf>
+            <BookDetailBottomHalf>
+                <Text style={{
+                    lineHeight: 18
+                }}
+                >{item.detailContent}</Text>
+
+                
+            </BookDetailBottomHalf>
       
         </BookDetailView>
     )
