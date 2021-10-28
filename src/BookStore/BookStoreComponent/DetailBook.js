@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import {View, Text, Alert, StyleSheet, useWindowDimensions} from 'react-native';
 import styled from 'styled-components/native';
 import {
@@ -9,6 +9,7 @@ import {
 import Carousel from 'react-native-snap-carousel';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import ImageModal from 'react-native-image-modal';
+
 
 const BookDetailView = styled.ScrollView`
     width: 90%;
@@ -67,8 +68,11 @@ const IMAGES = {
     image2: require('../../Assets/images/images.jpeg')
 };
 
-function DetailBook ({bookId}) {
 
+
+function DetailBook ({bookId, gotoSecond}) {
+
+    const carouselRef = useRef();
     const {width, height} = useWindowDimensions();
 
         const BookDetailCard = ({index, item}) => {
@@ -126,7 +130,7 @@ function DetailBook ({bookId}) {
                                     }}>
                                     <TouchableOpacity 
                                         style={styles.buyButton} 
-                                        onPress={() => Alert.alert('부분구매하기')}>
+                                        onPress={() => {gotoSecond(books[carouselRef.current.currentIndex])}}>
                                         <Text style={styles.buyButtonText}>부분 구매하기</Text>
                                     </TouchableOpacity>
                                     </View>
@@ -208,6 +212,7 @@ function DetailBook ({bookId}) {
                 sliderWidth={width}
                 itemWidth={width > height ? width*0.63 : width* 0.80}
                 renderItem={BookDetailCard}
+                ref={carouselRef}
             />
           
         </View>

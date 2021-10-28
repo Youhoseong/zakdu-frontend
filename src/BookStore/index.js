@@ -2,6 +2,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 
 import BookStoreTest from './BookStoreComponent/BookStoreTest';
+import DetailBook from './BookStoreComponent/DetailBook';
+import PartPurchaseView from './BookStoreComponent/PartPurchaseView';
 
 
 
@@ -13,11 +15,24 @@ function BookStore ({navigation}) {
     return (
         <Stack.Navigator>
             <Stack.Screen 
-            name="DetailBook" 
+            name="BookShop" 
             options={{
-                title: '자세한 내용'
-            }}>
-                {()=> <BookStoreTest />}
+                title: '북스토어'
+            }}
+            component={BookStoreTest}>
+            
+
+            </Stack.Screen>
+
+
+            <Stack.Screen
+            name="PartPurchase"
+            options={{
+                title: '히히'
+            }}
+            component={PartPurchaseView}
+            >
+             
             </Stack.Screen>
 
             
