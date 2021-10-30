@@ -88,6 +88,30 @@ function PartPurchaseView({navigation, selectedBook}) {
                             shopId: 7,
              
                           },
+                          {
+                            shopReportName: 'Name 12',
+                            shopId: 12,
+                          },
+                          {
+                            shopReportName: 'Name 13',
+                            shopId: 13,
+                          },
+                          {
+                            shopReportName: 'Name 14',
+                            shopId: 14,
+                          },
+                          {
+                            shopReportName: 'Name 15',
+                            shopId: 15,
+                          },
+                          {
+                            shopReportName: 'Name 16',
+                            shopId: 16,
+                          },
+                          {
+                            shopReportName: 'Name 17',
+                            shopId: 17,
+                          }
                         ],
                       }],
                     },
@@ -174,8 +198,8 @@ function PartPurchaseView({navigation, selectedBook}) {
         }
  
         return(
-            <View style={{marginLeft: 20}}>            
-                <View key={item.shopId}>
+            <View style={{marginLeft: 20}}  key={item.shopId}>            
+                <View>
                                 
                     <View style={styles.TocFieldViewStyle}>
                             {item.childs ? 
@@ -193,6 +217,9 @@ function PartPurchaseView({navigation, selectedBook}) {
                                         width: 20,
                                         height: 20
                                     }}
+                                    animationDuration={0.4}
+                                    onAnimationType='fade'
+                                    offAnimationType='fade'
                                     value={item.tick}
                                     onValueChange={()=> {
                                         if(!item.tick) {
@@ -279,7 +306,7 @@ function PartPurchaseView({navigation, selectedBook}) {
                             <FlatList
                                 data={recursiveData}
                                 renderItem={({item,index})=> HierarchyDataRender(item, index)}
-                                keyExtractor={(item,index)=> index.toString()}
+                                keyExtractor={(item,index)=> item.shopId.toString()}
                             >
                                 
                             </FlatList>
@@ -315,7 +342,10 @@ function PartPurchaseView({navigation, selectedBook}) {
                                 justifyContent: 'center',
                                 
                             }}
-                            onPress={()=> alert('구매하기 ㅎㅎ')}>
+                            onPress={()=> {
+                                alert('구매하기 ㅎㅎ');
+                                console.log(recursiveData);
+                            }}>
                                 <Text style={{
                                     fontSize: responsiveScreenFontSize(1),
                                     textAlign: 'center',

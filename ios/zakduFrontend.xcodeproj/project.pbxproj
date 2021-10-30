@@ -111,7 +111,6 @@
 			children = (
 			);
 			name = Resources;
-			path = "";
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -154,7 +153,6 @@
 				9886ECF54AEB7860CF39C803 /* Pods-zakduFrontend-zakduFrontendTests.debug.xcconfig */,
 				0204F14EBB9DCBABDFF7013B /* Pods-zakduFrontend-zakduFrontendTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
