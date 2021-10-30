@@ -1,7 +1,9 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
-import {View, Text} from 'react-native';
-import DetailBook from './BookStoreComponent/DetailBook';
+
+import BookStores from './BookStoreComponent/BookStores';
+import PartPurchaseView from './BookStoreComponent/PartPurchaseView';
+
 
 
 const Stack = createStackNavigator();
@@ -12,11 +14,24 @@ function BookStore ({navigation}) {
     return (
         <Stack.Navigator>
             <Stack.Screen 
-            name="DetailBook" 
+            name="BookShop" 
             options={{
-                title: '자세한 내용'
-            }}>
-                {()=> <DetailBook bookId={2}/>}
+                title: '북스토어'
+            }}
+            component={BookStores}>
+            
+
+            </Stack.Screen>
+
+
+            <Stack.Screen
+            name="PartPurchase"
+            options={{
+                title: '히히'
+            }}
+            component={PartPurchaseView}
+            >
+             
             </Stack.Screen>
 
             
