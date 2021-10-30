@@ -1,8 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 
-import BookStoreTest from './BookStoreComponent/BookStoreTest';
-import DetailBook from './BookStoreComponent/DetailBook';
+import BookStores from './BookStoreComponent/BookStores';
 import PartPurchaseView from './BookStoreComponent/PartPurchaseView';
 
 
@@ -19,7 +18,7 @@ function BookStore ({navigation}) {
             options={{
                 title: '북스토어'
             }}
-            component={BookStoreTest}>
+            component={BookStores}>
             
 
             </Stack.Screen>

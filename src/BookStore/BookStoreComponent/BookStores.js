@@ -9,7 +9,7 @@ import PartPurchaseView from './PartPurchaseView';
 
 
 
-function BookStoreTest({navigation}) {
+function BookStores({navigation}) {
     const [detailBookVisible, setDetailBookVisible] = useState(false);
     const [partBookPurchaseVisible, setPartBookPurchaseVisible] = useState(false);
     const [selectedBookId, setSelectedBookId] = useState(null);
@@ -17,7 +17,7 @@ function BookStoreTest({navigation}) {
        
         setSelectedBookId(currentIndex);
         setDetailBookVisible(false);
-        setTimeout(function(){setPartBookPurchaseVisible(true)}, 400);
+        setTimeout(function(){setPartBookPurchaseVisible(true)}, 600);
 
         //navigation.push('PartPurchase', {'selectedBook': currentIndex});
   
@@ -83,4 +83,4 @@ function BookStoreTest({navigation}) {
 
 
 }
-export default BookStoreTest;
+export default BookStores;

@@ -1,13 +1,10 @@
-import React, {useState} from 'react';
-import {View, Text, useWindowDimensions, StyleSheet, Image,ScrollView, Pressable} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, useWindowDimensions, StyleSheet, Image,ScrollView, Pressable, FlatList} from 'react-native';
 import { responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth } from 'react-native-responsive-dimensions';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
-import CheckboxTree from 'react-native-checkbox-tree';
-
 import CheckBox from '@react-native-community/checkbox';
-import { ScrollViewBase } from 'react-native';
 
 const styles = StyleSheet.create({
     PartPurchaseViewStyle: {
@@ -60,9 +57,9 @@ const styles = StyleSheet.create({
 function PartPurchaseView({navigation, selectedBook}) {
     const [imageModalVisible, setImageModalVisible] = useState(false);
     const {width, height} = useWindowDimensions();
-    //const {selectedBook} = route.params;
-
-    const recursiveData = [
+    let selectedItem = [];
+    const [reload, setReload] = useState(Math.random());
+    const [recursiveData, setRecursiveData] = useState([
         {
           shopReportName: 'Name 1',
           shopId: 1,
@@ -107,59 +104,132 @@ function PartPurchaseView({navigation, selectedBook}) {
                 },
               ],
             },
+            {
+                shopReportName: 'Name 11',
+                shopId: 11
+            }
           ],
         },
-      ];
-    
-      const setCheckStateWithChild = () => {
+        {
+            shopReportName: 'Name 9',
+            shopId: 9,
+            childs: [
+                {
+                    shopReportName: 'Name 10',
+                    shopId: 10
+                }
+            ]
+        }
+      ]);
 
-      }
+    const unTick = (data) => {
 
-      const HierarchyDataRender = ({data, checkValue}) => {
-        return(
-            <View style={{marginLeft: 20}}>            
-                {data.map(
-                    (item) => {
-                        return(
-                            <View key={item.shopId}>
-    
-                                <View style={styles.TocFieldViewStyle}>
-                                    {item.childs ? 
-                                        <Icon name="chevron-right" size={18} style={{
-                                            marginRight: 12
-                                        }}/> : 
-                                        <Icon name="circle" size={18} style={{
-                                            marginRight: 12}}
-                                        />}
-                                    <CheckBox
-                                        boxType='square'
-                                        style={{
-                                            marginRight: 10
-                                        }}
-                                        value={checkValue}
-                               
-                                        
-                                    />
-                                    <Text style={{
-                                    // marginLeft: 3,
-                                        fontSize: responsiveScreenFontSize(1),
-                                    // textAlign: 'center',
-                                    // marginBottom: 10
-                                    }} >{item.shopReportName}</Text>
-                                </View>
-    
-                                {item.childs ? <HierarchyDataRender data={item.childs} checkValue={checkValue} />: null}
-    
-                            </View>
-                         
-                        )
-                    }
-                )}
-            </View>
-        );
-    
+        data.tick = false;
+        parent(data.parent);
+        if(data.childs){
+            data.childs.map(
+                (item)=> {
+                    unTick(item);
+                }
+            )
+          
+        }
+            
     }
 
+    const parent = (data) => {
+        if(data && data.childs) {
+            const countNotCheckedItem = data.childs.filter(child => !child.tick);
+
+            if(countNotCheckedItem.length === 0){
+                data.tick = true;
+            }else {
+                data.tick = false;
+            }
+            parent(data.parent);
+        }
+    }
+
+    const onTick = (data) => {
+        data.tick = true;
+        parent(data.parent);
+        if(data.childs){
+            data.childs.map(
+                (item) => {
+                    onTick(item);
+                }
+            )
+            
+        }
+    }
+
+
+    const HierarchyDataRender = (item, index) => {
+
+        if (!item.show) {
+            item.show = false;
+        }
+        if (!item.tick) {
+            item.tick = false;
+        }
+ 
+        return(
+            <View style={{marginLeft: 20}}>            
+                <View key={item.shopId}>
+                                
+                    <View style={styles.TocFieldViewStyle}>
+                            {item.childs ? 
+
+                                <Icon name="chevron-right" size={15} style={{
+                                    marginRight: 12
+                                }}/> : 
+                                <Icon name="circle" size={15} style={{
+                                    marginRight: 12}}
+                                />}
+                                <CheckBox
+                                    boxType='square'
+                                    style={{
+                                        marginRight: 10,
+                                        width: 20,
+                                        height: 20
+                                    }}
+                                    value={item.tick}
+                                    onValueChange={()=> {
+                                        if(!item.tick) {
+                                            onTick(item);
+                                            setReload(Math.random())
+                                        }else {
+                                            unTick(item); 
+                                            setReload(Math.random())
+                                        }
+
+                                    }} />
+                                        
+
+                                <Text style={{
+                                    // marginLeft: 3,
+                                    fontSize: responsiveScreenFontSize(1),
+                                    // textAlign: 'center',
+                                    // marginBottom: 10
+                                }} >{item.shopReportName}</Text>
+                        </View>
+    
+                        {item.childs && item.childs.map(
+                            (data, index) => {
+                                if(!data.parent) {
+                                    data.parent = item;
+                                }
+                                return HierarchyDataRender(data, index);
+                            }
+                        ) }
+    
+                    </View>
+                          
+            </View>
+        );
+    }
+
+ 
 
     return (
         <View style={styles.PartPurchaseViewStyle}>
@@ -205,22 +275,55 @@ function PartPurchaseView({navigation, selectedBook}) {
                         height: '80%',
                        // borderWidth: 1
                     }}>
-                    <ScrollView>
-                        <HierarchyDataRender data={recursiveData} checkValue={true}/>
-                    </ScrollView>
+                        
+                            <FlatList
+                                data={recursiveData}
+                                renderItem={({item,index})=> HierarchyDataRender(item, index)}
+                                keyExtractor={(item,index)=> index.toString()}
+                            >
+                                
+                            </FlatList>
+                           
+                   
                     </View>
                     <View style={{
                         backgroundColor: '#ABAAAA', 
-                        //shadowOpacity: '20%',
                         height: '20%', 
                         borderTopWidth: 1,
                         borderBottomLeftRadius: 15,
                         borderBottomRightRadius: 15,
-                        borderBottomWidth: 1                     
+                        borderBottomWidth: 1,
+                        justifyContent: 'center'
                     }}>
-                            <Text>
-                                
+                        <View style={{
+                            display: 'flex',
+                            flexDirection: 'row'
+                        }}>
+                            <Text style={{
+                                fontSize: responsiveScreenFontSize(2.2),
+                                marginLeft: 15,
+                                width: '30%',
+                                     
+                            }}>
+                                8,730₩
                             </Text>
+                            <Pressable style={{
+                                borderRadius: 20,
+                                padding: 2,
+                                width: responsiveScreenWidth(13),
+                                backgroundColor: '#0A84FF',
+                                justifyContent: 'center',
+                                
+                            }}
+                            onPress={()=> alert('구매하기 ㅎㅎ')}>
+                                <Text style={{
+                                    fontSize: responsiveScreenFontSize(1),
+                                    textAlign: 'center',
+                                    color: 'white'
+
+                                }}>구매하기</Text>
+                            </Pressable>
+                        </View>
                     </View>
                 </View>
             </View>
