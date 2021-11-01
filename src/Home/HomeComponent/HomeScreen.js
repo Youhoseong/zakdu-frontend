@@ -2,6 +2,8 @@ import { NavigationAction } from '@react-navigation/routers';
 import React, {useRef} from 'react';
 import {Button, View, Text, useWindowDimensions, StyleSheet, Dimensions} from 'react-native';
 import Pdf from 'react-native-pdf';
+
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
