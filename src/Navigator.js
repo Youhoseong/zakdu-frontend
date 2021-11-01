@@ -28,7 +28,7 @@ const TabPlaceholder = () => {
 const BottomNavigation = ({navigation}) => {
     return (
         <BottomTab.Navigator>
-            <BottomTab.Screen
+            {/* <BottomTab.Screen
                 name="ReadingBook"
                 component={Home}
                 options={{
@@ -38,7 +38,7 @@ const BottomNavigation = ({navigation}) => {
                  
                 }}
             >
-            </BottomTab.Screen>
+            </BottomTab.Screen> */}
             <BottomTab.Screen
                 name="BookShelf"
                 component={BookShelf}
