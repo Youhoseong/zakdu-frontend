@@ -1,12 +1,16 @@
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator, HeaderBackButton } from '@react-navigation/stack';
 import React from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, Pressable, StyleSheet} from 'react-native';
 import BookShelfHome from './BookShelfComponent/BookShelfHome';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import HomeScreen from './BookShelfComponent/ReadingBookView';
 
 const Stack = createStackNavigator();
 
 
-function BookShelf ({navigation}) {
+
+
+function BookShelf () {
 
     return (
         <Stack.Navigator>
@@ -16,6 +20,16 @@ function BookShelf ({navigation}) {
             options={{
                 title: '노제원님의 책장'
             }}/>
+            <Stack.Screen 
+            name="HomeScreen" 
+            component={HomeScreen}
+            options={{
+                title: '읽고 있는 책',
+                
+                
+            }}
+            
+            />
             
         </Stack.Navigator>
     )
