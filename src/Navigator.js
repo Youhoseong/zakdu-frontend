@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, StatusBar} from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import Home from './Home/index';
@@ -7,6 +7,8 @@ import Test from './Home/HomeComponent/Test';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Styled from 'styled-components';
 import BookStore from './BookStore';
+import BookShelf from './BookShelf';
+import MyPage from './MyPage';
 
 
 const Stack = createStackNavigator();
@@ -39,7 +41,7 @@ const BottomNavigation = ({navigation}) => {
             </BottomTab.Screen>
             <BottomTab.Screen
                 name="BookShelf"
-                component={TabPlaceholder}
+                component={BookShelf}
                 options={{
                     tabBarLabel: '보관함',
                     headerShown: false,
@@ -59,7 +61,7 @@ const BottomNavigation = ({navigation}) => {
             </BottomTab.Screen>
             <BottomTab.Screen
                 name="MyPage"
-                component={TabPlaceholder}
+                component={MyPage}
                 options={{
                     tabBarLabel: '마이페이지',
                     headerShown: false,
@@ -78,10 +80,11 @@ function Navigator() {
 
 
     return (
+
         <NavigationContainer>
             <Stack.Navigator>
                 <Stack.Screen 
-                name="BottomNav" 
+                name="BottomNav"
                 component={BottomNavigation}
                 options={{
                     headerShown: false,
