@@ -1,53 +1,205 @@
 import React, {useState, useRef} from 'react';
-import {View, Text, StatusBar, Image, Dimensions, Button, Alert, StyleSheet} from 'react-native';
-import Carousel, {Pagination} from 'react-native-snap-carousel';
+import {View, Text, Alert, StyleSheet, useWindowDimensions} from 'react-native';
 import styled from 'styled-components/native';
 import {
     responsiveScreenHeight,
     responsiveScreenWidth,
     responsiveScreenFontSize,
 } from 'react-native-responsive-dimensions';
-import BookDetailCard from './BookDetailCard';
+import Carousel from 'react-native-snap-carousel';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import ImageModal from 'react-native-image-modal';
 
+
+const BookDetailView = styled.ScrollView`
+    width: 90%;
+    height: 100%;
+    background-color: #ffffff;
+    border-radius: 15px;
+    border: solid #CBCACA;
+    margin: 4% auto;
+`;
+
+const BookDetailTopHalf = styled.View`
+    width: 80%;
+    height: 50%;
+    display: flex;
+    flex-direction: row;
+    //border: solid;
+    margin: 6% auto 0 auto;
+`;
+
+const BookDetailBottomHalf = styled.View`
+    width: 80%;
+    height: 50%;
+    margin: 6% auto;
+
+`;
+
+
+const styles = StyleSheet.create({
+    buyButton: {
+        backgroundColor: 'black',
+        borderRadius: 20,
+        width: '100%',
+        paddingVertical: 13,
+        paddingHorizontal: 13,      
+    },
+
+    buyButtonText: {
+        textAlign: 'center',
+        fontSize: responsiveScreenFontSize(0.7),
+        color: 'white'
+    },
+
+    buyButtonView: {
+        display: 'flex',
+        width: '100%',
+
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        position: 'absolute',
+        bottom: 0,
+    },  
+})
 
 const IMAGES = {
     image1: require('../../Assets/images/img.png'),
     image2: require('../../Assets/images/images.jpeg')
 };
 
-function DetailBook ({bookId}) {
-    
-    const { width } = Dimensions.get('window');
+
+
+function DetailBook ({bookId, gotoSecond}) {
+
+    const carouselRef = useRef();
+    const {width, height} = useWindowDimensions();
+
+        const BookDetailCard = ({index, item}) => {
+            return (
+                <BookDetailView>
+                    <BookDetailTopHalf>
+                        <View style={{
+                                width: '40%',
+                                height: '100%',
+                                marginRight: width > height ? responsiveScreenWidth(2) : responsiveScreenHeight(2)
+                        }}>
+                            <ImageModal
+                                resizeMode='cover'
+                                style={{
+                                    height: '100%',
+                                    width: width > height ? responsiveScreenWidth(16) : responsiveScreenHeight(16),
+                                    alignContent: 'center',
+                                    borderWidth:1,
+                                    borderColor: '#C2C2C2',
+                                }}
+                                source={item.image}
+                            />
+                        </View>
+                
+            
+                        <View style={{
+                            width: '60%',
+                            height: '100%'
+                        }}>
+                                <Text
+                                    style={{
+                                        textAlign: 'center',
+                                        fontSize: responsiveScreenFontSize(1.2),
+                                    }}>
+                                    {item.title}
+                                </Text>
+                                <View
+                                    style={{
+                                        borderBottomColor: '#CBCACA',
+                                        borderBottomWidth: 1,
+                                        marginVertical: '5%'
+                                    }} />
+                                <Text numberOfLines={10} 
+                                    style={{
+                                        textAlign: 'center',
+                                        fontSize: responsiveScreenFontSize(0.7),
+                                        lineHeight: 18
+                                    }}>
+                                    {item.content}
+                                </Text>
+
+                                <View style={styles.buyButtonView}>
+                                    <View style={{
+                                        width: '45%'
+                                    }}>
+                                    <TouchableOpacity 
+                                        style={styles.buyButton} 
+                                        onPress={() => {gotoSecond(books[carouselRef.current.currentIndex])}}>
+                                        <Text style={styles.buyButtonText}>부분 구매하기</Text>
+                                    </TouchableOpacity>
+                                    </View>
+                                    <View style={{
+                                        width: '45%'
+                                    }}>
+                                    <TouchableOpacity 
+                                        style={styles.buyButton} 
+                                        onPress={() => Alert.alert('구매하기')}>
+                                        <Text style={styles.buyButtonText}>구매하기 </Text>
+                                    </TouchableOpacity>
+                                    </View>
+                                </View>
+                    
+
+                        </View>
+                    </BookDetailTopHalf>
+                    <BookDetailBottomHalf>
+                        <Text style={{
+                            lineHeight: 20,
+                            textAlign: 'center',
+                            fontSize: responsiveScreenFontSize(0.7),
+                        }}
+                        >{item.detailContent}</Text>
+
+                        
+                    </BookDetailBottomHalf>
+            
+                </BookDetailView>
+            )
+
+
+        }
+
+
 
     const [books, setBooks] = useState([
         { 
             id: 0, 
             image: IMAGES.image1,
             title: '쎈 중등수학 2(하)',
-            content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+            content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+            detailContent: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
         },
         {
             id: 1,
             image: IMAGES.image1,
             title: '쎈 중등수학 2(하)',
-            content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+            content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+            detailContent: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
         },
+
         {
             id: 2,
             image: IMAGES.image2,
             title: '쎈 중등수학 2(하)',
-            content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+            content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+            detailContent: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
         },
         {
             id: 3,
             image: IMAGES.image2,
             title: '쎈 중등수학 2(하)',
-            content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+            content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+            detailContent: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
         }
     
     ]);
     
-
 
     return (
         <View>
@@ -57,19 +209,14 @@ function DetailBook ({bookId}) {
                 layout='default'
                 inactiveSlideScale={1}
                 data={books}
-                sliderWidth={responsiveScreenWidth(100)}px
-                itemWidth={responsiveScreenWidth(60)}px
+                sliderWidth={width}
+                itemWidth={width > height ? width*0.63 : width* 0.80}
                 renderItem={BookDetailCard}
-              
-             
+                ref={carouselRef}
             />
           
         </View>
-
-
     );
-
-
 }
 
 export default DetailBook;
