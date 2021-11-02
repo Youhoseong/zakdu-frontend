@@ -182,6 +182,43 @@ function BookStores({navigation}) {
 
 
             </View>
+            <View style={{
+                
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 1,
+                },
+                shadowOpacity: 0.3,
+                shadowRadius: 7,
+            }}>
+                <Text style={{
+                    fontSize: responsiveScreenFontSize(1.5),
+                    fontWeight: '600',
+                    marginHorizontal: 30,
+                    marginTop: 50,
+                    marginBottom: 15
+                }}>
+                    호성이가 만든 책
+                </Text>
+                <View style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    width: '100%',
+                    height: width > height ? responsiveScreenHeight(28) : responsiveScreenWidth(28),
+                   
+                }}>
+                    <FlatList
+                        horizontal
+                        data={books}
+                        renderItem={({item,index})=> BookStoreBookListRender(item, index)}
+                        keyExtractor={(item,index)=> item.id.toString()}
+                    />
+                </View>
+
+
+
+            </View>
 
 
 
@@ -189,7 +226,9 @@ function BookStores({navigation}) {
                 isVisible={detailBookVisible}
                 useNativeDriver={true}
                 style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-                onBackdropPress={()=> setDetailBookVisible(false)}>
+                onBackdropPress={()=> setDetailBookVisible(false)}
+                hideModalContentWhileAnimating={true} 
+                onSwipeComplete={()=>setDetailBookVisible(false)}>
             
                 <TouchableOpacity 
                         onPress={() => setDetailBookVisible(false)} >
@@ -207,7 +246,9 @@ function BookStores({navigation}) {
                     justifyContent: 'center',
                     alignItems: 'center'
                 }}
-                onBackdropPress={()=> setPartBookPurchaseVisible(false)}>
+                onBackdropPress={()=> setPartBookPurchaseVisible(false)}
+                hideModalContentWhileAnimating={true} 
+                onSwipeComplete={()=>setDetailBookVisible(false)}>
                
                 <TouchableOpacity 
                         onPress={() => setPartBookPurchaseVisible(false)} style={{margin: 5}}>
