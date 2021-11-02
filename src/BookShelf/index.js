@@ -3,7 +3,7 @@ import React from 'react';
 import {View, Text, Pressable, StyleSheet} from 'react-native';
 import BookShelfHome from './BookShelfComponent/BookShelfHome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import HomeScreen from './BookShelfComponent/ReadingBookView';
+import ReadingBookView from './BookShelfComponent/ReadingBookView';
 
 const Stack = createStackNavigator();
 
@@ -22,7 +22,7 @@ function BookShelf () {
             }}/>
             <Stack.Screen 
             name="HomeScreen" 
-            component={HomeScreen}
+            component={ReadingBookView}
             options={{
                 title: '읽고 있는 책',
                 

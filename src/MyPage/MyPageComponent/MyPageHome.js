@@ -40,7 +40,7 @@ function MyPageHome({navigation}) {
                 style={styles.innerView}
             >
                 <Button
-                    title="로그 아웃"
+                    title="로그아웃"
                 //onPress={() => navigation.navigate('Profile')}
                 />
             </View>
