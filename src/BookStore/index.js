@@ -16,7 +16,10 @@ function BookStore ({navigation}) {
             <Stack.Screen 
             name="BookShop" 
             options={{
-                title: '북스토어'
+                title: '북스토어',
+                headerStyle: {
+                    backgroundColor: '#F3F3F3'
+                }
             }}
             component={BookStores}>
             

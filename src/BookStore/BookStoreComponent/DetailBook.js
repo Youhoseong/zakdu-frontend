@@ -204,7 +204,7 @@ function DetailBook ({bookId, gotoSecond}) {
     return (
         <View>
             <Carousel
-                firstItem={bookId}
+                firstItem={Number(bookId)}
                 scrollEnabled={true}
                 layout='default'
                 inactiveSlideScale={1}

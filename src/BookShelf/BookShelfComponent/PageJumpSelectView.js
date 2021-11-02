@@ -1,35 +1,46 @@
-import React from 'react';
-import {View, StyleSheet, FlatList, Text} from 'react-native';
-
+import React, { useState } from 'react';
+import {View, StyleSheet, FlatList, Text, useWindowDimensions, TextInput, Pressable} from 'react-native';
+import Pdf from 'react-native-pdf';
 
 const styles = StyleSheet.create({
     PageJumpSelectViewStyle : {
-        width: '60%',
-        height: '60%',
+        width: '40%',
+        height: '30%',
         backgroundColor: 'white',
-        borderRadius: 15
+        borderRadius: 15,
+        alignItems: 'center',
+        justifyContent: 'center'
 
 
-    }
+    },
+    container: {
+        flex: 1,
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+       
+    },
+    pdf: {
+        flex:1,
+        width: '50%',
+        height: '50%',
+        borderWidth:1
+    },
 
 
 });
 
 
-
-function PageJumpSelectView({pdfRef}) {
+function PageJumpSelectView({pdfRef, pdfSource, setModalVisible}) {
+    const {height, width} = useWindowDimensions();
+    const [temp, setTemp] = useState();
 
 
     return (
         <View style={styles.PageJumpSelectViewStyle}>
-            <FlatList >
-                <View>
-                    <Text>
-                        dd
-                    </Text>
-                </View>
-
-            </FlatList>
+            <Text>dd{console.log('dd')}
+                {temp}
+            </Text>
+          
         </View>
     );
 
