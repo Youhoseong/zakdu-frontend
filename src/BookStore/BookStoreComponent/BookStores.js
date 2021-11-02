@@ -1,16 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import {View, Text, Button, useWindowDimensions, FlatList, Image, Pressable, ScrollView} from 'react-native';
+import {View, Text, Button, useWindowDimensions, FlatList, Image, Pressable, ScrollView, StyleSheet} from 'react-native';
 import Modal from 'react-native-modal';
 import DetailBook from './DetailBook';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import PartPurchaseView from './PartPurchaseView';
 import { responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth } from 'react-native-responsive-dimensions';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
-
-
-
-
+const styles = StyleSheet.create({
+    imageStyle: {
+        marginHorizontal: 10,
+        height: '100%',
+        borderWidth: 1,
+        borderColor: '#C2C2C2',
+    },
+    catergoryViewStyle: {
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 1,
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 7,
+    },
+    catergoryTitleStyle: {
+        fontSize: responsiveScreenFontSize(1.5),
+        fontWeight: '600',
+        marginHorizontal: 30,
+        marginTop: 25,
+        marginBottom: 15
+    }
+})
 
 
 function BookStores({navigation}) {
@@ -77,23 +98,18 @@ function BookStores({navigation}) {
                     
                 }
                 style={{
-                  
-                    height: '98%'
-                    
+                    height: '98%'           
                 }}
                 >
                 <Image 
                     resizeMode='cover'
                     source={item.image}
-                    style={{
-                        width: width > height ? responsiveScreenWidth(14) : responsiveScreenHeight(14),
-                        marginHorizontal: 10,
-                        height: '100%',
-                        borderWidth: 1,
-                        borderColor: '#C2C2C2',
-                                              
-                  
-                    }}
+                    style={[
+                        {
+                            width: width > height ? responsiveScreenWidth(14) : responsiveScreenHeight(14),
+                        },
+                        styles.imageStyle
+                    ]}
                 ></Image>
                 </Pressable>
             </View>
@@ -104,27 +120,17 @@ function BookStores({navigation}) {
     
 
     return (
+        <View style={{
+            width: '100%',
+            height: '100%'
+        }}>
         <ScrollView style={{
             backgroundColor: 'white',
+            width: '100%'
         }}>
 
-            <View style={{
-                
-                shadowColor: "#000",
-                shadowOffset: {
-                  width: 0,
-                  height: 1,
-                },
-                shadowOpacity: 0.3,
-                shadowRadius: 7,
-            }}>
-                <Text style={{
-                    fontSize: responsiveScreenFontSize(1.5),
-                    fontWeight: '600',
-                    marginHorizontal: 30,
-                    marginTop: 25,
-                    marginBottom: 15
-                }}>
+            <View style={styles.catergoryViewStyle }>
+                <Text style={styles.catergoryTitleStyle}>
                     문제집
                 </Text>
                 <View style={{
@@ -142,26 +148,41 @@ function BookStores({navigation}) {
                     />
                 </View>
 
+                <View style={{
+                    width: '100%',
+                    borderBottomWidth: 1,
+                    marginTop: 50,
+                    marginBottom: 20,
+                    borderBottomColor: '#EAEAEA'
+                }}/>
+
+                <Pressable style={{
+                    marginHorizontal: 25,
+                    alignItems: 'center',
+                    display: 'flex',
+                    flexDirection: 'row'
+                }}>
+                    <Text style={{
+                        fontSize: responsiveScreenFontSize(0.8)
+                    }}> 
+                        모두 보기
+                    </Text>
+                    <MaterialCommunityIcons name="chevron-right" size={27} />
+                    
+                </Pressable>
+      
+
 
 
             </View>
-            <View style={{
-                
-                shadowColor: "#000",
-                shadowOffset: {
-                  width: 0,
-                  height: 1,
-                },
-                shadowOpacity: 0.3,
-                shadowRadius: 7,
-            }}>
-                <Text style={{
-                    fontSize: responsiveScreenFontSize(1.5),
-                    fontWeight: '600',
-                    marginHorizontal: 30,
-                    marginTop: 50,
-                    marginBottom: 15
-                }}>
+            <View style={styles.catergoryViewStyle }>
+                <Text style={[
+                    styles.catergoryTitleStyle,
+                    {
+                        marginTop: 50
+                    },
+                 
+                ]}>
                     전공 서적
                 </Text>
                 <View style={{
@@ -179,26 +200,40 @@ function BookStores({navigation}) {
                     />
                 </View>
 
+                <View style={{
+                    width: '100%',
+                    borderBottomWidth: 1,
+                    marginTop: 50,
+                    marginBottom: 20,
+                    borderBottomColor: '#EAEAEA'
+                }}/>
+
+                <Pressable style={{
+                    marginHorizontal: 25,
+                    alignItems: 'center',
+                    display: 'flex',
+                    flexDirection: 'row'
+                }}>
+                    <Text style={{
+                        fontSize: responsiveScreenFontSize(0.8)
+                    }}> 
+                        모두 보기
+                    </Text>
+                    <MaterialCommunityIcons name="chevron-right" size={27} />
+                    
+                </Pressable>
+
 
 
             </View>
-            <View style={{
-                
-                shadowColor: "#000",
-                shadowOffset: {
-                  width: 0,
-                  height: 1,
-                },
-                shadowOpacity: 0.3,
-                shadowRadius: 7,
-            }}>
-                <Text style={{
-                    fontSize: responsiveScreenFontSize(1.5),
-                    fontWeight: '600',
-                    marginHorizontal: 30,
-                    marginTop: 50,
-                    marginBottom: 15
-                }}>
+            <View style={styles.catergoryViewStyle }>
+                <Text style={[
+                    styles.catergoryTitleStyle,
+                    {
+                        marginTop: 50
+                    },
+                 
+                ]}>
                     호성이가 만든 책
                 </Text>
                 <View style={{
@@ -216,11 +251,40 @@ function BookStores({navigation}) {
                     />
                 </View>
 
+                <View style={{
+                    width: '100%',
+                    borderBottomWidth: 1,
+                    marginTop: 50,
+                    marginBottom: 20,
+                    borderBottomColor: '#EAEAEA'
+                }}/>
+
+                <Pressable style={{
+                    marginHorizontal: 25,
+                    alignItems: 'center',
+                    display: 'flex',
+                    flexDirection: 'row'
+                }}>
+                    <Text style={{
+                        fontSize: responsiveScreenFontSize(0.8)
+                    }}> 
+                        모두 보기
+                    </Text>
+                    <MaterialCommunityIcons name="chevron-right" size={27} />
+                    
+                </Pressable>
 
 
             </View>
-
-
+{/* 
+   
+            <View style={{borderWidth:1,bottom:0,alignSelf:'flex-end'}}>
+                <Button
+                    title="Press"
+                    color="#841584"
+                    accessibilityLabel="Press"/>
+            </View> */}
+    
 
             <Modal 
                 isVisible={detailBookVisible}
@@ -228,7 +292,10 @@ function BookStores({navigation}) {
                 style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
                 onBackdropPress={()=> setDetailBookVisible(false)}
                 hideModalContentWhileAnimating={true} 
-                onSwipeComplete={()=>setDetailBookVisible(false)}>
+                onSwipeComplete={()=>setDetailBookVisible(false)}
+                animationIn= "zoomInDown"
+                animationOut="zoomOutUp"
+            >
             
                 <TouchableOpacity 
                         onPress={() => setDetailBookVisible(false)} >
@@ -261,6 +328,39 @@ function BookStores({navigation}) {
             </Modal>
         
         </ScrollView>
+        
+        <Pressable 
+            style={({pressed}) => [
+            {
+                backgroundColor: pressed ? '#2A50EE' : 'black',
+            }, 
+            {
+                width: 70,
+                height: 70,
+                borderRadius: 50,
+                justifyContent: 'center',
+                alignItems:'center',
+                position: 'absolute',
+                bottom: 20,
+                right: 20
+            }]}
+            onPress={()=> {
+                navigation.push('BookRegister');
+            }}
+
+        >
+         <Text style={{
+             color: 'white',
+             fontSize: responsiveScreenFontSize(2),
+             textAlign: 'center',
+   
+
+         }}>+</Text>
+        </Pressable>
+        
+   
+
+        </View>
   
     );
 

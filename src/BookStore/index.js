@@ -1,8 +1,8 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
-
+import BookRegisterView from './BookRegisterComponent/BookRegisterView';
 import BookStores from './BookStoreComponent/BookStores';
-import PartPurchaseView from './BookStoreComponent/PartPurchaseView';
+
 
 
 
@@ -25,17 +25,21 @@ function BookStore ({navigation}) {
             
 
             </Stack.Screen>
-
-
-            <Stack.Screen
-            name="PartPurchase"
+            <Stack.Screen 
+            name="BookRegister" 
             options={{
-                title: '히히'
+                title: '책 등록하기',
+                headerStyle: {
+                    backgroundColor: '#F3F3F3'
+                }
             }}
-            component={PartPurchaseView}
-            >
-             
+            component={BookRegisterView}>
+            
+
             </Stack.Screen>
+
+
+           
 
             
             
