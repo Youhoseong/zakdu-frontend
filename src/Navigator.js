@@ -9,7 +9,7 @@ import Styled from 'styled-components';
 import BookStore from './BookStore';
 import BookShelf from './BookShelf';
 import MyPage from './MyPage';
-
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 const Stack = createStackNavigator();
 const BottomTab = createBottomTabNavigator();
@@ -45,7 +45,10 @@ const BottomNavigation = ({navigation}) => {
                 options={{
                     tabBarLabel: '보관함',
                     headerShown: false,
-                    animationEnabled: false
+                    animationEnabled: false,
+                    tabBarIcon: ()=> (
+                        <MaterialCommunityIcons name="bookshelf" size={25} />
+                    )
                 }}
             >
             </BottomTab.Screen>
@@ -55,7 +58,10 @@ const BottomNavigation = ({navigation}) => {
                 options={{
                     tabBarLabel: '북스토어',
                     headerShown: false,
-                    animationEnabled: false
+                    animationEnabled: false,
+                    tabBarIcon: ()=> (
+                        <MaterialCommunityIcons name="cart" size={25} />
+                    )
                 }}
             >
             </BottomTab.Screen>
@@ -65,7 +71,10 @@ const BottomNavigation = ({navigation}) => {
                 options={{
                     tabBarLabel: '마이페이지',
                     headerShown: false,
-                    animationEnabled: false
+                    animationEnabled: false,
+                    tabBarIcon: ()=> (
+                        <MaterialCommunityIcons name="account" size={25} />
+                    )
                 }}
             >
             </BottomTab.Screen>

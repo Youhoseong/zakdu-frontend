@@ -70,7 +70,7 @@ function ReadingBookView({navigation}) {
                                     shadowColor: "#000",
                                     shadowOffset: {
                                       width: 1,
-                                      height: 3,
+                                      height: 2,
                                     },
                                     shadowOpacity: 0.4,
                                     shadowRadius: 1,
