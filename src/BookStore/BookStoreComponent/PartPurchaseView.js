@@ -9,7 +9,7 @@ import CheckBox from '@react-native-community/checkbox';
 const styles = StyleSheet.create({
     PartPurchaseViewStyle: {
         width: '90%',
-        height: '100%',
+
         backgroundColor: 'white',
         borderRadius: 15,
         display: 'flex',
@@ -259,7 +259,12 @@ function PartPurchaseView({navigation, selectedBook}) {
  
 
     return (
-        <View style={styles.PartPurchaseViewStyle}>
+        <View style={[
+            styles.PartPurchaseViewStyle,
+            {
+                height:  width > height ? '100%' : '60%',
+            }
+        ]}>
                      
         
             <View style={styles.PartPurchaseLeftView}>
@@ -319,39 +324,61 @@ function PartPurchaseView({navigation, selectedBook}) {
                         borderTopWidth: 1,
                         borderBottomLeftRadius: 15,
                         borderBottomRightRadius: 15,
-                        borderBottomWidth: 1,
-                        justifyContent: 'center'
+                        justifyContent: 'center',
+             
                     }}>
                         <View style={{
                             display: 'flex',
-                            flexDirection: 'row'
+                            flexDirection: width > height ? 'row': 'column',
+                            paddingHorizontal: 15,
+                            alignItems: width > height ? 'center' : null,
+                            justifyContent: width > height ? null : 'center',
+                            height: '50%',
+                            width: '100%'
                         }}>
                             <Text style={{
-                                fontSize: responsiveScreenFontSize(2.2),
-                                marginLeft: 15,
+                                fontSize: width > height ? responsiveScreenFontSize(2.2) : responsiveScreenFontSize(1.7),
+                              
                                 width: '30%',
                                      
                             }}>
                                 8,730₩
                             </Text>
                             <Pressable style={{
-                                borderRadius: 20,
-                                padding: 2,
-                                width: responsiveScreenWidth(13),
-                                backgroundColor: '#0A84FF',
-                                justifyContent: 'center',
-                                
-                            }}
-                            onPress={()=> {
-                                alert('구매하기 ㅎㅎ');
-                                console.log(recursiveData);
+                             
                             }}>
                                 <Text style={{
+                                    color: '#256EDE',
+                                    fontWeight: '500'
+                                }}>페이지 단위로 구매하기</Text>
+                            </Pressable>
+                            <Pressable style={({pressed}) => [
+                                {
+                                    backgroundColor: pressed ? '#1440F9' : 'black',
+                                }, 
+                                {
+                                borderRadius: 25,
+                        
+                                width: responsiveScreenWidth(13),
+                                height: '80%',
+                                position: 'absolute',
+                                alignItems: 'center',
+                                right: 5,
+                                justifyContent: 'center',
+                                }
+                            ]}
+                                onPress={()=> {
+                                    alert('구매하기 ㅎㅎ');
+                                    console.log(recursiveData);
+                                }}>
+       
+                                
+                            <Text 
+                                style={{
                                     fontSize: responsiveScreenFontSize(1),
-                                    textAlign: 'center',
                                     color: 'white'
-
-                                }}>구매하기</Text>
+                            }}>구매하기</Text>
+             
                             </Pressable>
                         </View>
                     </View>
@@ -365,7 +392,10 @@ function PartPurchaseView({navigation, selectedBook}) {
                     flex: 1,
                     justifyContent: 'center',
                     alignItems: 'center',
-                }}>
+                }}
+                hideModalContentWhileAnimating={true} 
+                onSwipeComplete={()=> setImageModalVisible(false)}
+                >
                
                 <TouchableOpacity 
                         onPress={() => setImageModalVisible(false)}>
