@@ -365,7 +365,10 @@ function PartPurchaseView({navigation, selectedBook}) {
                     flex: 1,
                     justifyContent: 'center',
                     alignItems: 'center',
-                }}>
+                }}
+                hideModalContentWhileAnimating={true} 
+                onSwipeComplete={()=> setImageModalVisible(false)}
+                >
                
                 <TouchableOpacity 
                         onPress={() => setImageModalVisible(false)}>

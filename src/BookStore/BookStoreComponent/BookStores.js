@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {View, Text, Button, useWindowDimensions, FlatList, Image, Pressable, ScrollView, StyleSheet} from 'react-native';
+import {View, Text, TextInput, Button, useWindowDimensions, FlatList, Image, Pressable, ScrollView, StyleSheet} from 'react-native';
 import Modal from 'react-native-modal';
 import DetailBook from './DetailBook';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -21,8 +21,8 @@ const styles = StyleSheet.create({
           width: 0,
           height: 1,
         },
-        shadowOpacity: 0.3,
-        shadowRadius: 7,
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
     },
     catergoryTitleStyle: {
         fontSize: responsiveScreenFontSize(1.5),
@@ -30,6 +30,26 @@ const styles = StyleSheet.create({
         marginHorizontal: 30,
         marginTop: 25,
         marginBottom: 15
+    },
+    searchBarViewStyle: {
+        width: '100%', 
+        height: '6%', 
+        alignItems: 'center', 
+        marginTop: 20,
+    },
+    searchBarView2Style: {
+        width: '90%',
+        height: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        display:'flex',
+        flexDirection: 'row',
+        borderWidth:1,
+        borderColor: '#DADADA',
+        borderRadius: 15,
+        backgroundColor: '#E9E9E9',
+
+    
     }
 })
 
@@ -130,6 +150,19 @@ function BookStores({navigation}) {
         }}>
 
             <View style={styles.catergoryViewStyle }>
+                <View style={styles.searchBarViewStyle}> 
+
+                    <View style={styles.searchBarView2Style}>
+                        <TextInput 
+                            placeholder="검색..."
+                            style={{
+                                width: '90%',
+                                height: '100%',
+                            }}>
+                        </TextInput>   
+                        <MaterialCommunityIcons name="magnify" size={20} />
+                    </View>
+                </View>
                 <Text style={styles.catergoryTitleStyle}>
                     문제집
                 </Text>
@@ -138,7 +171,6 @@ function BookStores({navigation}) {
                     flexDirection: 'row',
                     width: '100%',
                     height: width > height ? responsiveScreenHeight(28) : responsiveScreenWidth(28),
-                   
                 }}>
                     <FlatList
                         horizontal
@@ -170,9 +202,6 @@ function BookStores({navigation}) {
                     <MaterialCommunityIcons name="chevron-right" size={27} />
                     
                 </Pressable>
-      
-
-
 
             </View>
             <View style={styles.catergoryViewStyle }>
@@ -297,8 +326,9 @@ function BookStores({navigation}) {
                 animationOut="zoomOutUp"
             >
             
-                <TouchableOpacity 
-                        onPress={() => setDetailBookVisible(false)} >
+                   
+            <TouchableOpacity 
+                        onPress={() => setDetailBookVisible(false)} style={{margin: 5}}>
                         <Icon name="times-circle" size={30} color="white" />
                 </TouchableOpacity>
                 <DetailBook gotoSecond={gotoPartPurchaseView} bookId={selectedBookId}/>
