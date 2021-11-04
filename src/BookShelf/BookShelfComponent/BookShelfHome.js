@@ -1,7 +1,5 @@
-import { createStackNavigator, StackActions } from '@react-navigation/routers';
 import React, {useState} from 'react';
-import {View, Text, Image, StyleSheet, TouchableOpacity, SafeAreaView, FlatList, Pressable} from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import {View, Text, Image, StyleSheet, SafeAreaView, FlatList, Pressable} from 'react-native';
 import { Dimensions } from 'react-native';
 
 const windowWidth = Dimensions.get('window').width;

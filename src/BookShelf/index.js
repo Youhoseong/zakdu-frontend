@@ -1,8 +1,6 @@
-import { createStackNavigator, HeaderBackButton } from '@react-navigation/stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
-import {View, Text, Pressable, StyleSheet} from 'react-native';
 import BookShelfHome from './BookShelfComponent/BookShelfHome';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import ReadingBookView from './BookShelfComponent/ReadingBookView';
 
 const Stack = createStackNavigator();

@@ -8,7 +8,7 @@ import {
 } from 'react-native-responsive-dimensions';
 import Carousel from 'react-native-snap-carousel';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import ImageModal from 'react-native-image-modal';
+
 
 
 const BookDetailView = styled.ScrollView`

@@ -1,9 +1,9 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
-import BookRegisterView from './BookRegisterComponent/BookRegisterView';
+import BookRegisterLandingView from './BookRegisterComponent/BookRegisterLandingView';
 import BookStores from './BookStoreComponent/BookStores';
-
-
+import BookRegisterFileUploadView from './BookRegisterComponent/BookRegisterFileUploadView';
+import BookmarkTocCheckingView from './BookRegisterComponent/BookmarkTocCheckingView';
 
 
 const Stack = createStackNavigator();
@@ -21,10 +21,8 @@ function BookStore ({navigation}) {
                     backgroundColor: '#F3F3F3'
                 }
             }}
-            component={BookStores}>
+            component={BookStores}/>
             
-
-            </Stack.Screen>
             <Stack.Screen 
             name="BookRegister" 
             options={{
@@ -33,10 +31,29 @@ function BookStore ({navigation}) {
                     backgroundColor: '#F3F3F3'
                 }
             }}
-            component={BookRegisterView}>
+            component={BookRegisterLandingView}/>
             
+            <Stack.Screen 
+            name="BookRegisterFileUpload" 
+            options={{
+                title: '책 등록하기',
+                headerStyle: {
+                    backgroundColor: '#F3F3F3'
+                }
+            }}
+            component={BookRegisterFileUploadView}/>
 
-            </Stack.Screen>
+            <Stack.Screen 
+            name="BookMarkChecking" 
+            options={{
+                title: '책 등록하기',
+                headerStyle: {
+                    backgroundColor: '#F3F3F3'
+                }
+            }}
+            component={BookmarkTocCheckingView}/>           
+
+       
 
 
            
