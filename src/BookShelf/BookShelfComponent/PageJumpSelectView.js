@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import {View, StyleSheet, FlatList, Text, useWindowDimensions, TextInput, Pressable} from 'react-native';
-import Pdf from 'react-native-pdf';
+import {View, StyleSheet, Text, useWindowDimensions} from 'react-native';
 
 const styles = StyleSheet.create({
     PageJumpSelectViewStyle : {

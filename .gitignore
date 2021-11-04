@@ -7,3 +7,6 @@ ios/Podfile.lock
 
 
 package-lock.json
+
+
+**/DS_Store/**

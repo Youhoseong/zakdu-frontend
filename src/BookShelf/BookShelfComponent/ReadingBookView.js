@@ -1,6 +1,5 @@
-import { NavigationAction } from '@react-navigation/routers';
-import React, {useRef, useLayoutEffect, useState} from 'react';
-import {Button, View, Text, useWindowDimensions, StyleSheet, Dimensions, Pressable, TextInput, Keyboard} from 'react-native';
+import React, {useRef, useState} from 'react';
+import { View, useWindowDimensions, StyleSheet, Pressable, TextInput} from 'react-native';
 import Pdf from 'react-native-pdf';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import Modal from  'react-native-modal';

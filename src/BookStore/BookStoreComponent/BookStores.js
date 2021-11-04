@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import {View, Text, TextInput, Button, useWindowDimensions, FlatList, Image, Pressable, ScrollView, StyleSheet} from 'react-native';
+import React, { useState} from 'react';
+import {View, Text, TextInput, useWindowDimensions, FlatList, Image, Pressable, ScrollView, StyleSheet} from 'react-native';
 import Modal from 'react-native-modal';
 import DetailBook from './DetailBook';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -362,7 +362,7 @@ function BookStores({navigation}) {
         <Pressable 
             style={({pressed}) => [
             {
-                backgroundColor: pressed ? '#2A50EE' : 'black',
+                backgroundColor: pressed ? '#2A3AC4' : '#3448F3',
             }, 
             {
                 width: 70,
