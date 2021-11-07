@@ -6,6 +6,8 @@ import {responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth}
 import Animation from 'lottie-react-native';
 import DocumentPicker from 'react-native-document-picker';
 import HeaderBackButton from '../../Common/CommonComponent/HeaderBackButton';
+import axios from 'axios';
+import {HS_API_END_POINT} from '../../Shared/env';
 
 function  BookRegisterFileUploadView ({navigation}) {
     const [bookRegisterObj, setBookRegisterObj] = useState({
@@ -17,6 +19,48 @@ function  BookRegisterFileUploadView ({navigation}) {
     const [fileValidate, setFileValidate] = useState("");
     const {width ,height} = useWindowDimensions();
 
+    const onPressUploadFile = async() => {
+        const formData = new FormData();
+
+        formData.append('files', {
+                name: bookRegisterObj.bookFile.name,
+                type: bookRegisterObj.bookFile.type,
+                uri: bookRegisterObj.bookFile.uri
+
+        });
+   
+        axios.post(`${HS_API_END_POINT}/book/bookmark`, formData,{
+                headers: {
+                        'Content-Type': 'multipart/form-data'
+                },
+        }).then((res)=> {
+            if(res.data) {
+                console.log(res.data);
+                if(res.data.statusEnum === "BOOKMARK_NO_EXIST") {
+                    navigation.push('BookMarkChecking', 
+                    {
+                        'fileObj': bookRegisterObj,
+                        'bookmarkResult': false,
+                        'tocResult': null
+                    })
+                } else if(res.data.statusEnum === "OK") {
+                    navigation.push('BookMarkChecking', 
+                    {
+                        'fileObj': bookRegisterObj,
+                        'bookmarkResult': true,
+                        'tocResult': res.data.data
+                    })
+                }
+            }
+        }).catch((err)=> {
+            console.error(err);
+        })
+    
+
+
+    }
+        
+    
     const filePicker =  async () => {
         try {
             const file = await DocumentPicker.pick({
@@ -188,8 +232,9 @@ function  BookRegisterFileUploadView ({navigation}) {
                           
                         }
                     ]}
-                        onPress={()=> {
-                            navigation.push('BookMarkChecking', {'fileObj': bookRegisterObj})
+                        onPress={async()=> {
+                            await onPressUploadFile();
+                         
                         }}>
                     
                         <Text 
@@ -197,7 +242,7 @@ function  BookRegisterFileUploadView ({navigation}) {
                                 color: 'white',
                                 fontSize: responsiveScreenFontSize(1.0)
                             }}>
-                            다음
+                            업로드
 
                         </Text>
                     </Pressable>
