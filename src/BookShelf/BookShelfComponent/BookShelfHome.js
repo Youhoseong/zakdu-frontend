@@ -1,11 +1,9 @@
 import { createStackNavigator, StackActions } from '@react-navigation/routers';
-import React, {useState} from 'react';
+import React, {useState, Component} from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity, SafeAreaView, FlatList} from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView, State } from 'react-native-gesture-handler';
 import { Dimensions } from 'react-native';
 
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
 
@@ -61,13 +59,14 @@ const IMAGES = {
 const Item = ({ item, onPress, backgroundColor, textColor }) => (
     <TouchableOpacity onPress={onPress} style={[styles.item2, backgroundColor]}> 
         <Image source={item.image} style={styles.image}/>
-        <Text style={[styles.title, textColor]}>{item.title}</Text>
+        <Text style={[styles.title, textColor]}>{item.title+screenWidth+screenHeight}</Text>
     </TouchableOpacity>
   );
   
 const BookShelfHome = () => {
     const [selectedId, setSelectedId] = useState(null);
-  
+    const numColumns = 4;
+
     const renderItem = ({ item }) => {
       const backgroundColor = item.id === selectedId ? "gray" : null;
       const color = item.id === selectedId ? 'blue' : 'black';
@@ -89,7 +88,7 @@ const BookShelfHome = () => {
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           extraData={selectedId}
-          numColumns='4'
+          numColumns={numColumns}
         />
       </SafeAreaView>
     );
@@ -111,17 +110,19 @@ const BookShelfHome = () => {
         flex:1,
         alignItems:'center',
         padding: 20,
-        height: screenHeight*0.43,
+        height: screenWidth > screenHeight ? screenHeight*0.43 : screenHeight*0.30,
+        //width: screenWidth > screenHeight ? screenWidth*0.2 : screenWidth*0.30,
         marginVertical: screenHeight*0.01,
         //marginHorizontal: 20,
     },
     title: {
         marginTop:5,
-        fontSize: screenHeight*0.03,
+        flex:1,
+        fontSize: screenWidth > screenHeight ? screenHeight*0.02 : screenHeight*0.015,
     },
     image: {
         //height: 300,
-        flex:1,
+        flex:9,
         resizeMode: 'contain',
 
     },

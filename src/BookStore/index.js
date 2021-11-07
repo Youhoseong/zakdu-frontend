@@ -19,7 +19,6 @@ function BookStore ({navigation}) {
                 title: '북스토어'
             }}
             component={BookStores}>
-            
 
             </Stack.Screen>
 
