@@ -18,6 +18,7 @@
     "@react-navigation/bottom-tabs": "^6.0.9",
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/stack": "^6.0.11",
+    "axios": "^0.24.0",
     "fbjs": "^0.8.18",
     "lottie-ios": "^3.2.3",
     "lottie-react-native": "^4.1.3",
