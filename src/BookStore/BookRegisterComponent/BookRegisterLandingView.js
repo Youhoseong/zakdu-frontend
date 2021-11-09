@@ -57,6 +57,14 @@ import HeaderBackButton from '../../Common/CommonComponent/HeaderBackButton';
                         }}>
                             도서 등록 서비스를 사용해보세요.
                         </Text>
+                        <Text 
+                        style={{
+                            marginTop : 12,
+                            fontSize: responsiveScreenFontSize(1.2),
+                            fontWeight: '100'
+                        }}>
+                            목차를 기반으로 도서를 자동 분할 합니다.
+                        </Text>
 
 
                     </View>
