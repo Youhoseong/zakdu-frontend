@@ -1,10 +1,12 @@
 import React, {useRef, useState} from 'react';
-import { View, useWindowDimensions, StyleSheet, Pressable, TextInput} from 'react-native';
+import { View, useWindowDimensions, StyleSheet, Pressable, TextInput, Button, Image} from 'react-native';
 import Pdf from 'react-native-pdf';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import Modal from  'react-native-modal';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import PageJumpSelectView from './PageJumpSelectView'
+import * as RNFS from 'react-native-fs';
+import {decryptPages, decryptEpub} from '../decrypt/decrypter';
 
 
 const styles = StyleSheet.create({
@@ -23,13 +25,63 @@ const styles = StyleSheet.create({
     }
 });
 
+async function downloadPDF() {
+    const src = await require("../../Assets/files/example_enc.pdf");
+    var fromPath = Image.resolveAssetSource(src);
+    const downloadPath = RNFS.DocumentDirectoryPath + "/downloaded.pdf";
+
+    var source;
+    console.log(downloadPath);
+    RNFS.downloadFile({
+        fromUrl: fromPath.uri,
+        toFile: downloadPath
+    }).promise.then(res => {
+        source = res;
+        console.log("download!");
+        console.log(res);
+    });
+}
+
+async function pdf_test() {
+    downloadPDF();
+    console.log(RNFS.DocumentDirectoryPath);
+    RNFS.readDir(RNFS.DocumentDirectoryPath).then(files => {
+        console.log(files);
+    })
+    const filePath = RNFS.DocumentDirectoryPath + "/" + "downloaded.pdf";
+    decryptPages(filePath, [{pageNum: 1, aesKey: "abcdefghijklmnopqrstuvwxyzabcdef", iv: "0123456789abcdef"}]);
+}
+
+async function epub_test() {
+    const downloadPath = RNFS.DocumentDirectoryPath + "/real.epub";
+
+    RNFS.downloadFile({
+        fromUrl: "http://localhost:8081/src/Assets/files/abc_enc.epub",
+        toFile: downloadPath
+    }).promise.then(res => {
+        console.log("download epub");
+        console.log(res);
+    });
+
+    const epubTestData = [
+        {
+            filePath: "OEBPS/Cath_9780553418828_epub3_itr_r1.xhtml",
+            aesKey: "abcdefghijklmnopqrstuvwxyzabcdef",
+            iv: "0123456789abcdef"
+        }
+    ]
+    decryptEpub(downloadPath, epubTestData);
+}
+
 function ReadingBookView({navigation}) {
     const {height, width} = useWindowDimensions();
     const [pageModalVisible, setPageModalVisible] = useState(false);
     const pdfRef = useRef(null);
 
     const pdfFileExample = require('../../Assets/files/example.pdf')
-
+    //const [source, setSource] = useState({ uri: RNFS.DocumentDirectoryPath + "/dec.pdf" });
+    //epub_test();
+    pdf_test();
 
     React.useLayoutEffect(() => {     
         navigation.setOptions({       
