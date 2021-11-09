@@ -147,9 +147,15 @@ export async function decryptPages(pdfPath, pageInfos) {
     }
     
     const decPdfBytes = await pdfDoc.save();
-    console.log("????")
-    //console.log(arrayAsString(new Uint8Array(existingPdfBytes)));
-    RNFS.writeFile(RNFS.DocumentDirectoryPath + "/dec.pdf", arrayAsString(decPdfBytes), 'ascii');
+    const fileName = getFileName(pdfPath);
+    const tempDecryptedFilePath = RNFS.TemporaryDirectoryPath + "pdf/" + fileName + "_dec";
+    RNFS.exists(RNFS.TemporaryDirectoryPath + "pdf").then(res =>{
+        if(!res) {
+            console.log("tmp/pdf 생성");
+            RNFS.mkdir(RNFS.TemporaryDirectoryPath + "pdf");
+        }
+        RNFS.writeFile(tempDecryptedFilePath, arrayAsString(decPdfBytes), 'ascii');
+    })
 }
 
 /**
