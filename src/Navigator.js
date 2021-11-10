@@ -18,6 +18,7 @@ import EnterName from './Login/RegisterStep/EnterName';
 import EnterEmail from './Login/RegisterStep/EnterEmail';
 import PasswordCheck from './Login/RegisterStep/PasswordCheck';
 
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 const Stack = createStackNavigator();
 const LogStack = createStackNavigator();
@@ -37,7 +38,7 @@ const TabPlaceholder = () => {
 const BottomNavigation = ({navigation}) => {
     return (
         <BottomTab.Navigator>
-            <BottomTab.Screen
+            {/* <BottomTab.Screen
                 name="ReadingBook"
                 component={Home}
                 options={{
@@ -47,14 +48,17 @@ const BottomNavigation = ({navigation}) => {
                  
                 }}
             >
-            </BottomTab.Screen>
+            </BottomTab.Screen> */}
             <BottomTab.Screen
                 name="BookShelf"
                 component={BookShelf}
                 options={{
                     tabBarLabel: '보관함',
                     headerShown: false,
-                    animationEnabled: false
+                    animationEnabled: false,
+                    tabBarIcon: ()=> (
+                        <MaterialCommunityIcons name="bookshelf" size={25} />
+                    )
                 }}
             >
             </BottomTab.Screen>
@@ -64,7 +68,10 @@ const BottomNavigation = ({navigation}) => {
                 options={{
                     tabBarLabel: '북스토어',
                     headerShown: false,
-                    animationEnabled: false
+                    animationEnabled: false,
+                    tabBarIcon: ()=> (
+                        <MaterialCommunityIcons name="cart" size={25} />
+                    )
                 }}
             >
             </BottomTab.Screen>
@@ -74,7 +81,10 @@ const BottomNavigation = ({navigation}) => {
                 options={{
                     tabBarLabel: '마이페이지',
                     headerShown: false,
-                    animationEnabled: false
+                    animationEnabled: false,
+                    tabBarIcon: ()=> (
+                        <MaterialCommunityIcons name="account" size={25} />
+                    )
                 }}
             >
             </BottomTab.Screen>

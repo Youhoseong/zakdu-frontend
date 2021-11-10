@@ -1,22 +1,19 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
-import {View, Text} from 'react-native';
-import HomeScreen from './HomeComponent/HomeScreen';
 import Test from './HomeComponent/Test';
 
 const Stack = createStackNavigator();
 
 
+
 function Home ({navigation}) {
+
+
 
     return (
         <Stack.Navigator>
-            <Stack.Screen 
-            name="HomeScreen" 
-            component={HomeScreen}
-            options={{
-                title: '읽고 있는 책'
-            }}/>
+            
+            
 
             <Stack.Screen 
             name="Test" 

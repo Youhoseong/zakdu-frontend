@@ -1,6 +1,6 @@
 import { createStackNavigator, StackActions } from '@react-navigation/routers';
 import React, {useState, Component} from 'react';
-import {View, Text, Image, StyleSheet, TouchableOpacity, SafeAreaView, FlatList} from 'react-native';
+import {View, Text, Image, StyleSheet, TouchableOpacity, SafeAreaView, FlatList,Pressable} from 'react-native';
 import { ScrollView, State } from 'react-native-gesture-handler';
 import { Dimensions } from 'react-native';
 
@@ -57,13 +57,13 @@ const IMAGES = {
 };
 
 const Item = ({ item, onPress, backgroundColor, textColor }) => (
-    <TouchableOpacity onPress={onPress} style={[styles.item2, backgroundColor]}> 
+    <Pressable onPress={onPress} style={[styles.item2, backgroundColor]}> 
         <Image source={item.image} style={styles.image}/>
-        <Text style={[styles.title, textColor]}>{item.title+screenWidth+screenHeight}</Text>
-    </TouchableOpacity>
+        <Text style={[styles.title, textColor]}>{item.title}</Text>
+    </Pressable>
   );
   
-const BookShelfHome = () => {
+const BookShelfHome = ({navigation}) => {
     const [selectedId, setSelectedId] = useState(null);
     const numColumns = 4;
 
@@ -74,7 +74,10 @@ const BookShelfHome = () => {
       return (
         <Item
           item={item}
-          onPress={() => setSelectedId(item.id)}
+          onPress={() => {
+            setSelectedId(item.id);
+            navigation.push('HomeScreen')
+          }}
           backgroundColor={{ backgroundColor }}
           textColor={{ color }}
         />
@@ -126,7 +129,12 @@ const BookShelfHome = () => {
         resizeMode: 'contain',
 
     },
+
 })
+
+
+
+
 
 export default BookShelfHome;
 

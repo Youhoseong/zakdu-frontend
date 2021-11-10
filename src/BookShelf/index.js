@@ -1,12 +1,14 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
-import {View, Text} from 'react-native';
 import BookShelfHome from './BookShelfComponent/BookShelfHome';
+import ReadingBookView from './BookShelfComponent/ReadingBookView';
 
 const Stack = createStackNavigator();
 
 
-function BookShelf ({navigation}) {
+
+
+function BookShelf () {
 
     return (
         <Stack.Navigator>
@@ -16,6 +18,16 @@ function BookShelf ({navigation}) {
             options={{
                 title: '노제원님의 책장'
             }}/>
+            <Stack.Screen 
+            name="HomeScreen" 
+            component={ReadingBookView}
+            options={{
+                title: '읽고 있는 책',
+                
+                
+            }}
+            
+            />
             
         </Stack.Navigator>
     )

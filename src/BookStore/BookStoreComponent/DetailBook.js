@@ -1,5 +1,5 @@
 import React, {useState, useRef} from 'react';
-import {View, Text, Alert, StyleSheet, useWindowDimensions} from 'react-native';
+import {View, Text, Alert, StyleSheet, useWindowDimensions, Image, Pressable} from 'react-native';
 import styled from 'styled-components/native';
 import {
     responsiveScreenHeight,
@@ -8,7 +8,7 @@ import {
 } from 'react-native-responsive-dimensions';
 import Carousel from 'react-native-snap-carousel';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import ImageModal from 'react-native-image-modal';
+
 
 
 const BookDetailView = styled.ScrollView`
@@ -17,12 +17,12 @@ const BookDetailView = styled.ScrollView`
     background-color: #ffffff;
     border-radius: 15px;
     border: solid #CBCACA;
-    margin: 4% auto;
+    margin: auto;
 `;
 
 const BookDetailTopHalf = styled.View`
-    width: 80%;
-    height: 50%;
+    width: 85%;
+    height: ${(props)=> props.width > props.height ? responsiveScreenHeight(40) : responsiveScreenWidth(40)}px;
     display: flex;
     flex-direction: row;
     //border: solid;
@@ -30,10 +30,10 @@ const BookDetailTopHalf = styled.View`
 `;
 
 const BookDetailBottomHalf = styled.View`
-    width: 80%;
+    width: 85%;
     height: 50%;
     margin: 6% auto;
-
+   // border: solid;
 `;
 
 
@@ -55,11 +55,10 @@ const styles = StyleSheet.create({
     buyButtonView: {
         display: 'flex',
         width: '100%',
-
         flexDirection: 'row',
         justifyContent: 'space-between',
         position: 'absolute',
-        bottom: 0,
+        bottom: 17,
     },  
 })
 
@@ -77,30 +76,41 @@ function DetailBook ({bookId, gotoSecond}) {
 
         const BookDetailCard = ({index, item}) => {
             return (
+                <View style={{
+                    width: '100%',
+                    height: '100%',
+                   // borderWidth: 1
+                }}>
                 <BookDetailView>
-                    <BookDetailTopHalf>
+                    <BookDetailTopHalf width={width} height={height}>
                         <View style={{
                                 width: '40%',
                                 height: '100%',
-                                marginRight: width > height ? responsiveScreenWidth(2) : responsiveScreenHeight(2)
+                                //borderWidth: 1,
                         }}>
-                            <ImageModal
-                                resizeMode='cover'
-                                style={{
-                                    height: '100%',
-                                    width: width > height ? responsiveScreenWidth(16) : responsiveScreenHeight(16),
-                                    alignContent: 'center',
-                                    borderWidth:1,
-                                    borderColor: '#C2C2C2',
-                                }}
-                                source={item.image}
-                            />
+                            <Pressable style={{
+                                height: '83%',
+                                marginTop: '17%'
+                            }}>
+                                <Image
+                                    resizeMode='cover'
+                                    style={{
+                                        height: '100%',
+                                        width: width > height ? responsiveScreenWidth(16) : responsiveScreenHeight(16),
+                                        alignContent: 'center',
+                                        borderWidth:1,
+                                        borderColor: '#C2C2C2',
+                                    }}
+                                    source={item.image}
+                                />
+                            </Pressable>
                         </View>
                 
             
                         <View style={{
                             width: '60%',
-                            height: '100%'
+                            height: '100%',
+                            //borderWidth: 1
                         }}>
                                 <Text
                                     style={{
@@ -160,6 +170,7 @@ function DetailBook ({bookId, gotoSecond}) {
                     </BookDetailBottomHalf>
             
                 </BookDetailView>
+                </View>
             )
 
 
@@ -195,7 +206,7 @@ function DetailBook ({bookId, gotoSecond}) {
             image: IMAGES.image2,
             title: '쎈 중등수학 2(하)',
             content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-            detailContent: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+            detailContent: 'Lorem ipsum dolor sit amet, Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et d Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et d Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et d consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
         }
     
     ]);
@@ -204,7 +215,7 @@ function DetailBook ({bookId, gotoSecond}) {
     return (
         <View>
             <Carousel
-                firstItem={bookId}
+                firstItem={Number(bookId)}
                 scrollEnabled={true}
                 layout='default'
                 inactiveSlideScale={1}
