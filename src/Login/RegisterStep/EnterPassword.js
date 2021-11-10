@@ -23,7 +23,7 @@ const screenHeight = Dimensions.get('screen').height;
 const bigOne = screenWidth > screenHeight ? screenWidth:screenHeight;
 const smallOne = screenWidth < screenHeight ? screenWidth:screenHeight;
 
-function EnterPassword({navigation}) {
+function EnterPassword({navigation, route}) {
     const [password, setPassword] = React.useState(null);
     const [number, onChangeNumber] = React.useState(null);
     const onChangeText = (data) => {
@@ -43,7 +43,7 @@ function EnterPassword({navigation}) {
             );
         }
         else{
-            navigation.navigate('PasswordCheck');
+            navigation.navigate('PasswordCheck',{names: route.params.names, emails: route.params.emails, passwords: password});
         }
     }
     return (

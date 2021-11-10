@@ -19,8 +19,8 @@ const SplashScreen = ({navigation}) => {
       //Check if user_id is set or not
       //If not then send for Authentication
       //else send to Home Screen
-      AsyncStorage.getItem('user_id').then((value) =>
-        navigation.replace(value === null ? 'Auth' : 'DrawerNavigationRoutes'),
+      AsyncStorage.getItem('여기를 user_information으로 바꾸면 아이디 있으면 자동로그인').then((value) =>
+        navigation.replace(value === null ? 'Auth' : 'BottomNav'),
       );
     }, 1000);
   }, []);

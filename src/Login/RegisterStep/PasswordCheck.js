@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { NavigationContainer } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // import Loader from './Components/Loader';
 
@@ -23,20 +24,31 @@ const screenHeight = Dimensions.get('screen').height;
 const bigOne = screenWidth > screenHeight ? screenWidth:screenHeight;
 const smallOne = screenWidth < screenHeight ? screenWidth:screenHeight;
 
-function PasswordCheck({navigation}) {
+function PasswordCheck({navigation, route}) {
     const [text, onChangeText] = React.useState(null);
     const [number, onChangeNumber] = React.useState(null);
     const onPress = () => {
-        
-        Alert.alert(
-            "로그인하여 ZakDu를 시작하세요!",
-            "회원가입이 완료되었습니다.",
-            [{
-                text:"로그인 화면으로",
-                onPress: () => navigation.navigate('Login')
-            }]
-        );
-
+        if(text === route.params.passwords){
+            // 여기에 데이터를 async storage 로 전달
+            const dataToSend = {names:route.params.names, emails:route.params.emails, passwords:route.params.passwords}
+            AsyncStorage.setItem('user_information',JSON.stringify({
+                'user_name': route.params.names,
+                'user_id' : route.params.emails,
+                'user_password' : route.params.passwords
+            }));
+            Alert.alert(
+                "로그인하여 ZakDu를 시작하세요!",
+                "회원가입이 완료되었습니다.",
+                [{
+                    text:"로그인 화면으로",
+                    onPress: () => navigation.navigate('Login')
+                }]
+            );
+        } else {
+            Alert.alert(
+                "올바른 패스워드를 입력해주세요."
+            );
+        }
 
     }
     return (

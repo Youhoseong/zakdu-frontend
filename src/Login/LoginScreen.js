@@ -9,6 +9,8 @@ import {
   Keyboard,
   TouchableOpacity,
   KeyboardAvoidingView,
+  Alert,
+  useWindowDimensions,
 } from 'react-native';
 import { Dimensions } from 'react-native';
 import LottieView from 'lottie-react-native';
@@ -18,9 +20,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
+// const screenWidth = useWindowDimensions().width;
+// const screenHeight = useWindowDimensions().height;
 const bigOne = screenWidth > screenHeight ? screenWidth:screenHeight;
 const smallOne = screenWidth < screenHeight ? screenWidth:screenHeight;
-  
+
 function LoginScreen({navigation}) {
   const [userEmail, setUserEmail] = useState('');
     const [userPassword, setUserPassword] = useState('');
@@ -79,6 +83,23 @@ function LoginScreen({navigation}) {
           console.error(error);
         });
     };
+    const compareAsyncLogin = () => {
+      AsyncStorage.getItem('user_information', (err, result) => {
+        const userInfo = JSON.parse(result);             //string화 된 result를 parsing
+        //console.log('아이디는' + userInfo.user_id);        // user에 담긴 id출력
+        if(userInfo===null){
+          Alert.alert("아이디가 존재하지 않습니다");
+        }
+        else if(userEmail===userInfo.user_id && userPassword===userInfo.user_password){
+          navigation.replace('BottomNav');
+        }
+        else{
+          Alert.alert("아이디 또는 비밀번호가 일치하지 않습니다.");
+        }
+
+      });
+
+    }
 
     return (
         <View style={styles.container}>
@@ -140,7 +161,7 @@ function LoginScreen({navigation}) {
                     <TouchableOpacity 
                       style={styles.btn} 
                       activeOpacity={0.5}
-                      onPress={handleSubmitPress}
+                      onPress={compareAsyncLogin}
                     >
                         <Text style={[styles.Text, {color: 'white'}]}>로그인</Text>
                     </TouchableOpacity>

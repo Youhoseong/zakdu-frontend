@@ -1,12 +1,19 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { createStackNavigator, createAppContainer } from "react-navigation";
-import {StyleSheet, ScrollView, TouchableOpacity, Button, View, Text} from 'react-native';
+import {StyleSheet, ScrollView, TouchableOpacity, Button, View, Text, } from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const username = '홍길동';
+
 
 function MyPageHome({navigation}) {
+    const [username,setUsername] = useState("");
 
+    AsyncStorage.getItem('user_information', (err, result) => {
+        const UserInfo = JSON.parse(result);
+        setUsername(UserInfo.user_name);    
+    });
+    const originname='';
     return (
         <View style={styles.mainView} >
             <TouchableOpacity 
@@ -34,7 +41,7 @@ function MyPageHome({navigation}) {
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.innerView}
-                onPress={() => navigation.navigate('PurchaseHistory')}
+                onPress={() => navigation.replace('Auth')}
             >
                 <Text style={styles.text}>로그 아웃</Text>
             </TouchableOpacity>

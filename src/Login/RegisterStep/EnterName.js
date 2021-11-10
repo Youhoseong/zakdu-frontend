@@ -37,7 +37,7 @@ function EnterName({navigation}) {
             );
         }
         else{
-            navigation.navigate('EnterEmail');
+            navigation.navigate('EnterEmail',{names: name});
         }
     }
 

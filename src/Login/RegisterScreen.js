@@ -44,7 +44,7 @@ function RegisterScreen ({navigation}){
                         style={styles.btn} 
                         activeOpacity={0.5}
                     >
-                        <Text style={[styles.botText, {color: 'white'}]}>ZakDu 회원가입</Text>
+                        <Text style={[styles.botText, {color: 'white',fontWeight:'bold'}]}>ZakDu 회원가입</Text>
                     </TouchableOpacity>
                 </View>
             </View>

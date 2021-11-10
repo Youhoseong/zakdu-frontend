@@ -23,7 +23,7 @@ const screenHeight = Dimensions.get('screen').height;
 const bigOne = screenWidth > screenHeight ? screenWidth:screenHeight;
 const smallOne = screenWidth < screenHeight ? screenWidth:screenHeight;
 
-function EnterEmail({navigation}) {
+function EnterEmail({navigation, route}) {
     const [email, setEmail] = useState("");
     const [number, onChangeNumber] = React.useState(null);
 
@@ -44,7 +44,7 @@ function EnterEmail({navigation}) {
             );
         }
         else{
-            navigation.navigate('EnterPassword');
+            navigation.navigate('EnterPassword',{names: route.params.names, emails: email});
         }
     }
     return (
@@ -59,7 +59,7 @@ function EnterEmail({navigation}) {
                         <Text style={styles.title}>이메일을 입력해주세요</Text>
                     </View>
                     <View style={{flex:0.5, backgroundColor:'white',justifyContent:'center'}}>
-                        <Text style={styles.subtitle}>본인인증을 위해 필요해요!</Text>
+                        <Text style={styles.subtitle}>ZakDu의 로그인 아이디가 됩니다!</Text>
                     </View>
                     <View style={{flex:3,justifyContent:'flex-start'}}>
                         <TextInput 
