@@ -14,7 +14,10 @@ function  BookRegisterFileUploadView ({navigation}) {
         bookFile: null,
         bookName: null,
         bookPrice: null,
-        bookCategory: null
+        bookCategory: null,
+        bookPDFTocStartPage: null,
+        bookPDFTocEndPage: null,
+        bookPDFRowCount: null
     });
     const [fileValidate, setFileValidate] = useState("");
     const {width ,height} = useWindowDimensions();
@@ -29,7 +32,7 @@ function  BookRegisterFileUploadView ({navigation}) {
 
         });
    
-        axios.post(`${HS_API_END_POINT}/book/bookmark`, formData,{
+        axios.post(`${HS_API_END_POINT}/book/bookmark-analyze`, formData,{
                 headers: {
                         'Content-Type': 'multipart/form-data'
                 },

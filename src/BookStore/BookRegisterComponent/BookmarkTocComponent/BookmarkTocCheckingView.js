@@ -1,15 +1,16 @@
 
 import React, {useState} from 'react';
 import {View, Text, Button, FlatList, useWindowDimensions, Pressable, TextInput, Vibration} from 'react-native';
-import  {HS_API_END_POINT} from '../../Shared/env';
+import  {HS_API_END_POINT} from '../../../Shared/env';
 import {responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth} from 'react-native-responsive-dimensions';
 import Animation from 'lottie-react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import HeaderBackButton from '../../Common/CommonComponent/HeaderBackButton';
-import BasisButtonComponent from './BasisButtonComponent';
+import HeaderBackButton from '../../../Common/CommonComponent/HeaderBackButton';
+import BasisButtonComponent from '../BasisButtonComponent';
 import Modal from 'react-native-modal';
 
 import DraggableFlatList, {ScaleDecorator} from 'react-native-draggable-flatlist';
+import BookmarkEmptyView from './BookmarkEmptyView';
 
 
 function BookmarkTocCheckingView({navigation, route}) {
@@ -23,17 +24,6 @@ function BookmarkTocCheckingView({navigation, route}) {
 
     const [test, setTest] = useState(Math.random());
     const [tResult, setTResult] = useState(tocResult);
-
-
-    const onPress = (index, parent) => {
-        tocResult.splice(index+1, 0, {
-            id: 99,
-            text: '실험',
-            childs: null,
-            parent: parent
-        })
-        setTest(Math.random());
-     }
 
 
     React.useLayoutEffect(() => {     
@@ -236,14 +226,11 @@ function BookmarkTocCheckingView({navigation, route}) {
     }
 
     const onMinusPress = (index) => {
-        //console.log(id);
         if(tResult){
             console.log(index);
-            tResult.splice(index, 1);
-           
+            tResult.splice(index, 1);  
         }
         setTest(Math.random());
-
      }
 
 
@@ -344,56 +331,34 @@ function BookmarkTocCheckingView({navigation, route}) {
                         }}>
                             <BasisButtonComponent setEditable={setEditable} editable={editable} context={"편집할래요."} bColor='gray' bFocusColor='#2A3AC4'/>
                             <BasisButtonComponent context={"이대로 등록할래요."} bColor='#2A3AC4' bFocusColor='#3448F3'/>
-                            <BasisButtonComponent context={"너무 이상해요."} bColor='gray' bFocusColor='#3448F3'/>
+                            <Pressable 
+                                 onPress={()=> navigation.push('GetBookTitle', {
+                                    'fileObj': bookRegisterObj
+                                })}
+                                style={({pressed})=>[
+                                    
+                                        {
+                                            backgroundColor: pressed ? '#243AC4': 'gray',
+                                            width: '30%',
+                                            height: width > height ? responsiveScreenHeight(6) : responsiveScreenWidth(6),
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            marginHorizontal: width > height ? responsiveScreenWidth(1) : responsiveScreenHeight(1),
+                                            borderRadius: 30,
+                                        }
+                            ]}>
+                        
+                            <Text style={{color: 'white',fontSize: responsiveScreenFontSize(1.0)}}>
+                                    너무 이상해요.
+                            </Text>
+                        </Pressable>
                          </View>
                         }
 
                     </View>
-
-
                 </View> : 
-
-                <View style={{ 
-                    width: width > height ? '30%' : '50%',
-                    height: width > height ? '100%' : '80%',
-                    alignItems: 'center',
-                }}>
-                    
-                    <View style={{  marginTop: 100, width: '100%', height: '20%'}}>
-                        
-                        <Text style={{ fontSize: responsiveScreenFontSize(1.5), fontWeight: '700'}}>
-                            텅.     
-                        </Text>
-
-                        <Text style={{marginTop: 10, fontSize: responsiveScreenFontSize(1.3), fontWeight: '500',}}>
-                            내장된 목차를 찾을 수 없어요.           
-                        </Text>
-                    </View>
-                    <Animation
-                            style={{width: 300,  height: 300}}
-                            source={require('../../Assets/json/8021-empty-and-lost.json')} 
-                            autoPlay
-                            resizeMode= 'cover'/>
-
-                    <Pressable 
-                        style={({pressed})=>[
-                        {
-                            backgroundColor: pressed ? '#2A3AC4' : '#3448F3',
-                            width: '100%',
-                            height: width > height ? responsiveScreenHeight(6) : responsiveScreenWidth(6),
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            position: 'absolute',
-                            bottom: 100,
-                            borderRadius: 30,
-                        }
-                    ]}>
-                      
-                        <Text style={{color: 'white',fontSize: responsiveScreenFontSize(1.0)}}>
-                            다음 단계
-                        </Text>
-                    </Pressable>
-                </View>
+                <BookmarkEmptyView bookRegisterObj={bookRegisterObj} navigation={navigation}/>
+               
             }
 
       

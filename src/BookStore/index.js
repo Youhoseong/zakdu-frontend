@@ -3,8 +3,9 @@ import React from 'react';
 import BookRegisterLandingView from './BookRegisterComponent/BookRegisterLandingView';
 import BookStores from './BookStoreComponent/BookStores';
 import BookRegisterFileUploadView from './BookRegisterComponent/BookRegisterFileUploadView';
-import BookmarkTocCheckingView from './BookRegisterComponent/BookmarkTocCheckingView';
-
+import BookmarkTocCheckingView from './BookRegisterComponent/BookmarkTocComponent/BookmarkTocCheckingView';
+import PDFTocPageGetView from './BookRegisterComponent/OurTocLogicContinuosComponent/PDFTocPageGetView';
+import PDFRowCountGetView from './BookRegisterComponent/OurTocLogicContinuosComponent/PDFRowCountGetView';
 
 const Stack = createStackNavigator();
 
@@ -51,9 +52,29 @@ function BookStore ({navigation}) {
                     backgroundColor: '#F3F3F3'
                 }
             }}
-            component={BookmarkTocCheckingView}/>           
+            component={BookmarkTocCheckingView}/>          
 
-       
+
+            <Stack.Screen 
+            name="GetBookTitle" 
+            options={{
+                title: '책 등록하기',
+                headerStyle: {
+                    backgroundColor: '#F3F3F3'
+                }
+            }}
+            component={PDFTocPageGetView}/>      
+
+            <Stack.Screen 
+            name="GetRowCount" 
+            options={{
+                title: '책 등록하기',
+                headerStyle: {
+                    backgroundColor: '#F3F3F3'
+                }
+            }}
+            component={PDFRowCountGetView}/>      
+
 
 
            
