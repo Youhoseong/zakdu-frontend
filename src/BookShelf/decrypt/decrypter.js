@@ -8,6 +8,9 @@ import {
     arrayAsString,
     PDFRef,
 } from "pdf-lib";
+import {decode} from 'base-64';
+
+const atob = decode;
 
 FileReader.prototype.readAsArrayBuffer = function (blob) {
     if (this.readyState === this.LOADING) throw new Error("InvalidStateError");
