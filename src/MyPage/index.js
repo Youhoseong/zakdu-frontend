@@ -5,40 +5,40 @@ import PersonalInfo from "./MyPageComponent/PersonalInfo";
 import Profiles from "./MyPageComponent/Profiles";
 import PurchaseHistory from "./MyPageComponent/PurchaseHistory";
 
-const Stack = createStackNavigator();
+const MyPageStack = createStackNavigator();
 
 function MyPage (){
 
     return(
-        <Stack.Navigator>
-            <Stack.Screen
+        <MyPageStack.Navigator>
+            <MyPageStack.Screen
             name="MyPageHome"
             component={MyPageHome}
             options={{
                 title: '마이페이지'
             }}/>
 
-            <Stack.Screen
+            <MyPageStack.Screen
             name="Profiles"
             component={Profiles}
             options={{
                 title: '프로필 변경'
             }}/>
 
-            <Stack.Screen
+            <MyPageStack.Screen
             name="PersonalInfo"
             component={PersonalInfo}
             options={{
                 title: '개인정보'
             }} />
 
-            <Stack.Screen
+            <MyPageStack.Screen
             name="PurchaseHistory"
             component={PurchaseHistory}
             options={{
                 title: '구매내역'
             }} />
-        </Stack.Navigator>
+        </MyPageStack.Navigator>
     )
 }
 
