@@ -278,17 +278,18 @@ function PartPurchaseView({navigation, selectedBook}) {
         setPagesToBuy(newPages);
     }
     const addPage = () => {
-        const regex = /^[0-9|,|([0-9]+-[0-9]+)]+$/;
+        //const regex = /^[0-9|\,|\([0-9]{1,10}\-[0-9]{1,10}\)+]+$/;
         if(text===""){
             return;
-        } else if(!regex.test(text)){
-            Alert.alert(
-                "알맞은 형태로 입력해주세요!",
-                "ex) 6,7,8,10-15"
-            );
-            setText("");
-            return;
-        }
+        } 
+        // else if(!regex.test(text)){
+        //     Alert.alert(
+        //         "알맞은 형태로 입력해주세요!",
+        //         "ex 6,7,8,10-15"
+        //     );
+        //     setText("");
+        //     return;
+        // }
         const newPages = {
             ...pagesToBuy, 
             [Date.now()]: {text},
@@ -439,7 +440,7 @@ function PartPurchaseView({navigation, selectedBook}) {
                     height: '100%',
                     borderWidth: 1,
                     borderRadius: 15
-                }}>
+                    }}>
                     <View style={{
                         height: '80%',
                     // borderWidth: 1
@@ -479,7 +480,7 @@ function PartPurchaseView({navigation, selectedBook}) {
                                     onChangeText={onChangeText}
                                     value={text}
                                     onSubmitEditing={addPage}
-                                    placeholder=" ex) 6,7,8,10-15"
+                                    placeholder=" ex 6,7,8,10-15"
                                 >
                                 </TextInput>
                             </View>

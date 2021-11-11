@@ -18,21 +18,22 @@ import EnterName from './Login/RegisterStep/EnterName';
 import EnterEmail from './Login/RegisterStep/EnterEmail';
 import PasswordCheck from './Login/RegisterStep/PasswordCheck';
 
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const Stack = createStackNavigator();
 const LogStack = createStackNavigator();
 const BottomTab = createBottomTabNavigator();
 
-const Placeholder = Styled.View`
+// const Placeholder = Styled.View`
   
-`;
+// `;
 
 
 const TabPlaceholder = () => {
-  return <Placeholder>
+  return (<Placeholder>
             <Text>This is Temp Page.</Text>
-        </Placeholder>;
+        </Placeholder>
+        );
 };
 
 const BottomNavigation = ({navigation}) => {
