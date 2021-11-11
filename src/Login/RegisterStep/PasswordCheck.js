@@ -27,14 +27,16 @@ const smallOne = screenWidth < screenHeight ? screenWidth:screenHeight;
 function PasswordCheck({navigation, route}) {
     const [text, onChangeText] = React.useState(null);
     const [number, onChangeNumber] = React.useState(null);
+    const point = 100000;
     const onPress = () => {
         if(text === route.params.passwords){
             // 여기에 데이터를 async storage 로 전달
-            const dataToSend = {names:route.params.names, emails:route.params.emails, passwords:route.params.passwords}
+            const dataToSend = {names:route.params.names, emails:route.params.emails, passwords:route.params.passwords, points:point}
             AsyncStorage.setItem('user_information',JSON.stringify({
                 'user_name': route.params.names,
                 'user_id' : route.params.emails,
-                'user_password' : route.params.passwords
+                'user_password' : route.params.passwords,
+                'user_point' : point
             }));
             Alert.alert(
                 "로그인하여 ZakDu를 시작하세요!",
@@ -96,12 +98,12 @@ function PasswordCheck({navigation, route}) {
 }
 const styles = StyleSheet.create({
     title: {
-        fontSize: bigOne*0.035,
+        fontSize: bigOne*0.025,
         fontWeight:'bold'
     },
     subtitle:{
 
-        fontSize: bigOne*0.017,
+        fontSize: bigOne*0.015,
         color:'gray',
     },
     activityIndicator: {
@@ -109,7 +111,7 @@ const styles = StyleSheet.create({
       height: 80,
     },
     btn: {
-      height: bigOne*0.05,
+      height: bigOne*0.04,
       width: '50%',
       borderRadius: 10,
       justifyContent: 'center',
@@ -136,7 +138,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 3,
         padding: 10,
         borderBottomColor:'blue',
-        fontSize:bigOne*0.03,
+        fontSize:bigOne*0.02,
         color:'blue'
         
     },

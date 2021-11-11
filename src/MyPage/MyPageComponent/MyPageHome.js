@@ -8,10 +8,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function MyPageHome({navigation}) {
     const [username,setUsername] = useState("");
+    const [point,setPoint] = useState("");
 
     AsyncStorage.getItem('user_information', (err, result) => {
         const UserInfo = JSON.parse(result);
         setUsername(UserInfo.user_name);    
+        setPoint(UserInfo.user_point);    
     });
     const originname='';
     return (
@@ -28,8 +30,20 @@ function MyPageHome({navigation}) {
                 </Text>
             </TouchableOpacity>
             <TouchableOpacity
+                style={{
+                    ...styles.innerView, 
+                    alignItems:'center', 
+                    flexDirection:'row', 
+                    justifyContent:'center',
+                }}
+                // onPress={() => navigation.navigate('Profiles')}
+            >
+                <Text style={{...styles.text, flex:1}}>잔여 포인트</Text>
+                <Text style={{...styles.text, flex:1, textAlign:'right', paddingRight:20}}>{point} P</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
                 style={styles.innerView}
-                onPress={() => navigation.navigate('Profiles')}
+                onPress={() => navigation.navigate('PersonalInfo',{originname: originname})}
             >
                 <Text style={styles.text}>개인정보 설정</Text>
             </TouchableOpacity>
