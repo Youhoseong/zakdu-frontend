@@ -1,49 +1,23 @@
-
 import React, {useState} from 'react';
 import {View, Text, Button, FlatList, useWindowDimensions, Pressable, TextInput, StyleSheet} from 'react-native';
 import  {HS_API_END_POINT} from '../../../Shared/env';
 import {responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth} from 'react-native-responsive-dimensions';
-import Animation from 'lottie-react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import HeaderBackButton from '../../../Common/CommonComponent/HeaderBackButton';
 import BasisButtonComponent from '../BasisButtonComponent';
-import Modal from 'react-native-modal';
-
-import DraggableFlatList, {ScaleDecorator} from 'react-native-draggable-flatlist';
-import BookmarkEmptyView from './BookmarkEmptyView';
-
-export const tocCheckingStyles = StyleSheet.create({
-    buttonStyle: {
-        shadowOffset: {
-            width: 3,
-            height: 2
-        },
-        shadowOpacity: 0.5,
-        shadowRadius: 4,
-        shadowColor: 'gray',
-        width: '30%',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 20,
-    },
-    buttonTextStyle: {
-        color: 'black',
-        fontSize: responsiveScreenFontSize(0.9), 
-        fontWeight: '600' 
-    }
-})
+import { tocCheckingStyles } from '../BookmarkTocComponent/BookmarkTocCheckingView';
+import DraggableFlatList from 'react-native-draggable-flatlist';
 
 
 
-function BookmarkTocCheckingView({navigation, route}) {
+
+function ZakduAnalyzeTocCheckinigView({navigation, route}) {
     const {fileObj} = route.params;
     const {bookmarkResult} = route.params;
     const {tocResult} = route.params;
-
     const [bookRegisterObj, setBookRegisterObj] = useState(fileObj);
     const {width ,height} = useWindowDimensions();
     const [editable, setEditable] = useState(false);
-
     const [test, setTest] = useState(Math.random());
     const [tResult, setTResult] = useState(tocResult);
 
@@ -274,7 +248,7 @@ function BookmarkTocCheckingView({navigation, route}) {
                     }}>
                         
                         <Text style={{ fontSize: responsiveScreenFontSize(1.5), fontWeight: '700'}}>
-                            목차를 찾았어요.    
+                            작두 알고리즘으로 분석해봤어요.    
                         </Text>
 
                       
@@ -367,25 +341,25 @@ function BookmarkTocCheckingView({navigation, route}) {
                                         }
                             ]}>
                         
-                                <Text style={tocCheckingStyles.buttonTextStyle}>
-                                        등록하기
-                                </Text>
-                            </Pressable>
-                            <Pressable 
+                            <Text style={tocCheckingStyles.buttonTextStyle}>
+                                    등록하기
+                            </Text>
+                        </Pressable>
+                        <Pressable 
                                  onPress={()=> navigation.push('GetBookTitle', {
                                     'fileObj': bookRegisterObj
                                 })}
                                 style={({pressed})=>[
                                         tocCheckingStyles.buttonStyle,
-                                        {
-                                            backgroundColor: pressed ? '#E8E8E8': '#F7F7F7',
-                                            height: width > height ? responsiveScreenHeight(6) : responsiveScreenWidth(6),
+                                        {      
+                                            backgroundColor: pressed ? '#E8E8E8': '#F7F7F7',   
+                                            height: width > height ? responsiveScreenHeight(6) : responsiveScreenWidth(6),                                      
                                             marginHorizontal: width > height ? responsiveScreenWidth(1) : responsiveScreenHeight(1),
                                         }
                             ]}>
                         
                             <Text style={tocCheckingStyles.buttonTextStyle}>
-                                    너무 이상해요.
+                                    아까 결과로 할래요.
                             </Text>
                         </Pressable>
                          </View>
@@ -405,4 +379,4 @@ function BookmarkTocCheckingView({navigation, route}) {
 
 
 }
-export default BookmarkTocCheckingView;
+export default ZakduAnalyzeTocCheckinigView;

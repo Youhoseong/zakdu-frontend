@@ -71,7 +71,12 @@ function PDFRowCountGetView({navigation, route}) {
                        // 'Content-Type': 'multipart/form-data'
                 },
         }).then((res)=> {
-           console.log(res.data);
+            navigation.push('ZakduLogicChecking', 
+            {
+                'fileObj': bookRegisterObj,
+                'bookmarkResult': true,
+                'tocResult': res.data.data
+            })
         }).catch((err)=> {
             console.error(err);
         })

@@ -6,6 +6,15 @@ import BookRegisterFileUploadView from './BookRegisterComponent/BookRegisterFile
 import BookmarkTocCheckingView from './BookRegisterComponent/BookmarkTocComponent/BookmarkTocCheckingView';
 import PDFTocPageGetView from './BookRegisterComponent/OurTocLogicContinuosComponent/PDFTocPageGetView';
 import PDFRowCountGetView from './BookRegisterComponent/OurTocLogicContinuosComponent/PDFRowCountGetView';
+import ZakduAnalyzeTocCheckinigView from './BookRegisterComponent/OurTocLogicContinuosComponent/ZakduAnalyzeTocCheckingView';
+import BookNameView from './BookRegisterComponent/BookInfoRegisterComponent/BookNameView';
+import BookAuthorView from './BookRegisterComponent/BookInfoRegisterComponent/BookAuthorView';
+import BookPublisherView from './BookRegisterComponent/BookInfoRegisterComponent/BookPublisherView';
+import BookPubDateView from './BookRegisterComponent/BookInfoRegisterComponent/BookPubDateView';
+import BookIntroView from './BookRegisterComponent/BookInfoRegisterComponent/BookIntroView';
+import BookPriceView from './BookRegisterComponent/BookInfoRegisterComponent/BookPriceView';
+import BookCategoryView from './BookRegisterComponent/BookInfoRegisterComponent/BookCategoryView';
+import BookCoverView from './BookRegisterComponent/BookInfoRegisterComponent/BookCoverView';
 
 const Stack = createStackNavigator();
 
@@ -73,11 +82,99 @@ function BookStore ({navigation}) {
                     backgroundColor: '#F3F3F3'
                 }
             }}
-            component={PDFRowCountGetView}/>      
+            component={PDFRowCountGetView}/>  
+
+            <Stack.Screen 
+            name="ZakduLogicChecking" 
+            options={{
+                title: '책 등록하기',
+                headerStyle: {
+                    backgroundColor: '#F3F3F3'
+                }
+            }}
+            component={ZakduAnalyzeTocCheckinigView}/> 
+
+            <Stack.Screen 
+            name="GetName" 
+            options={{
+                title: '책 등록하기',
+                headerStyle: {
+                    backgroundColor: '#F3F3F3'
+                }
+            }}
+            component={BookNameView}/>  
+
+            <Stack.Screen 
+            name="GetAuthor" 
+            options={{
+                title: '책 등록하기',
+                headerStyle: {
+                    backgroundColor: '#F3F3F3'
+                }
+            }}
+            component={BookAuthorView}/>       
+
+            <Stack.Screen 
+            name="GetPublisher" 
+            options={{
+                title: '책 등록하기',
+                headerStyle: {
+                    backgroundColor: '#F3F3F3'
+                }
+            }}
+            component={BookPublisherView}/>  
 
 
 
-           
+            <Stack.Screen 
+            name="GetPubDate" 
+            options={{
+                title: '책 등록하기',
+                headerStyle: {
+                    backgroundColor: '#F3F3F3'
+                }
+            }}
+            component={BookPubDateView}/>  
+
+            <Stack.Screen 
+            name="GetIntro" 
+            options={{
+                title: '책 등록하기',
+                headerStyle: {
+                    backgroundColor: '#F3F3F3'
+                }
+            }}
+            component={BookIntroView}/>  
+
+             <Stack.Screen 
+            name="GetPrice" 
+            options={{
+                title: '책 등록하기',
+                headerStyle: {
+                    backgroundColor: '#F3F3F3'
+                }
+            }}
+            component={BookPriceView}/>            
+
+            <Stack.Screen 
+            name="GetCategory" 
+            options={{
+                title: '책 등록하기',
+                headerStyle: {
+                    backgroundColor: '#F3F3F3'
+                }
+            }}
+            component={BookCategoryView}/>       
+
+            <Stack.Screen 
+            name="GetCover" 
+            options={{
+                title: '책 등록하기',
+                headerStyle: {
+                    backgroundColor: '#F3F3F3'
+                }
+            }}
+            component={BookCoverView}/>                         
 
             
             

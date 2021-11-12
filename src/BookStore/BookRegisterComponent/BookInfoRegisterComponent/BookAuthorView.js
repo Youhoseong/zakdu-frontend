@@ -1,28 +1,13 @@
 import React, {useState} from 'react';
-import {View, Text, useWindowDimensions, TextInput, Pressable} from 'react-native';
-import HeaderBackButton from '../../../Common/CommonComponent/HeaderBackButton';
+import {View, Text, Pressable, useWindowDimensions, TextInput} from 'react-native';
 import {responsiveScreenFontSize, responsiveScreenWidth, responsiveScreenHeight} from 'react-native-responsive-dimensions';
 import Animation from 'lottie-react-native';
+import HeaderBackButton from '../../../Common/CommonComponent/HeaderBackButton';
 
 
-
-function validInputs(start, end) {
-    start = parseInt(start);
-    end = parseInt(end);
-    if(start == null  || end == null)
-        return false;
-
-    if(start <= end) {
-        return true;
-    }else {
-        return false;
-    }
-}
-
-
-function PDFTocPageGetView({navigation, route}) {
+function BookAuthorView({navigation, route}) {
     const {fileObj} = route.params;
-
+    const {tocResult} = route.params;
     const [bookRegisterObj, setBookRegisterObj] = useState(fileObj);
     const {width, height} = useWindowDimensions();
 
@@ -47,17 +32,14 @@ function PDFTocPageGetView({navigation, route}) {
                 alignItems: 'center',
                // borderWidth: 1
             }}>
-                <View style={{  marginTop: 50, width: '100%', height: '15%'}}>
+                <View style={{  marginTop: '20%', width: '100%', height: '15%'}}>
                     
-                    <Text style={{ fontSize: responsiveScreenFontSize(1.3), fontWeight: '700', textAlign: 'center'}}>
-                        새로운 분석을 위해 정보가 필요해요.     
+    
+                    <Text style={{marginTop: 5, fontSize: responsiveScreenFontSize(1.4), fontWeight: '700', textAlign: 'center'}}>
+                        도서의 저자를 입력해 주세요.        
                     </Text>
-
-                    <Text style={{marginTop: 10, fontSize: responsiveScreenFontSize(1.0), fontWeight: '500',textAlign: 'center'}}>
-                        파일 내에 목차 페이지가 있는         
-                    </Text>
-                    <Text style={{marginTop: 5, fontSize: responsiveScreenFontSize(1.0), fontWeight: '500', textAlign: 'center'}}>
-                        페이지 번호를 알려주세요. (PDF 파일 기준)         
+                    <Text style={{marginTop: 5, fontSize: responsiveScreenFontSize(1.1), fontWeight: '500', textAlign: 'center'}}>
+                        (4/8)      
                     </Text>
 
                 </View>
@@ -80,7 +62,7 @@ function PDFTocPageGetView({navigation, route}) {
 
                     <TextInput 
                             style={{
-                                width: '30%',
+                                width: '100%',
                                 height: '100%',
                                 borderBottomColor: 'gray',
                                 borderBottomWidth: 3,
@@ -88,61 +70,41 @@ function PDFTocPageGetView({navigation, route}) {
                                 marginHorizontal: '5%'
                             }}
                             onChangeText={(text)=> {
-                                
-                                if(!isNaN(text) && Number.isInteger(parseInt(text))){
+                                if(text) {
                                     setBookRegisterObj({
                                         ...bookRegisterObj,
-                                        ["bookPDFTocStartPage"]: text
-                                    });
+                                        ["bookAuthor"]: text
+                                    })
                                 }else {
                                     setBookRegisterObj({
                                         ...bookRegisterObj,
-                                        ["bookPDFTocStartPage"]: null
-                                    });
+                                        ["bookAuthor"]: null
+                                    })
                                 }
-                            }}
-                            keyboardType='number-pad'
-                            placeholder="숫자만 입력해주세요."
-                    />
-                    <Text style={{textAlign: 'center', fontSize: responsiveScreenFontSize(1.2)}}>부터</Text>
-                    <TextInput 
-                            style={{
-                                width: '30%',
-                                height: '100%',
-                                borderBottomColor: 'gray',
-                                borderBottomWidth: 3,
-                                fontSize: responsiveScreenFontSize(1.0),
-                                marginHorizontal: '5%'
-                            }}
-                            onChangeText={(text)=> {
                                 
-                                if(!isNaN(text) && Number.isInteger(parseInt(text))){
-                                    setBookRegisterObj({
-                                        ...bookRegisterObj,
-                                        ["bookPDFTocEndPage"]: text
-                                    });
-                                }else {
-                                    setBookRegisterObj({
-                                        ...bookRegisterObj,
-                                        ["bookPDFTocEndPage"]: null
-                                    });
-                                }
                             }}
-                            keyboardType='number-pad'
-                            placeholder="숫자만 입력해주세요."
+                            
+                            placeholder="저자를 입력해 주세요."
                     />
-                    <Text style={{textAlign: 'center', fontSize: responsiveScreenFontSize(1.2)}}>까지</Text>
+
 
                 </View>
 
                 <Pressable 
-                            disabled={!validInputs(bookRegisterObj.bookPDFTocStartPage, bookRegisterObj.bookPDFTocEndPage) ? true : false} 
+                            disabled= {bookRegisterObj.bookAuthor === null ? true : false}
                             style={({pressed})=>[
                             {
-                                backgroundColor: 
-                                !validInputs(bookRegisterObj.bookPDFTocStartPage, bookRegisterObj.bookPDFTocEndPage) ? 'gray'  : pressed ? '#2A3AC4' : '#3448F3',
+                               backgroundColor: 
+                               bookRegisterObj.bookAuthor === null ? 'gray' : 'blue'
                             }, 
                             {
+                                shadowOffset :{
+                                    width: 3,
+                                    height: 2
+                                },
+                                shadowOpacity: 1,
+                                shadowRadius: 4,
+                                shadowColor: 'gray',
                                 width: '100%',
                                 height: width > height ? responsiveScreenHeight(6) : responsiveScreenWidth(6),
                                 justifyContent: 'center',
@@ -153,8 +115,9 @@ function PDFTocPageGetView({navigation, route}) {
                             
                             }
                         ]}
-                            onPress={()=> navigation.push('GetRowCount', {
-                                'fileObj': bookRegisterObj
+                            onPress={()=> navigation.push('GetPublisher', {
+                                'fileObj': bookRegisterObj,
+                                'tocResult': tocResult
                             })}>
                         
                             <Text 
@@ -173,5 +136,4 @@ function PDFTocPageGetView({navigation, route}) {
 
 
 }
-
-export default PDFTocPageGetView;
+export default BookAuthorView;

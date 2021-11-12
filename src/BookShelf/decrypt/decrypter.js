@@ -8,6 +8,9 @@ import {
     arrayAsString,
     PDFRef,
 } from "pdf-lib";
+import {decode} from 'base-64';
+import {Buffer} from 'buffer';
+const atob = decode;
 
 FileReader.prototype.readAsArrayBuffer = function (blob) {
     if (this.readyState === this.LOADING) throw new Error("InvalidStateError");
@@ -17,6 +20,7 @@ FileReader.prototype.readAsArrayBuffer = function (blob) {
     const fr = new FileReader();
     fr.onloadend = () => {
         const content = atob(fr.result.substring("data:application/octet-stream;base64,".length));
+        console.log("여기" + fr.result.substring("data:application/octet-stream;base64,".length));
         const buffer = new ArrayBuffer(content.length);
         const view = new Uint8Array(buffer);
         view.set(Array.from(content).map(c => c.charCodeAt(0)));
@@ -112,13 +116,14 @@ export const tryToDecodeStream = (maybeStream) => {
  * aesKey : 32byte, iv: 16byte
  */
 export async function decryptPages(pdfPath, pageInfos) {
-    const existingPdfBytes = await fetch(pdfPath).then((res) => res.arrayBuffer());
+    var pdfBase64 = await RNFS.readFile(pdfPath, 'base64');
+    const existingPdfBytes = Buffer.from(pdfBase64, 'base64');
     console.log(existingPdfBytes);
     
     var pdfDoc = await PDFDocument.load(existingPdfBytes);
 
-    console.log(pageInfos);
-    console.log(pdfDoc);
+   // console.log(pageInfos);
+   // console.log(pdfDoc);
 
     for(var i in pageInfos) {
         const pageInfo = pageInfos[i];

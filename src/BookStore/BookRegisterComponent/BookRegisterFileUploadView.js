@@ -11,13 +11,17 @@ import {HS_API_END_POINT} from '../../Shared/env';
 
 function  BookRegisterFileUploadView ({navigation}) {
     const [bookRegisterObj, setBookRegisterObj] = useState({
+        bookCover: "",
         bookFile: null,
         bookName: null,
-        bookPrice: null,
-        bookCategory: null,
+        bookPrice: "",
+        bookCategory: "",
         bookPDFTocStartPage: null,
         bookPDFTocEndPage: null,
-        bookPDFRowCount: null
+        bookPDFRowCount: null,
+        bookAuthor: null,
+        bookPublisher: "",
+        bookPubDate: "",
     });
     const [fileValidate, setFileValidate] = useState("");
     const {width ,height} = useWindowDimensions();

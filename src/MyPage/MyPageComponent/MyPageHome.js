@@ -1,49 +1,50 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { createStackNavigator, createAppContainer } from "react-navigation";
-import {StyleSheet, ScrollView, Button, View, Text} from 'react-native';
+import {StyleSheet, ScrollView, TouchableOpacity, Button, View, Text, } from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const username = '홍길동';
+
 
 function MyPageHome({navigation}) {
+    const [username,setUsername] = useState("");
 
+    AsyncStorage.getItem('user_information', (err, result) => {
+        const UserInfo = JSON.parse(result);
+        setUsername(UserInfo.user_name);    
+    });
+    const originname='';
     return (
         <View style={styles.mainView} >
-            <View 
+            <TouchableOpacity 
                 style={styles.profiles}
+                onPress={() => navigation.navigate('Profiles',{originname:username})} 
             >
                 {/* 이미지 삽입 */}
                 <Text
-                    onPress={() => navigation.navigate('Profiles',{originname:username})} 
                     style={styles.mainText}
                 >
                     {username}
                 </Text>
-            </View>
-            <View
+            </TouchableOpacity>
+            <TouchableOpacity
                 style={styles.innerView}
+                onPress={() => navigation.navigate('Profiles')}
             >
-                <Button
-                    title="개인정보 설정"
-                    onPress={() => navigation.navigate('PersonalInfo')}
-                />
-            </View>
-            <View
+                <Text style={styles.text}>개인정보 설정</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
                 style={styles.innerView}
-            >
-                <Button
-                title="구매 내역"
                 onPress={() => navigation.navigate('PurchaseHistory')}
-            />
-            </View>
-            <View
-                style={styles.innerView}
             >
-                <Button
-                    title="로그아웃"
-                //onPress={() => navigation.navigate('Profile')}
-                />
-            </View>
+                <Text style={styles.text}>구매 내역</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.innerView}
+                onPress={() => navigation.replace('Auth')}
+            >
+                <Text style={styles.text}>로그 아웃</Text>
+            </TouchableOpacity>
             
             
             
@@ -60,9 +61,9 @@ const styles = StyleSheet.create({
     },
     profiles: {
         flex:4,
+        width:'100%',
         alignItems: 'center',
         justifyContent: 'center',
-        padding:50,
     },
     mainText: {
         fontSize:30
@@ -75,8 +76,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems:'flex-start'
     },
-    button: {
-        marginLeft:50,
+    text: {
+        marginLeft:20,
+        fontSize:20
     }
 })
 export default MyPageHome;
