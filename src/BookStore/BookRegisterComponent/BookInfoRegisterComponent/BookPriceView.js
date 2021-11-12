@@ -45,6 +45,11 @@ function BookPriceView({navigation, route}) {
                   
 
                 </View>
+                <Animation
+                style={{width: 300,  height: 400, position: 'absolute'}}
+                source={require('../../../Assets/json/67938-money-confetti.json')} 
+                autoPlay
+                resizeMode= 'cover'/>
 
 
 
@@ -57,8 +62,7 @@ function BookPriceView({navigation, route}) {
             
                     alignItems: 'center',
                     justifyContent: 'center'
-                }}>
-
+                }}>              
                     <TextInput 
                             style={{
                                 width: '100%',
@@ -100,11 +104,7 @@ function BookPriceView({navigation, route}) {
 
 
                 </View>
-                <Animation
-                        style={{width: 300,  height: 400}}
-                        source={require('../../../Assets/json/67938-money-confetti.json')} 
-                        autoPlay
-                        resizeMode= 'cover'/>
+ 
                 <Pressable 
                             disabled= {bookRegisterObj.bookPrice === "" ? true : false}
                             style={({pressed})=>[
