@@ -1,39 +1,25 @@
-
 import React, {useState} from 'react';
-import {View, Text, Button, FlatList, useWindowDimensions, Pressable, TextInput, Vibration} from 'react-native';
-import  {HS_API_END_POINT} from '../../Shared/env';
+import {View, Text, Button, FlatList, useWindowDimensions, Pressable, TextInput, StyleSheet} from 'react-native';
+import  {HS_API_END_POINT} from '../../../Shared/env';
 import {responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth} from 'react-native-responsive-dimensions';
-import Animation from 'lottie-react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import HeaderBackButton from '../../Common/CommonComponent/HeaderBackButton';
-import BasisButtonComponent from './BasisButtonComponent';
-import Modal from 'react-native-modal';
+import HeaderBackButton from '../../../Common/CommonComponent/HeaderBackButton';
+import BasisButtonComponent from '../BasisButtonComponent';
+import { tocCheckingStyles } from '../BookmarkTocComponent/BookmarkTocCheckingView';
+import DraggableFlatList from 'react-native-draggable-flatlist';
 
-import DraggableFlatList, {ScaleDecorator} from 'react-native-draggable-flatlist';
 
 
-function BookmarkTocCheckingView({navigation, route}) {
+
+function ZakduAnalyzeTocCheckinigView({navigation, route}) {
     const {fileObj} = route.params;
     const {bookmarkResult} = route.params;
     const {tocResult} = route.params;
-
     const [bookRegisterObj, setBookRegisterObj] = useState(fileObj);
     const {width ,height} = useWindowDimensions();
     const [editable, setEditable] = useState(false);
-
     const [test, setTest] = useState(Math.random());
     const [tResult, setTResult] = useState(tocResult);
-
-
-    const onPress = (index, parent) => {
-        tocResult.splice(index+1, 0, {
-            id: 99,
-            text: '실험',
-            childs: null,
-            parent: parent
-        })
-        setTest(Math.random());
-     }
 
 
     React.useLayoutEffect(() => {     
@@ -236,14 +222,11 @@ function BookmarkTocCheckingView({navigation, route}) {
     }
 
     const onMinusPress = (index) => {
-        //console.log(id);
         if(tResult){
             console.log(index);
-            tResult.splice(index, 1);
-           
+            tResult.splice(index, 1);  
         }
         setTest(Math.random());
-
      }
 
 
@@ -265,7 +248,7 @@ function BookmarkTocCheckingView({navigation, route}) {
                     }}>
                         
                         <Text style={{ fontSize: responsiveScreenFontSize(1.5), fontWeight: '700'}}>
-                            목차를 찾았어요.    
+                            작두 알고리즘으로 분석해봤어요.    
                         </Text>
 
                       
@@ -342,58 +325,50 @@ function BookmarkTocCheckingView({navigation, route}) {
                             display: 'flex',
                             flexDirection: 'row'
                         }}>
-                            <BasisButtonComponent setEditable={setEditable} editable={editable} context={"편집할래요."} bColor='gray' bFocusColor='#2A3AC4'/>
-                            <BasisButtonComponent context={"이대로 등록할래요."} bColor='#2A3AC4' bFocusColor='#3448F3'/>
-                            <BasisButtonComponent context={"너무 이상해요."} bColor='gray' bFocusColor='#3448F3'/>
+                            <BasisButtonComponent setEditable={setEditable} editable={editable} context={"편집할래요."}/>
+                            <Pressable 
+                                 onPress={()=> navigation.push('GetCategory', {
+                                    'fileObj': bookRegisterObj,
+                                    'tocResult': tResult
+                                })}
+                                style={({pressed})=>[
+                                        tocCheckingStyles.buttonStyle,
+                                        {
+                                            backgroundColor: pressed ? '#E8E8E8': '#F7F7F7',
+                                            height: width > height ? responsiveScreenHeight(6) : responsiveScreenWidth(6),
+                                            marginHorizontal: width > height ? responsiveScreenWidth(1) : responsiveScreenHeight(1),
+                                
+                                        }
+                            ]}>
+                        
+                            <Text style={tocCheckingStyles.buttonTextStyle}>
+                                    등록하기
+                            </Text>
+                        </Pressable>
+                        <Pressable 
+                                 onPress={()=> navigation.push('GetBookTitle', {
+                                    'fileObj': bookRegisterObj
+                                })}
+                                style={({pressed})=>[
+                                        tocCheckingStyles.buttonStyle,
+                                        {      
+                                            backgroundColor: pressed ? '#E8E8E8': '#F7F7F7',   
+                                            height: width > height ? responsiveScreenHeight(6) : responsiveScreenWidth(6),                                      
+                                            marginHorizontal: width > height ? responsiveScreenWidth(1) : responsiveScreenHeight(1),
+                                        }
+                            ]}>
+                        
+                            <Text style={tocCheckingStyles.buttonTextStyle}>
+                                    아까 결과로 할래요.
+                            </Text>
+                        </Pressable>
                          </View>
                         }
 
                     </View>
-
-
                 </View> : 
-
-                <View style={{ 
-                    width: width > height ? '30%' : '50%',
-                    height: width > height ? '100%' : '80%',
-                    alignItems: 'center',
-                }}>
-                    
-                    <View style={{  marginTop: 100, width: '100%', height: '20%'}}>
-                        
-                        <Text style={{ fontSize: responsiveScreenFontSize(1.5), fontWeight: '700'}}>
-                            텅.     
-                        </Text>
-
-                        <Text style={{marginTop: 10, fontSize: responsiveScreenFontSize(1.3), fontWeight: '500',}}>
-                            내장된 목차를 찾을 수 없어요.           
-                        </Text>
-                    </View>
-                    <Animation
-                            style={{width: 300,  height: 300}}
-                            source={require('../../Assets/json/8021-empty-and-lost.json')} 
-                            autoPlay
-                            resizeMode= 'cover'/>
-
-                    <Pressable 
-                        style={({pressed})=>[
-                        {
-                            backgroundColor: pressed ? '#2A3AC4' : '#3448F3',
-                            width: '100%',
-                            height: width > height ? responsiveScreenHeight(6) : responsiveScreenWidth(6),
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            position: 'absolute',
-                            bottom: 100,
-                            borderRadius: 30,
-                        }
-                    ]}>
-                      
-                        <Text style={{color: 'white',fontSize: responsiveScreenFontSize(1.0)}}>
-                            다음 단계
-                        </Text>
-                    </Pressable>
-                </View>
+                <BookmarkEmptyView bookRegisterObj={bookRegisterObj} navigation={navigation}/>
+               
             }
 
       
@@ -404,4 +379,4 @@ function BookmarkTocCheckingView({navigation, route}) {
 
 
 }
-export default BookmarkTocCheckingView;
+export default ZakduAnalyzeTocCheckinigView;
