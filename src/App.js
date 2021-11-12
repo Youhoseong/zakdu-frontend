@@ -5,8 +5,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import Navigator from './Navigator';
 const App = () => {
  
-  return (    
-
+  return (
     <Navigator></Navigator>
   );
 };

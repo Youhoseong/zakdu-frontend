@@ -32,7 +32,7 @@ async function downloadPDF() {
 
     var source;
     console.log(downloadPath);
-    RNFS.downloadFile({
+    await RNFS.downloadFile({
         fromUrl: fromPath.uri,
         toFile: downloadPath
     }).promise.then(res => {
@@ -43,7 +43,7 @@ async function downloadPDF() {
 }
 
 async function pdf_test() {
-    downloadPDF();
+    await downloadPDF();
     console.log(RNFS.DocumentDirectoryPath);
     RNFS.readDir(RNFS.DocumentDirectoryPath).then(files => {
         console.log(files);
@@ -81,7 +81,7 @@ function ReadingBookView({navigation}) {
     const pdfFileExample = require('../../Assets/files/example.pdf')
     //const [source, setSource] = useState({ uri: RNFS.DocumentDirectoryPath + "/dec.pdf" });
     //epub_test();
-    pdf_test();
+    // pdf_test();
 
     React.useLayoutEffect(() => {     
         navigation.setOptions({       

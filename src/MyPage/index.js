@@ -7,7 +7,7 @@ import PurchaseHistory from "./MyPageComponent/PurchaseHistory";
 
 const MyPageStack = createStackNavigator();
 
-function MyPage (){
+function MyPage () {
 
     return(
         <MyPageStack.Navigator>

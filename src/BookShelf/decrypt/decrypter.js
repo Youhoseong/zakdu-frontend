@@ -8,6 +8,7 @@ import {
     arrayAsString,
     PDFRef,
 } from "pdf-lib";
+
 import {decode} from 'base-64';
 import {Buffer} from 'buffer';
 const atob = decode;
@@ -31,16 +32,17 @@ FileReader.prototype.readAsArrayBuffer = function (blob) {
 }
 
 
+
 async function decrypt(encrypted, aesKey, iv) {
     aesKey = CryptoJS.enc.Utf8.parse(aesKey ? aesKey : "abcdefghijklmnopqrstuvwxyzabcdef");
     iv = CryptoJS.enc.Utf8.parse(iv ? iv : "0123456789abcdef");
  
-    console.log(typeof(aesKey));
-    console.log("key: " + aesKey + "\niv: " + iv);
+    // console.log(typeof(aesKey));
+    // console.log("key: " + aesKey + "\niv: " + iv);
     //console.log(aesKey)
 
-    console.log("encrypted string ", typeof(encrypted));
-    console.log(encrypted);
+    // console.log("encrypted string ", typeof(encrypted));
+    // console.log(encrypted);
 
     // bytes is wordArray class 일반적 바이트 배열 아님!
     // CryptoJS.lib.WordArray.create()
@@ -52,7 +54,7 @@ async function decrypt(encrypted, aesKey, iv) {
         CryptoJS.AES.decrypt({ciphertext: encrypted}, aesKey, { iv: iv,
         padding: CryptoJS.pad.Pkcs7,
         mode: CryptoJS.mode.CBC });
-    console.log(bytes);
+    // console.log(bytes);
 
     var unit8ByteArray = convert_word_array_to_uint8Array(bytes);
     // console.log("decrypted byte array");
@@ -104,7 +106,7 @@ function CryptJsWordArrayToUint8Array(wordArray) {
 
 export const tryToDecodeStream = (maybeStream) => {
     if (maybeStream instanceof PDFRawStream) {
-        console.log(decodePDFRawStream(maybeStream).decode());
+        // console.log(decodePDFRawStream(maybeStream).decode());
         return arrayAsString(decodePDFRawStream(maybeStream).decode());
     }
     return undefined;
@@ -116,6 +118,7 @@ export const tryToDecodeStream = (maybeStream) => {
  * aesKey : 32byte, iv: 16byte
  */
 export async function decryptPages(pdfPath, pageInfos) {
+
     var pdfBase64 = await RNFS.readFile(pdfPath, 'base64');
     const existingPdfBytes = Buffer.from(pdfBase64, 'base64');
     console.log(existingPdfBytes);
@@ -124,6 +127,7 @@ export async function decryptPages(pdfPath, pageInfos) {
 
    // console.log(pageInfos);
    // console.log(pdfDoc);
+
 
     for(var i in pageInfos) {
         const pageInfo = pageInfos[i];
@@ -136,15 +140,15 @@ export async function decryptPages(pdfPath, pageInfos) {
         if (!Contents) return;
         Contents.asArray().forEach((streamRef) => {
         if (streamRef instanceof PDFRef) {
-            console.log(streamRef);
+            // console.log(streamRef);
             const stream = page.doc.context.lookup(streamRef);
             const contents = tryToDecodeStream(stream);
             if (contents) {
                 decrypt(contents, pageInfo.aesKey, pageInfo.iv).then(newContents => {
                     const newStream = page.doc.context.flateStream(newContents);
                     page.doc.context.assign(streamRef, newStream);
-                    console.log(contents);
-                    console.log(newContents);
+                    // console.log(contents);
+                    // console.log(arrayAsString(newContents));
                 });
             }
         }
@@ -172,7 +176,7 @@ export async function decryptPages(pdfPath, pageInfos) {
 export async function decryptEpub(epubPath, epubInfos) {
     // 파일 전체 
     const epubBytes = await fetch(epubPath).then((res) => res.arrayBuffer());
-    console.log(epubBytes);
+    // console.log(epubBytes);
 
     await JSZip.loadAsync(epubBytes).then(async (zip) => {
         // zip - 압축파일 전체 files로 모든 내부 파일 확인 가능
@@ -182,11 +186,12 @@ export async function decryptEpub(epubPath, epubInfos) {
                 // res - 압축해제 된 uint8array
                 console.log("Encrypted\n", arrayAsString(res));
                 var wordArray = CryptoJS.lib.WordArray.create(res);
-                console.log(wordArray);
-                var decryptedBytes = decrypt(wordArray, epubInfo.aesKey, epubInfo.iv);
-                zip.file(epubInfo.filePath, decryptedBytes, {compression: "DEFLATE"});
-                console.log(decryptedBytes);
-                console.log(arrayAsString(decryptedBytes));
+                // console.log(wordArray);
+                decrypt(wordArray, epubInfo.aesKey, epubInfo.iv).then(decryptedBytes => {
+                    zip.file(epubInfo.filePath, decryptedBytes, {compression: "DEFLATE"});
+                    // console.log(decryptedBytes);
+                    // console.log(arrayAsString(decryptedBytes));
+                })
             });
         }
 
