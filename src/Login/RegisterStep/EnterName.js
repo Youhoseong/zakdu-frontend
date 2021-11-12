@@ -55,7 +55,7 @@ function EnterName({navigation}) {
                     <View style={{flex:0.5, backgroundColor:'white',justifyContent:'center'}}>
                         <Text style={styles.subtitle}>ZakDu는 당신의 이름이 궁금해요!</Text>
                     </View>
-                    <View style={{flex:3,justifyContent:'flex-start'}}>
+                    <View style={{flex:3,justifyContent:'flex-start',}}>
                         <TextInput 
                             style={styles.input}
                             onChangeText={onChangeText}
@@ -84,12 +84,12 @@ function EnterName({navigation}) {
 }
 const styles = StyleSheet.create({
     title: {
-        fontSize: bigOne*0.035,
+        fontSize: bigOne*0.025,
         fontWeight:'bold'
     },
     subtitle:{
 
-        fontSize: bigOne*0.017,
+        fontSize: bigOne*0.015,
         color:'gray',
     },
     activityIndicator: {
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
       height: 80,
     },
     btn: {
-      height: bigOne*0.05,
+      height: bigOne*0.04,
       width: '50%',
       borderRadius: 10,
       justifyContent: 'center',
@@ -124,8 +124,9 @@ const styles = StyleSheet.create({
         borderBottomWidth: 3,
         padding: 10,
         borderBottomColor:'blue',
-        fontSize:bigOne*0.03,
-        color:'blue'
+        fontSize:bigOne*0.02,
+        color:'blue',
+        
         
     },
   });

@@ -91,12 +91,12 @@ function EnterPassword({navigation, route}) {
 }
 const styles = StyleSheet.create({
     title: {
-        fontSize: bigOne*0.035,
+        fontSize: bigOne*0.025,
         fontWeight:'bold'
     },
     subtitle:{
 
-        fontSize: bigOne*0.017,
+        fontSize: bigOne*0.015,
         color:'gray',
     },
     activityIndicator: {
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
       height: 80,
     },
     btn: {
-      height: bigOne*0.05,
+      height: bigOne*0.04,
       width: '50%',
       borderRadius: 10,
       justifyContent: 'center',
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 3,
         padding: 10,
         borderBottomColor:'blue',
-        fontSize:bigOne*0.03,
+        fontSize:bigOne*0.02,
         color:'blue'
         
     },

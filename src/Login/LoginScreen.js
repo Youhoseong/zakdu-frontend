@@ -12,6 +12,8 @@ import {
   Alert,
   useWindowDimensions,
 } from 'react-native';
+import { responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth } from "react-native-responsive-dimensions";
+
 import { Dimensions } from 'react-native';
 import LottieView from 'lottie-react-native';
 import RegisterScreen from './RegisterScreen';
