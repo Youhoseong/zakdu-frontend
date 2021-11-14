@@ -1,6 +1,5 @@
-import PDFRowCountGetView from "./PDFRowCountGetView";
-import React, {useState} from 'react';
-import {View, Text, Pressable, useWindowDimensions, TextInput, StyleSheet} from 'react-native';
+import React from 'react';
+import {View, StyleSheet} from 'react-native';
 
 const styles = StyleSheet.create({
     innerViewStyle: {

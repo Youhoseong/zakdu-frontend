@@ -1,6 +1,5 @@
-import React, {useState} from 'react';
-import {View, Text, Pressable, useWindowDimensions, TextInput, StyleSheet} from 'react-native';
-import Animation from 'lottie-react-native';
+import React from 'react';
+import {View, Text, Pressable, useWindowDimensions, StyleSheet} from 'react-native';
 import { responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth } from 'react-native-responsive-dimensions';
 import HeaderBackButton from '../../../Common/CommonComponent/HeaderBackButton';
 import PDF1RowComponent from './PDF1RowComponent';
@@ -8,11 +7,11 @@ import PDF2RowComponent from './PDF2RowComponent';
 import PDF3RowComponent from './PDF3RowComponent';
 import axios from 'axios';
 import {HS_API_END_POINT} from '../../../Shared/env';
+import {connect} from 'react-redux';
+import { registerBook } from '../../../Store/Actions';
 
-function PDFRowCountGetView({navigation, route}) {
-    const {fileObj} = route.params;
 
-    const [bookRegisterObj, setBookRegisterObj] = useState(fileObj);
+function PDFRowCountGetView({navigation, handleTocRow,bookInfo}) {
     const {width, height} = useWindowDimensions();
     
     const styles = StyleSheet.create({
@@ -53,15 +52,15 @@ function PDFRowCountGetView({navigation, route}) {
     const onPress = async() => {
         const formData = new FormData();
         let tocAnalyzeData = {
-            bookPDFTocStartPage: bookRegisterObj.bookPDFTocStartPage,
-            bookPDFTocEndPage: bookRegisterObj.bookPDFTocEndPage,
-            bookPDFRowCount: bookRegisterObj.bookPDFRowCount
+            bookPDFTocStartPage: bookInfo.bookPDFTocStartPage,
+            bookPDFTocEndPage: bookInfo.bookPDFTocEndPage,
+            bookPDFRowCount: bookInfo.bookPDFRowCount
         }
 
         let fileData = {
-            name: bookRegisterObj.bookFile.name,
-            type: bookRegisterObj.bookFile.type,
-            uri: bookRegisterObj.bookFile.uri
+            name: bookInfo.bookFile.name,
+            type: bookInfo.bookFile.type,
+            uri: bookInfo.bookFile.uri
         }
         formData.append('bookTocAnalyzeDto', JSON.stringify(tocAnalyzeData));
         formData.append('files', fileData);
@@ -73,18 +72,12 @@ function PDFRowCountGetView({navigation, route}) {
         }).then((res)=> {
             navigation.push('ZakduLogicChecking', 
             {
-                'fileObj': bookRegisterObj,
-                'bookmarkResult': true,
                 'tocResult': res.data.data
             })
         }).catch((err)=> {
             console.error(err);
         })
-    
-
-
     }
-
 
     return (
         <View style={styles.mainView}>
@@ -116,20 +109,14 @@ function PDFRowCountGetView({navigation, route}) {
                             {
                                 borderRadius: 15,
                                 borderWidth: 1,
-                                borderColor: bookRegisterObj.bookPDFRowCount === 1 ? 'red' :  '#CECECE'
+                                borderColor: bookInfo.bookPDFRowCount === 1 ? 'red' :  '#CECECE'
                             }
                         ]}
                             onPress={()=> {
-                                if(bookRegisterObj.bookPDFRowCount == 1){
-                                    setBookRegisterObj({
-                                        ...bookRegisterObj,
-                                        ["bookPDFRowCount"]: null
-                                    });
+                                if(bookInfo.bookPDFRowCount == 1){
+                                    handleTocRow("");
                                 }else {
-                                    setBookRegisterObj({
-                                        ...bookRegisterObj,
-                                        ["bookPDFRowCount"]: 1
-                                    });
+                                    handleTocRow(1);
                                 }
                             }}
                         >
@@ -151,20 +138,14 @@ function PDFRowCountGetView({navigation, route}) {
                             {
                                 borderRadius: 15,
                                 borderWidth: 1,
-                                borderColor: bookRegisterObj.bookPDFRowCount === 2 ? 'red' :  '#CECECE'
+                                borderColor: bookInfo.bookPDFRowCount === 2 ? 'red' :  '#CECECE'
                             }
                         ]}
                         onPress={()=> {
-                            if(bookRegisterObj.bookPDFRowCount == 2){
-                                setBookRegisterObj({
-                                    ...bookRegisterObj,
-                                    ["bookPDFRowCount"]: null
-                                });
+                            if(bookInfo.bookPDFRowCount == 2){
+                                handleTocRow("");
                             }else {
-                                setBookRegisterObj({
-                                    ...bookRegisterObj,
-                                    ["bookPDFRowCount"]: 2
-                                });
+                                handleTocRow(2);
                             }
                         }}>
                         
@@ -187,20 +168,14 @@ function PDFRowCountGetView({navigation, route}) {
                             {
                                 borderRadius: 15,
                                 borderWidth: 1,
-                                borderColor: bookRegisterObj.bookPDFRowCount === 3 ? 'red' :  '#CECECE'
+                                borderColor: bookInfo.bookPDFRowCount === 3 ? 'red' :  '#CECECE'
                             }
                         ]} 
                         onPress={()=> {
-                            if(bookRegisterObj.bookPDFRowCount == 3){
-                                setBookRegisterObj({
-                                    ...bookRegisterObj,
-                                    ["bookPDFRowCount"]: null
-                                });
+                            if(bookInfo.bookPDFRowCount == 3){
+                                handleTocRow("");
                             }else {
-                                setBookRegisterObj({
-                                    ...bookRegisterObj,
-                                    ["bookPDFRowCount"]: 3
-                                });
+                                handleTocRow(3);
                             }
                         }}>
                         <PDF3RowComponent/>
@@ -213,11 +188,11 @@ function PDFRowCountGetView({navigation, route}) {
 
 
             <Pressable 
-                        disabled={bookRegisterObj.bookPDFRowCount === null ? true : false} 
+                        disabled={!bookInfo.bookPDFRowCount ? true : false} 
                         style={({pressed})=>[
                         {
                             backgroundColor: 
-                                bookRegisterObj.bookPDFRowCount === null ? 'gray'  : pressed ? '#2A3AC4' : '#3448F3',
+                                !bookInfo.bookPDFRowCount ? 'gray'  : pressed ? '#2A3AC4' : '#3448F3',
                         }, 
                         {
                             width: width > height ? '40%': '70%',
@@ -251,4 +226,12 @@ function PDFRowCountGetView({navigation, route}) {
 
 }
 
-export default PDFRowCountGetView;
+const mapDispatchToProps = (dispatch) => ({
+    handleTocRow: (value) => (dispatch(registerBook("bookPDFRowCount", value)))
+});
+
+const mapStateToProps = (state) => ({
+    bookInfo: state.registerBooks.bookRegisterObj
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(PDFRowCountGetView);

@@ -3,10 +3,17 @@ import {SafeAreaView, StyleSheet, Text} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Navigator from './Navigator';
+import configureStore from './Store/Reducers';
+import {Provider} from 'react-redux';
+
+const {store} = configureStore();
+
 const App = () => {
  
   return (
-    <Navigator></Navigator>
+    <Provider store={store}>
+      <Navigator/>
+    </Provider>
   );
 };
 

@@ -3,12 +3,11 @@ import {View, Text, Pressable, useWindowDimensions, TextInput} from 'react-nativ
 import {responsiveScreenFontSize, responsiveScreenWidth, responsiveScreenHeight} from 'react-native-responsive-dimensions';
 import Animation from 'lottie-react-native';
 import HeaderBackButton from '../../../Common/CommonComponent/HeaderBackButton';
+import { registerBook } from '../../../Store/Actions';
+import {connect} from 'react-redux';
 
-
-function BookPublisherView({navigation, route}) {
-    const {fileObj} = route.params;
+function BookPublisherView({navigation, route, handleBookPublisher, bookPublisher}) {
     const {tocResult} = route.params;
-    const [bookRegisterObj, setBookRegisterObj] = useState(fileObj);
     const {width, height} = useWindowDimensions();
 
     React.useLayoutEffect(() => {     
@@ -33,8 +32,7 @@ function BookPublisherView({navigation, route}) {
                // borderWidth: 1
             }}>
                 <View style={{  marginTop: '20%', width: '100%', height: '15%'}}>
-                    
-    
+
                     <Text style={{marginTop: 5, fontSize: responsiveScreenFontSize(1.4), fontWeight: '700', textAlign: 'center'}}>
                         도서의 출판사를 입력해 주세요.        
                     </Text>
@@ -71,15 +69,9 @@ function BookPublisherView({navigation, route}) {
                             }}
                             onChangeText={(text)=> {
                                 if(text) {
-                                    setBookRegisterObj({
-                                        ...bookRegisterObj,
-                                        ["bookPublisher"]: text
-                                    })
-                                }else {
-                                    setBookRegisterObj({
-                                        ...bookRegisterObj,
-                                        ["bookPublisher"]: ""
-                                    })
+                                    handleBookPublisher(text);
+                                } else {
+                                    handleBookPublisher("");
                                 }
                                 
                             }}
@@ -91,11 +83,11 @@ function BookPublisherView({navigation, route}) {
                 </View>
 
                 <Pressable 
-                            disabled= {bookRegisterObj.bookPublisher === "" ? true : false}
+                            disabled= {!bookPublisher ? true : false}
                             style={({pressed})=>[
                             {
                                backgroundColor: 
-                               bookRegisterObj.bookPublisher === "" ? 'gray' : 'blue'
+                               !bookPublisher ? 'gray' : 'blue'
                             }, 
                             {
                                 shadowOffset :{
@@ -116,7 +108,6 @@ function BookPublisherView({navigation, route}) {
                             }
                         ]}
                             onPress={()=> navigation.push('GetPubDate', {
-                                'fileObj': bookRegisterObj,
                                 'tocResult': tocResult
                             })}>
                         
@@ -136,4 +127,12 @@ function BookPublisherView({navigation, route}) {
 
 
 }
-export default BookPublisherView;
+
+const mapDispatchToProps = (dispatch) => ({
+    handleBookPublisher: (value) => (dispatch(registerBook("bookPublisher", value)))
+});
+
+const mapStateToProps = (state) => ({
+    bookPublisher: state.registerBooks.bookRegisterObj.bookPublisher
+});
+export default connect(mapStateToProps, mapDispatchToProps)(BookPublisherView);

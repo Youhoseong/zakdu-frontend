@@ -3,12 +3,11 @@ import {View, Text, Pressable, useWindowDimensions, TextInput} from 'react-nativ
 import {responsiveScreenFontSize, responsiveScreenWidth, responsiveScreenHeight} from 'react-native-responsive-dimensions';
 import Animation from 'lottie-react-native';
 import HeaderBackButton from '../../../Common/CommonComponent/HeaderBackButton';
+import { registerBook } from '../../../Store/Actions';
+import {connect} from 'react-redux';
 
-
-function BookPubDateView({navigation, route}) {
-    const {fileObj} = route.params;
+function BookPubDateView({navigation, route, handleBookPubDate, bookPubDate}) {
     const {tocResult} = route.params;
-    const [bookRegisterObj, setBookRegisterObj] = useState(fileObj);
     const {width, height} = useWindowDimensions();
 
     React.useLayoutEffect(() => {     
@@ -33,8 +32,7 @@ function BookPubDateView({navigation, route}) {
                // borderWidth: 1
             }}>
                 <View style={{  marginTop: '20%', width: '100%', height: '15%'}}>
-                    
-            
+
                     <Text style={{marginTop: 5, fontSize: responsiveScreenFontSize(1.4), fontWeight: '700', textAlign: 'center'}}>
                         도서의 출판 날짜를 입력해 주세요.        
                     </Text>
@@ -70,16 +68,10 @@ function BookPubDateView({navigation, route}) {
                                 marginHorizontal: '5%'
                             }}
                             onChangeText={(text)=> {
-                                if(text) {
-                                    setBookRegisterObj({
-                                        ...bookRegisterObj,
-                                        ["bookPubDate"]: text
-                                    })
-                                }else {
-                                    setBookRegisterObj({
-                                        ...bookRegisterObj,
-                                        ["bookPubDate"]: ""
-                                    })
+                                if(text) { 
+                                    handleBookPubDate(text);
+                                } else {
+                                    handleBookPubDate("");
                                 }
                                 
                             }}
@@ -91,11 +83,11 @@ function BookPubDateView({navigation, route}) {
                 </View>
 
                 <Pressable 
-                            disabled= {bookRegisterObj.bookPubDate === "" ? true : false}
+                            disabled= {!bookPubDate ? true : false}
                             style={({pressed})=>[
                             {
                                backgroundColor: 
-                               bookRegisterObj.bookPubDate === "" ? 'gray' : 'blue'
+                               !bookPubDate ? 'gray' : 'blue'
                             }, 
                             {
                                 shadowOffset :{
@@ -116,7 +108,6 @@ function BookPubDateView({navigation, route}) {
                             }
                         ]}
                             onPress={()=> navigation.push('GetIntro', {
-                                'fileObj': bookRegisterObj,
                                 'tocResult': tocResult
                             })}>
                         
@@ -136,4 +127,11 @@ function BookPubDateView({navigation, route}) {
 
 
 }
-export default BookPubDateView;
+const mapDispatchToProps = (dispatch) => ({
+    handleBookPubDate: (value) => (dispatch(registerBook("bookPubDate", value)))
+});
+
+const mapStateToProps = (state) => ({
+    bookPubDate: state.registerBooks.bookRegisterObj.bookPubDate
+});
+export default connect(mapStateToProps, mapDispatchToProps)(BookPubDateView);

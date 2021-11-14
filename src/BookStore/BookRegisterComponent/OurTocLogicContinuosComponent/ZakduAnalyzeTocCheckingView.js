@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, Button, FlatList, useWindowDimensions, Pressable, TextInput, StyleSheet} from 'react-native';
-import  {HS_API_END_POINT} from '../../../Shared/env';
+import {View, Text, useWindowDimensions, Pressable, TextInput, StyleSheet} from 'react-native';
 import {responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth} from 'react-native-responsive-dimensions';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import HeaderBackButton from '../../../Common/CommonComponent/HeaderBackButton';
@@ -12,15 +11,12 @@ import DraggableFlatList from 'react-native-draggable-flatlist';
 
 
 function ZakduAnalyzeTocCheckinigView({navigation, route}) {
-    const {fileObj} = route.params;
-    const {bookmarkResult} = route.params;
     const {tocResult} = route.params;
-    const [bookRegisterObj, setBookRegisterObj] = useState(fileObj);
+
     const {width ,height} = useWindowDimensions();
     const [editable, setEditable] = useState(false);
     const [test, setTest] = useState(Math.random());
     const [tResult, setTResult] = useState(tocResult);
-
 
     React.useLayoutEffect(() => {     
         navigation.setOptions({       
@@ -233,7 +229,6 @@ function ZakduAnalyzeTocCheckinigView({navigation, route}) {
     return (
         <View style={{width: '100%', height: '100%', alignItems: 'center', backgroundColor: 'white'}}>
 
-            {bookmarkResult ? 
                 <View style={{ 
                     width: width > height ? '50%' : '70%',
                     height: width > height ? '100%' : '100%',
@@ -328,7 +323,6 @@ function ZakduAnalyzeTocCheckinigView({navigation, route}) {
                             <BasisButtonComponent setEditable={setEditable} editable={editable} context={"편집할래요."}/>
                             <Pressable 
                                  onPress={()=> navigation.push('GetCategory', {
-                                    'fileObj': bookRegisterObj,
                                     'tocResult': tResult
                                 })}
                                 style={({pressed})=>[
@@ -346,9 +340,7 @@ function ZakduAnalyzeTocCheckinigView({navigation, route}) {
                             </Text>
                         </Pressable>
                         <Pressable 
-                                 onPress={()=> navigation.push('GetBookTitle', {
-                                    'fileObj': bookRegisterObj
-                                })}
+                                 onPress={()=> navigation.push('GetBookTitle')}
                                 style={({pressed})=>[
                                         tocCheckingStyles.buttonStyle,
                                         {      
@@ -366,14 +358,8 @@ function ZakduAnalyzeTocCheckinigView({navigation, route}) {
                         }
 
                     </View>
-                </View> : 
-                <BookmarkEmptyView bookRegisterObj={bookRegisterObj} navigation={navigation}/>
-               
-            }
-
-      
-                           
-           
+                </View> 
+        
         </View>
     );
 

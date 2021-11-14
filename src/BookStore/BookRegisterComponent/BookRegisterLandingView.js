@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, ScrollView, Button, Pressable, TextInput, Image, Animated, useWindowDimensions} from 'react-native';
+import {View, Text, Pressable, useWindowDimensions} from 'react-native';
 
 import { responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth } from 'react-native-responsive-dimensions';
 import Animation from 'lottie-react-native';

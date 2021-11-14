@@ -4,7 +4,8 @@ import {responsiveScreenFontSize, responsiveScreenWidth, responsiveScreenHeight}
 import Animation from 'lottie-react-native';
 import HeaderBackButton from '../../../Common/CommonComponent/HeaderBackButton';
 import RNPickerSelect from 'react-native-picker-select';
-
+import { registerBook } from '../../../Store/Actions';
+import {connect} from 'react-redux';
 
 const styles = StyleSheet.create({
     inputIOS: {
@@ -15,10 +16,8 @@ const styles = StyleSheet.create({
     },
 })
 
-function BookCategoryView({navigation, route}) {
-    const {fileObj} = route.params;
+function BookCategoryView({navigation, route, handleBookCategory, bookCategory}) {
     const {tocResult} = route.params;
-    const [bookRegisterObj, setBookRegisterObj] = useState(fileObj);
     const {width, height} = useWindowDimensions();
 
     React.useLayoutEffect(() => {     
@@ -79,15 +78,9 @@ function BookCategoryView({navigation, route}) {
                     onValueChange={(value)=> {
                         console.log(value);
                         if(value === null) {
-                            setBookRegisterObj({
-                                ...bookRegisterObj,
-                                ["bookCategory"]: ""
-                            })
+                            handleBookCategory("")
                         } else {
-                            setBookRegisterObj({
-                                ...bookRegisterObj,
-                                ["bookCategory"]: value
-                            })
+                            handleBookCategory(value);
                         }
                     }}
                     items={[
@@ -105,11 +98,11 @@ function BookCategoryView({navigation, route}) {
                 </View>
 
                 <Pressable 
-                            disabled= {bookRegisterObj.bookCategory === "" ? true : false}
+                            disabled= {!bookCategory ? true : false}
                             style={({pressed})=>[
                             {
                                backgroundColor: 
-                               bookRegisterObj.bookCategory === "" ? 'gray' : 'blue'
+                               !bookCategory ? 'gray' : 'blue'
                             }, 
                             {
                                 shadowOffset :{
@@ -130,7 +123,6 @@ function BookCategoryView({navigation, route}) {
                             }
                         ]}
                             onPress={()=> navigation.push('GetCover', {
-                                'fileObj': bookRegisterObj,
                                 'tocResult': tocResult
                             })}>
                         
@@ -148,6 +140,13 @@ function BookCategoryView({navigation, route}) {
         </View>
     );
 
-
 }
-export default BookCategoryView;
+const mapDispatchToProps = (dispatch) => ({
+    handleBookCategory: (value) => (dispatch(registerBook("bookCategory", value)))
+});
+
+const mapStateToProps = (state) => ({
+    bookCategory: state.registerBooks.bookRegisterObj.bookCategory
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(BookCategoryView);

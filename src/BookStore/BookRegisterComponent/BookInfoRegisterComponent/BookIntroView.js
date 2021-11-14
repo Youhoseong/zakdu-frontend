@@ -3,12 +3,11 @@ import {View, Text, Pressable, useWindowDimensions, TextInput} from 'react-nativ
 import {responsiveScreenFontSize, responsiveScreenWidth, responsiveScreenHeight} from 'react-native-responsive-dimensions';
 import Animation from 'lottie-react-native';
 import HeaderBackButton from '../../../Common/CommonComponent/HeaderBackButton';
+import { registerBook } from '../../../Store/Actions';
+import {connect} from 'react-redux';
 
-
-function BookIntroView({navigation, route}) {
-    const {fileObj} = route.params;
+function BookIntroView({navigation, route, handleBookIntro, bookIntro}) {
     const {tocResult} = route.params;
-    const [bookRegisterObj, setBookRegisterObj] = useState(fileObj);
     const {width, height} = useWindowDimensions();
 
     React.useLayoutEffect(() => {     
@@ -30,18 +29,14 @@ function BookIntroView({navigation, route}) {
                 width: width > height ? '30%' : '50%',
                 height: width > height ? '100%' : '80%',
                 alignItems: 'center',
-               // borderWidth: 1
             }}>
-                <View style={{  marginTop: '30%', width: '100%', height: '15%'}}>
-                    
-                <Text style={{marginTop: 5, fontSize: responsiveScreenFontSize(1.4), fontWeight: '700', textAlign: 'center'}}>
+                <View style={{  marginTop: '30%', width: '100%', height: '15%'}}>  
+                    <Text style={{marginTop: 5, fontSize: responsiveScreenFontSize(1.4), fontWeight: '700', textAlign: 'center'}}>
                         도서의 소개글을 입력해 주세요.        
                     </Text>
                     <Text style={{marginTop: 5, fontSize: responsiveScreenFontSize(1.1), fontWeight: '500', textAlign: 'center'}}>
-                        (7/8)      
+                            (7/8)      
                     </Text>
-
-
                 </View>
 
         
@@ -73,16 +68,9 @@ function BookIntroView({navigation, route}) {
                             }}
                             onChangeText={(text)=> {
                                 if(text) {
-                              
-                                    setBookRegisterObj({
-                                        ...bookRegisterObj,
-                                        ["bookIntro"]: text
-                                    })
+                                    handleBookIntro(text);
                                 }else {
-                                    setBookRegisterObj({
-                                        ...bookRegisterObj,
-                                        ["bookIntro"]: null
-                                    })
+                                    handleBookIntro("");
                                 }
                                 
                             }}
@@ -94,11 +82,11 @@ function BookIntroView({navigation, route}) {
                 </View>
 
                 <Pressable 
-                            disabled= {bookRegisterObj.bookIntro === null ? true : false}
+                            disabled= {!bookIntro ? true : false}
                             style={({pressed})=>[
                             {
                                backgroundColor: 
-                               bookRegisterObj.bookIntro === null ? 'gray' : 'blue'
+                               !bookIntro ? 'gray' : 'blue'
                             }, 
                             {
                                 shadowOffset :{
@@ -119,7 +107,6 @@ function BookIntroView({navigation, route}) {
                             }
                         ]}
                             onPress={()=> navigation.push('GetPrice', {
-                                'fileObj': bookRegisterObj,
                                 'tocResult': tocResult
                             })}>
                         
@@ -139,4 +126,11 @@ function BookIntroView({navigation, route}) {
 
 
 }
-export default BookIntroView;
+const mapDispatchToProps = (dispatch) => ({
+    handleBookIntro: (value) => (dispatch(registerBook("bookIntro", value)))
+});
+
+const mapStateToProps = (state) => ({
+    bookIntro: state.registerBooks.bookRegisterObj.bookIntro
+});
+export default connect(mapStateToProps, mapDispatchToProps)(BookIntroView);
