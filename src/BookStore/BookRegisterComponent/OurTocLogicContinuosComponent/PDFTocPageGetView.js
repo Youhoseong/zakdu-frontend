@@ -1,9 +1,10 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {View, Text, useWindowDimensions, TextInput, Pressable} from 'react-native';
 import HeaderBackButton from '../../../Common/CommonComponent/HeaderBackButton';
 import {responsiveScreenFontSize, responsiveScreenWidth, responsiveScreenHeight} from 'react-native-responsive-dimensions';
 import Animation from 'lottie-react-native';
-
+import { registerBook } from '../../../Store/Actions';
+import {connect} from 'react-redux';
 
 
 function validInputs(start, end) {
@@ -20,10 +21,7 @@ function validInputs(start, end) {
 }
 
 
-function PDFTocPageGetView({navigation, route}) {
-    const {fileObj} = route.params;
-
-    const [bookRegisterObj, setBookRegisterObj] = useState(fileObj);
+function PDFTocPageGetView({navigation, handleTocPage, tocStart, tocEnd}) {
     const {width, height} = useWindowDimensions();
 
     React.useLayoutEffect(() => {     
@@ -90,17 +88,13 @@ function PDFTocPageGetView({navigation, route}) {
                             onChangeText={(text)=> {
                                 
                                 if(!isNaN(text) && Number.isInteger(parseInt(text))){
-                                    setBookRegisterObj({
-                                        ...bookRegisterObj,
-                                        ["bookPDFTocStartPage"]: text
-                                    });
-                                }else {
-                                    setBookRegisterObj({
-                                        ...bookRegisterObj,
-                                        ["bookPDFTocStartPage"]: null
-                                    });
+                                    handleTocPage("bookPDFTocStartPage", text)
+                                }
+                                if(!text){
+                                    handleTocPage("bookPDFTocStartPage", "")
                                 }
                             }}
+                            value={tocStart}
                             keyboardType='number-pad'
                             placeholder="숫자만 입력해주세요."
                     />
@@ -117,17 +111,13 @@ function PDFTocPageGetView({navigation, route}) {
                             onChangeText={(text)=> {
                                 
                                 if(!isNaN(text) && Number.isInteger(parseInt(text))){
-                                    setBookRegisterObj({
-                                        ...bookRegisterObj,
-                                        ["bookPDFTocEndPage"]: text
-                                    });
-                                }else {
-                                    setBookRegisterObj({
-                                        ...bookRegisterObj,
-                                        ["bookPDFTocEndPage"]: null
-                                    });
+                                    handleTocPage("bookPDFTocEndPage", text)
+                                }
+                                if(!text){
+                                    handleTocPage("bookPDFTocEndPage", "")
                                 }
                             }}
+                            value={tocEnd}
                             keyboardType='number-pad'
                             placeholder="숫자만 입력해주세요."
                     />
@@ -136,11 +126,11 @@ function PDFTocPageGetView({navigation, route}) {
                 </View>
 
                 <Pressable 
-                            disabled={!validInputs(bookRegisterObj.bookPDFTocStartPage, bookRegisterObj.bookPDFTocEndPage) ? true : false} 
+                            disabled={!validInputs(tocStart, tocEnd) ? true : false} 
                             style={({pressed})=>[
                             {
                                 backgroundColor: 
-                                !validInputs(bookRegisterObj.bookPDFTocStartPage, bookRegisterObj.bookPDFTocEndPage) ? 'gray'  : pressed ? '#2A3AC4' : '#3448F3',
+                                !validInputs(tocStart, tocEnd) ? 'gray'  : pressed ? '#2A3AC4' : '#3448F3',
                             }, 
                             {
                                 width: '100%',
@@ -153,9 +143,7 @@ function PDFTocPageGetView({navigation, route}) {
                             
                             }
                         ]}
-                            onPress={()=> navigation.push('GetRowCount', {
-                                'fileObj': bookRegisterObj
-                            })}>
+                            onPress={()=> navigation.push('GetRowCount')}>
                         
                             <Text 
                                 style={{
@@ -174,4 +162,14 @@ function PDFTocPageGetView({navigation, route}) {
 
 }
 
-export default PDFTocPageGetView;
+const mapStateToProps = (state) => ({
+    tocStart: state.registerBooks.bookRegisterObj.bookPDFTocStartPage,
+    tocEnd: state.registerBooks.bookRegisterObj.bookPDFTocEndPage,
+})
+
+const mapDispatchToProps = (dispatch) => ({
+    handleTocPage: (key, value) =>  dispatch(registerBook(key, value))
+})
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(PDFTocPageGetView);

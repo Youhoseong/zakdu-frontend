@@ -3,12 +3,11 @@ import {View, Text, Pressable, useWindowDimensions, TextInput} from 'react-nativ
 import {responsiveScreenFontSize, responsiveScreenWidth, responsiveScreenHeight} from 'react-native-responsive-dimensions';
 import Animation from 'lottie-react-native';
 import HeaderBackButton from '../../../Common/CommonComponent/HeaderBackButton';
+import { registerBook } from '../../../Store/Actions';
+import {connect} from 'react-redux';
 
-
-function BookAuthorView({navigation, route}) {
-    const {fileObj} = route.params;
+function BookAuthorView({navigation, route, handleBookAuthor, bookAuthor}) {
     const {tocResult} = route.params;
-    const [bookRegisterObj, setBookRegisterObj] = useState(fileObj);
     const {width, height} = useWindowDimensions();
 
     React.useLayoutEffect(() => {     
@@ -71,15 +70,9 @@ function BookAuthorView({navigation, route}) {
                             }}
                             onChangeText={(text)=> {
                                 if(text) {
-                                    setBookRegisterObj({
-                                        ...bookRegisterObj,
-                                        ["bookAuthor"]: text
-                                    })
-                                }else {
-                                    setBookRegisterObj({
-                                        ...bookRegisterObj,
-                                        ["bookAuthor"]: null
-                                    })
+                                    handleBookAuthor(text);
+                                } else {
+                                    handleBookAuthor("");
                                 }
                                 
                             }}
@@ -91,11 +84,11 @@ function BookAuthorView({navigation, route}) {
                 </View>
 
                 <Pressable 
-                            disabled= {bookRegisterObj.bookAuthor === null ? true : false}
+                            disabled= {!bookAuthor ? true : false}
                             style={({pressed})=>[
                             {
                                backgroundColor: 
-                               bookRegisterObj.bookAuthor === null ? 'gray' : 'blue'
+                               !bookAuthor ? 'gray' : 'blue'
                             }, 
                             {
                                 shadowOffset :{
@@ -116,7 +109,6 @@ function BookAuthorView({navigation, route}) {
                             }
                         ]}
                             onPress={()=> navigation.push('GetPublisher', {
-                                'fileObj': bookRegisterObj,
                                 'tocResult': tocResult
                             })}>
                         
@@ -136,4 +128,11 @@ function BookAuthorView({navigation, route}) {
 
 
 }
-export default BookAuthorView;
+const mapDispatchToProps = (dispatch) => ({
+    handleBookAuthor: (value) => (dispatch(registerBook("bookAuthor", value)))
+});
+
+const mapStateToProps = (state) => ({
+    bookAuthor: state.registerBooks.bookRegisterObj.bookAuthor
+});
+export default connect(mapStateToProps, mapDispatchToProps)(BookAuthorView);

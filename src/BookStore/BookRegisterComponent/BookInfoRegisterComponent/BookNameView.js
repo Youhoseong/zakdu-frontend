@@ -3,12 +3,11 @@ import {View, Text, Pressable, useWindowDimensions, TextInput} from 'react-nativ
 import {responsiveScreenFontSize, responsiveScreenWidth, responsiveScreenHeight} from 'react-native-responsive-dimensions';
 import Animation from 'lottie-react-native';
 import HeaderBackButton from '../../../Common/CommonComponent/HeaderBackButton';
+import { registerBook } from '../../../Store/Actions';
+import {connect} from 'react-redux';
 
-
-function BookNameView({navigation, route}) {
-    const {fileObj} = route.params;
+function BookNameView({navigation, route, handleBookName, bookName}) {
     const {tocResult} = route.params;
-    const [bookRegisterObj, setBookRegisterObj] = useState(fileObj);
     const {width, height} = useWindowDimensions();
 
     React.useLayoutEffect(() => {     
@@ -34,9 +33,6 @@ function BookNameView({navigation, route}) {
             }}>
                 <View style={{  marginTop: '20%', width: '100%', height: '15%'}}>
                     
-              
-
-               
                     <Text style={{marginTop: 5, fontSize: responsiveScreenFontSize(1.4), fontWeight: '700', textAlign: 'center'}}>
                         도서의 제목을 입력해 주세요.        
                     </Text>
@@ -72,20 +68,13 @@ function BookNameView({navigation, route}) {
                                 marginHorizontal: '5%'
                             }}
                             onChangeText={(text)=> {
-                                if(text) {
-                                    setBookRegisterObj({
-                                        ...bookRegisterObj,
-                                        ["bookName"]: text
-                                    })
-                                }else {
-                                    setBookRegisterObj({
-                                        ...bookRegisterObj,
-                                        ["bookName"]: null
-                                    })
+                                if(text) {                     
+                                    handleBookName(text);
+                                } else {
+                                    handleBookName("");
                                 }
                                 
-                            }}
-                            
+                            }}  
                             placeholder="도서 제목을 입력해 주세요."
                     />
 
@@ -93,11 +82,11 @@ function BookNameView({navigation, route}) {
                 </View>
 
                 <Pressable 
-                            disabled= {bookRegisterObj.bookName === null ? true : false}
+                            disabled= {!bookName ? true : false}
                             style={({pressed})=>[
                             {
                                backgroundColor: 
-                               bookRegisterObj.bookName === null ? 'gray' : 'blue'
+                               !bookName  ? 'gray' : 'blue'
                             }, 
                             {
                                 shadowOffset :{
@@ -118,7 +107,6 @@ function BookNameView({navigation, route}) {
                             }
                         ]}
                             onPress={()=> navigation.push('GetAuthor', {
-                                'fileObj': bookRegisterObj,
                                 'tocResult': tocResult
                             })}>
                         
@@ -138,4 +126,12 @@ function BookNameView({navigation, route}) {
 
 
 }
-export default BookNameView;
+
+const mapDispatchToProps = (dispatch) => ({
+    handleBookName: (value) => (dispatch(registerBook("bookName", value)))
+});
+
+const mapStateToProps = (state) => ({
+    bookName: state.registerBooks.bookRegisterObj.bookName
+});
+export default connect(mapStateToProps, mapDispatchToProps)(BookNameView);

@@ -1,16 +1,13 @@
 
 import React, {useState} from 'react';
-import {View, Text, Button, FlatList, useWindowDimensions, Pressable, TextInput, StyleSheet} from 'react-native';
-import  {HS_API_END_POINT} from '../../../Shared/env';
+import {View, Text,useWindowDimensions, Pressable, TextInput, StyleSheet} from 'react-native';
 import {responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth} from 'react-native-responsive-dimensions';
-import Animation from 'lottie-react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import HeaderBackButton from '../../../Common/CommonComponent/HeaderBackButton';
 import BasisButtonComponent from '../BasisButtonComponent';
-import Modal from 'react-native-modal';
 
-import DraggableFlatList, {ScaleDecorator} from 'react-native-draggable-flatlist';
-import BookmarkEmptyView from './BookmarkEmptyView';
+import DraggableFlatList from 'react-native-draggable-flatlist';
+
 
 export const tocCheckingStyles = StyleSheet.create({
     buttonStyle: {
@@ -36,14 +33,10 @@ export const tocCheckingStyles = StyleSheet.create({
 
 
 function BookmarkTocCheckingView({navigation, route}) {
-    const {fileObj} = route.params;
-    const {bookmarkResult} = route.params;
     const {tocResult} = route.params;
 
-    const [bookRegisterObj, setBookRegisterObj] = useState(fileObj);
     const {width ,height} = useWindowDimensions();
     const [editable, setEditable] = useState(false);
-
     const [test, setTest] = useState(Math.random());
     const [tResult, setTResult] = useState(tocResult);
 
@@ -259,7 +252,6 @@ function BookmarkTocCheckingView({navigation, route}) {
     return (
         <View style={{width: '100%', height: '100%', alignItems: 'center', backgroundColor: 'white'}}>
 
-            {bookmarkResult ? 
                 <View style={{ 
                     width: width > height ? '50%' : '70%',
                     height: width > height ? '100%' : '100%',
@@ -274,7 +266,7 @@ function BookmarkTocCheckingView({navigation, route}) {
                     }}>
                         
                         <Text style={{ fontSize: responsiveScreenFontSize(1.5), fontWeight: '700'}}>
-                            목차를 찾았어요.    
+                            목차를 찾았어요.  
                         </Text>
 
                       
@@ -354,7 +346,6 @@ function BookmarkTocCheckingView({navigation, route}) {
                             <BasisButtonComponent setEditable={setEditable} editable={editable} context={"편집할래요."}/>
                             <Pressable 
                                  onPress={()=> navigation.push('GetCategory', {
-                                    'fileObj': bookRegisterObj,
                                     'tocResult': tResult
                                 })}
                                 style={({pressed})=>[
@@ -372,9 +363,7 @@ function BookmarkTocCheckingView({navigation, route}) {
                                 </Text>
                             </Pressable>
                             <Pressable 
-                                 onPress={()=> navigation.push('GetBookTitle', {
-                                    'fileObj': bookRegisterObj
-                                })}
+                                 onPress={()=> navigation.push('GetBookTitle')}
                                 style={({pressed})=>[
                                         tocCheckingStyles.buttonStyle,
                                         {
@@ -392,17 +381,12 @@ function BookmarkTocCheckingView({navigation, route}) {
                         }
 
                     </View>
-                </View> : 
-                <BookmarkEmptyView bookRegisterObj={bookRegisterObj} navigation={navigation}/>
-               
-            }
-
-      
-                           
-           
+                </View>  
         </View>
     );
 
 
 }
+
+
 export default BookmarkTocCheckingView;

@@ -4,12 +4,11 @@ import {responsiveScreenFontSize, responsiveScreenWidth, responsiveScreenHeight}
 import Animation from 'lottie-react-native';
 import HeaderBackButton from '../../../Common/CommonComponent/HeaderBackButton';
 import { parse } from '@babel/core';
+import { registerBook } from '../../../Store/Actions';
+import {connect} from 'react-redux';
 
-
-function BookPriceView({navigation, route}) {
-    const {fileObj} = route.params;
-
-    const [bookRegisterObj, setBookRegisterObj] = useState(fileObj);
+function BookPriceView({navigation, route, handleBookPrice, bookPrice}) {
+    const {tocResult} = route.params;
     const {width, height} = useWindowDimensions();
 
     React.useLayoutEffect(() => {     
@@ -77,24 +76,15 @@ function BookPriceView({navigation, route}) {
                                 text = text.replaceAll(",", "");
                                 text = text.replaceAll("₩", "");
 
-                                if(!isNaN(text) && Number.isInteger(parseInt(text))){
-                                    console.log(text);
-                                    setBookRegisterObj({
-                                        ...bookRegisterObj,
-                                        ["bookPrice"]: parseInt(text)
-                                    });
- 
+                                if(!isNaN(text) && Number.isInteger(parseInt(text))){                               
+                                    handleBookPrice(parseInt(text));
                                 }
                                 if(text === "") {
-                                    setBookRegisterObj({
-                                        ...bookRegisterObj,
-                                        ["bookPrice"]: ""
-                                    });
-                                    //setPriceString("")
+                                    handleBookPrice("");
                                 }
                                 
                             }}
-                            value={bookRegisterObj.bookPrice === "" ? "" : bookRegisterObj.bookPrice.toLocaleString("ko-KR", { style: 'currency', currency: 'KRW' })}
+                            value={!bookPrice? "" : bookPrice.toLocaleString("ko-KR", { style: 'currency', currency: 'KRW' })}
                             placeholder=""
                             keyboardType="numeric"
                             
@@ -106,11 +96,11 @@ function BookPriceView({navigation, route}) {
                 </View>
  
                 <Pressable 
-                            disabled= {bookRegisterObj.bookPrice === "" ? true : false}
+                            disabled= {!bookPrice ? true : false}
                             style={({pressed})=>[
                             {
                                backgroundColor: 
-                               bookRegisterObj.bookPrice === "" ? 'gray' : 'blue'
+                               !bookPrice ? 'gray' : 'blue'
                             }, 
                             {
                                 shadowOffset :{
@@ -148,4 +138,13 @@ function BookPriceView({navigation, route}) {
 
 
 }
-export default BookPriceView;
+
+const mapDispatchToProps = (dispatch) => ({
+    handleBookPrice: (value) => (dispatch(registerBook("bookPrice", value)))
+});
+
+const mapStateToProps = (state) => ({
+    bookPrice: state.registerBooks.bookRegisterObj.bookPrice
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(BookPriceView);

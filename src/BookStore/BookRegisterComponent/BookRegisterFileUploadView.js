@@ -8,21 +8,11 @@ import DocumentPicker from 'react-native-document-picker';
 import HeaderBackButton from '../../Common/CommonComponent/HeaderBackButton';
 import axios from 'axios';
 import {HS_API_END_POINT} from '../../Shared/env';
+import { registerBook } from '../../Store/Actions';
+import {connect} from 'react-redux';
 
-function  BookRegisterFileUploadView ({navigation}) {
-    const [bookRegisterObj, setBookRegisterObj] = useState({
-        bookCover: "",
-        bookFile: null,
-        bookName: null,
-        bookPrice: "",
-        bookCategory: "",
-        bookPDFTocStartPage: null,
-        bookPDFTocEndPage: null,
-        bookPDFRowCount: null,
-        bookAuthor: null,
-        bookPublisher: "",
-        bookPubDate: "",
-    });
+function  BookRegisterFileUploadView ({navigation, handleFileUpdate, fileInfo}) {
+
     const [fileValidate, setFileValidate] = useState("");
     const {width ,height} = useWindowDimensions();
 
@@ -30,10 +20,9 @@ function  BookRegisterFileUploadView ({navigation}) {
         const formData = new FormData();
 
         formData.append('files', {
-                name: bookRegisterObj.bookFile.name,
-                type: bookRegisterObj.bookFile.type,
-                uri: bookRegisterObj.bookFile.uri
-
+                name: fileInfo.name,
+                type: fileInfo.type,
+                uri: fileInfo.uri
         });
    
         axios.post(`${HS_API_END_POINT}/book/bookmark-analyze`, formData,{
@@ -44,16 +33,10 @@ function  BookRegisterFileUploadView ({navigation}) {
             if(res.data) {
                 console.log(res.data);
                 if(res.data.statusEnum === "BOOKMARK_NO_EXIST") {
-                    navigation.push('BookMarkChecking', 
-                    {
-                        'fileObj': bookRegisterObj,
-                        'bookmarkResult': false,
-                        'tocResult': null
-                    })
+                    navigation.push('BookMarkEmpty')
                 } else if(res.data.statusEnum === "OK") {
                     navigation.push('BookMarkChecking', 
                     {
-                        'fileObj': bookRegisterObj,
                         'bookmarkResult': true,
                         'tocResult': res.data.data
                     })
@@ -62,12 +45,9 @@ function  BookRegisterFileUploadView ({navigation}) {
         }).catch((err)=> {
             console.error(err);
         })
-    
-
-
     }
         
-    
+  
     const filePicker =  async () => {
         try {
             const file = await DocumentPicker.pick({
@@ -78,10 +58,7 @@ function  BookRegisterFileUploadView ({navigation}) {
             console.log(JSON.stringify(file))
             file.map((f)=> {
                 if(f.type === "application/epub+zip" || f.type === "application/pdf") {
-                    setBookRegisterObj({
-                        ...bookRegisterObj,
-                        ["bookFile"]: f
-                    });
+                    handleFileUpdate(f);
                     setFileValidate("");
                 }else {
                     setFileValidate("pdf 혹은 epub 확장자만 업로드 가능해요.");
@@ -134,7 +111,6 @@ function  BookRegisterFileUploadView ({navigation}) {
                             style={{
                                 fontSize: responsiveScreenFontSize(1.5),
                                 fontWeight: '500',
-                             
                             }}>
                             도서 분할은 작두가 해드릴게요.      
                         </Text>
@@ -144,11 +120,9 @@ function  BookRegisterFileUploadView ({navigation}) {
                                 marginTop: 10,
                                 fontSize: responsiveScreenFontSize(1.3),
                                 fontWeight: '500',
-                            
                             }}>
                             파일을 업로드 해주세요.            
-                        </Text>
-                    
+                        </Text>   
                     </View>
 
                     <Animation
@@ -160,7 +134,7 @@ function  BookRegisterFileUploadView ({navigation}) {
                                 autoPlay
                                 resizeMode= 'cover'/>
                     
-                        {bookRegisterObj.bookFile === null ?
+                        {!fileInfo ?
                             <View style={{
                                 width: '100%',
                                 height: '10%', 
@@ -195,7 +169,7 @@ function  BookRegisterFileUploadView ({navigation}) {
                             borderColor: fileValidate  === "" ? 'black' : 'red'
                         }}> 
                             <Text>
-                                {bookRegisterObj.bookFile.name}
+                                {fileInfo.name}
                             </Text> 
                             <Pressable 
                                    style={{
@@ -205,10 +179,7 @@ function  BookRegisterFileUploadView ({navigation}) {
                                        height: '100%'
                                    }}
                                    onPress={() =>{
-                                        setBookRegisterObj({
-                                            ...bookRegisterObj,
-                                            ["bookFile"]: null
-                                        })
+                                        handleFileUpdate("")
                                    } }>
                                        <MaterialCommunityIcons name="minus-circle" size={27} color= '#F36B6B'/>
                             </Pressable>
@@ -222,11 +193,11 @@ function  BookRegisterFileUploadView ({navigation}) {
 
                     
                     <Pressable 
-                        disabled={bookRegisterObj.bookFile === null ? true : false} 
+                        disabled={!fileInfo ? true : false} 
                         style={({pressed})=>[
                         {
                             backgroundColor: 
-                            bookRegisterObj.bookFile === null ? 'gray'  : pressed ? '#2A3AC4' : '#3448F3',
+                            !fileInfo ? 'gray'  : pressed ? '#2A3AC4' : '#3448F3',
                         }, 
                         {
                             width: '100%',
@@ -264,4 +235,13 @@ function  BookRegisterFileUploadView ({navigation}) {
 
 }
 
-export default BookRegisterFileUploadView;
+const mapStateToProps = (state) => ({
+    fileInfo: state.registerBooks.bookRegisterObj.bookFile,
+})
+
+const mapDispatchToProps = (dispatch) => ({
+    handleFileUpdate: (value) => dispatch(registerBook("bookFile", value))
+});
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(BookRegisterFileUploadView);

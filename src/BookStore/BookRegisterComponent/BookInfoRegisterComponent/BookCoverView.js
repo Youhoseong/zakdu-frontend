@@ -4,7 +4,8 @@ import {responsiveScreenFontSize, responsiveScreenWidth, responsiveScreenHeight}
 import Animation from 'lottie-react-native';
 import HeaderBackButton from '../../../Common/CommonComponent/HeaderBackButton';
 import RNPickerSelect from 'react-native-picker-select';
-
+import { registerBook } from '../../../Store/Actions';
+import {connect} from 'react-redux';
 
 const styles = StyleSheet.create({
     inputIOS: {
@@ -15,10 +16,8 @@ const styles = StyleSheet.create({
     },
 })
 
-function BookCoverView({navigation, route}) {
-    const {fileObj} = route.params;
-
-    const [bookRegisterObj, setBookRegisterObj] = useState(fileObj);
+function BookCoverView({navigation, route, handleBookCover, bookCover}) {
+    const {tocResult} = route.params;
     const {width, height} = useWindowDimensions();
 
     React.useLayoutEffect(() => {     
@@ -40,12 +39,10 @@ function BookCoverView({navigation, route}) {
                 width: width > height ? '30%' : '50%',
                 height: width > height ? '100%' : '80%',
                 alignItems: 'center',
-               // borderWidth: 1
+    
             }}>
                 <View style={{  marginTop: '30%', width: '100%', height: '10%'}}>
                     
-           
-
                     <Text style={{marginTop: 10, fontSize: responsiveScreenFontSize(1.4), fontWeight: '700',textAlign: 'center'}}>
                         도서 표지 이미지가 필요해요.        
                     </Text>
@@ -77,15 +74,9 @@ function BookCoverView({navigation, route}) {
                     onValueChange={(value)=> {
                         console.log(value);
                         if(value === null) {
-                            setBookRegisterObj({
-                                ...bookRegisterObj,
-                                ["bookCover"]: ""
-                            })
+                            handleBookCover("");
                         } else {
-                            setBookRegisterObj({
-                                ...bookRegisterObj,
-                                ["bookCover"]: value
-                            })
+                            handleBookCover(value);
                         }
                     }}
                     items={[
@@ -103,11 +94,11 @@ function BookCoverView({navigation, route}) {
                 </View>
 
                 <Pressable 
-                            disabled= {bookRegisterObj.bookCover === "" ? true : false}
+                            disabled= {!bookCover ? true : false}
                             style={({pressed})=>[
                             {
                                backgroundColor: 
-                               bookRegisterObj.bookCover === "" ? 'gray' : 'blue'
+                               !bookCover ? 'gray' : 'blue'
                             }, 
                             {
                                 shadowOffset :{
@@ -128,7 +119,7 @@ function BookCoverView({navigation, route}) {
                             }
                         ]}
                             onPress={()=> navigation.push('GetName', {
-                                'fileObj': bookRegisterObj
+                                'tocResult': tocResult
                             })}>
                         
                             <Text 
@@ -147,4 +138,13 @@ function BookCoverView({navigation, route}) {
 
 
 }
-export default BookCoverView;
+
+const mapDispatchToProps = (dispatch) => ({
+    handleBookCover: (value) => (dispatch(registerBook("bookCover", value)))
+});
+
+const mapStateToProps = (state) => ({
+    bookCover: state.registerBooks.bookRegisterObj.bookCover
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(BookCoverView);
