@@ -1,6 +1,6 @@
 import CryptoJS from 'crypto-js';
 import * as RNFS from 'react-native-fs';
-import JSZip from 'jszip';
+import JSZip, { remove } from 'jszip';
 import {   
     PDFDocument,
     PDFRawStream,
@@ -31,22 +31,11 @@ FileReader.prototype.readAsArrayBuffer = function (blob) {
     fr.readAsDataURL(blob);
 }
 
-
-
 async function decrypt(encrypted, aesKey, iv) {
     aesKey = CryptoJS.enc.Utf8.parse(aesKey ? aesKey : "abcdefghijklmnopqrstuvwxyzabcdef");
     iv = CryptoJS.enc.Utf8.parse(iv ? iv : "0123456789abcdef");
- 
-    // console.log(typeof(aesKey));
-    // console.log("key: " + aesKey + "\niv: " + iv);
-    //console.log(aesKey)
 
-    // console.log("encrypted string ", typeof(encrypted));
-    // console.log(encrypted);
-
-    // bytes is wordArray class 일반적 바이트 배열 아님!
-    // CryptoJS.lib.WordArray.create()
-
+    // bytes -> wordArray class 일반적 바이트 배열 아님!
     var bytes = typeof(encrypted) === "string" ? 
         CryptoJS.AES.decrypt(encrypted, aesKey, { iv: iv,
         padding: CryptoJS.pad.Pkcs7,
@@ -54,14 +43,10 @@ async function decrypt(encrypted, aesKey, iv) {
         CryptoJS.AES.decrypt({ciphertext: encrypted}, aesKey, { iv: iv,
         padding: CryptoJS.pad.Pkcs7,
         mode: CryptoJS.mode.CBC });
-    // console.log(bytes);
-
     var unit8ByteArray = convert_word_array_to_uint8Array(bytes);
-    // console.log("decrypted byte array");
-    // console.log(unit8ByteArray);
-    // console.log("decrypted Text\n" + String.fromCharCode(...unit8ByteArray));
     return unit8ByteArray;
 }
+
 
 function convert_word_array_to_uint8Array(wordArray) {
     var len = wordArray.words.length,
@@ -125,13 +110,25 @@ export async function decryptPages(pdfPath, pageInfos) {
     
     var pdfDoc = await PDFDocument.load(existingPdfBytes);
 
-   // console.log(pageInfos);
-   // console.log(pdfDoc);
-
-
-    for(var i in pageInfos) {
-        const pageInfo = pageInfos[i];
-        console.log(pageInfo.pageNum);
+    const pageNum = pdfDoc.getPageCount();
+    var lockPages = [];
+    var removePageList = [];
+    var index = 0;
+    const lastElement = (array) => {
+        return array[array.length - 1];
+    }
+    for (let i = 1; i < pageNum - 1; i++) {
+        if(pageInfos.length <= index || pageInfos[index].pageNum > i) {
+            if(lastElement(lockPages) == i - 1 || lastElement(removePageList) == i - 1) {
+                removePageList.push(i);
+            }
+            else {
+                lockPages.push(i);
+            }
+            continue;
+        }        
+        const pageInfo = pageInfos[index];
+        index++;
         const page = pdfDoc.getPage(pageInfo.pageNum);
 
         
@@ -140,21 +137,19 @@ export async function decryptPages(pdfPath, pageInfos) {
         if (!Contents) return;
         Contents.asArray().forEach((streamRef) => {
         if (streamRef instanceof PDFRef) {
-            // console.log(streamRef);
             const stream = page.doc.context.lookup(streamRef);
             const contents = tryToDecodeStream(stream);
             if (contents) {
                 decrypt(contents, pageInfo.aesKey, pageInfo.iv).then(newContents => {
                     const newStream = page.doc.context.flateStream(newContents);
                     page.doc.context.assign(streamRef, newStream);
-                    // console.log(contents);
-                    // console.log(arrayAsString(newContents));
                 });
             }
         }
       });
     }
-    
+    await setLockPages(pdfDoc, lockPages, removePageList);
+    await removePages(pdfDoc, removePageList);    
     const decPdfBytes = await pdfDoc.save();
     const fileName = getFileName(pdfPath);
     const tempDecryptedFilePath = RNFS.TemporaryDirectoryPath + "pdf/" + fileName + "_dec";
@@ -167,6 +162,65 @@ export async function decryptPages(pdfPath, pageInfos) {
     })
 }
 
+async function setLockPages(pdfDoc, pages, removePages) {
+    const lockPdfPath = RNFS.DocumentDirectoryPath + "/" + "lockpage.pdf";
+    const lockPdfBase64 = await RNFS.readFile(lockPdfPath, 'base64');
+    const lockPdfBytes = Buffer.from(lockPdfBase64, 'base64');
+    var lockPdfDoc = await PDFDocument.load(lockPdfBytes);
+    
+    var removePageIndex = 0;
+    for(var i in pages) {
+        const [lockPage] = await pdfDoc.copyPages(lockPdfDoc, [0]);
+        const pageNum = pages[i];
+        var startPage = pageNum;
+        var endPage = pageNum;
+        if(removePageIndex < removePages.length) {
+            while(removePages[removePageIndex] == endPage + 1) {
+                removePageIndex += 1;
+                endPage += 1;
+                if(removePageIndex == removePages.length) {
+                    break;
+                }
+            }
+        }
+        else {
+            endPage = pdfDoc.getPageCount() - 2;
+        }
+        startPage = (startPage + 1).toString();
+        endPage = (endPage + 1).toString();
+        while(startPage.length < 4) {
+            startPage = ' ' + startPage;
+        }
+        while(endPage.length < 4) {
+            endPage = endPage + ' ';
+        }
+        if(parseInt(startPage) === parseInt(endPage)) {
+            lockPage.drawText(startPage, {
+                x: 280,
+                y: 270,
+                size: 14
+            });
+        }
+        else {
+            lockPage.drawText(startPage + ' ~ ' + endPage , {
+                x: 260,
+                y: 270,
+                size: 14
+            });
+        }
+        const { x, y, width, height } = lockPage.getMediaBox();
+        lockPage.setCropBox(x, y, width, height);
+        await pdfDoc.removePage(pageNum);
+        await pdfDoc.insertPage(pageNum, lockPage);
+    }
+}
+
+async function removePages(pdfDoc, pages) {
+    for(var i in pages.reverse()) {
+        const pageNum = pages[i];
+        pdfDoc.removePage(pageNum);
+    }
+}
 /**
  * @param epubPath - epub 파일 경로
  * @param pageInfos - {filePath, aesKey, iv} 
@@ -176,21 +230,18 @@ export async function decryptPages(pdfPath, pageInfos) {
 export async function decryptEpub(epubPath, epubInfos) {
     // 파일 전체 
     const epubBytes = await fetch(epubPath).then((res) => res.arrayBuffer());
-    // console.log(epubBytes);
 
     await JSZip.loadAsync(epubBytes).then(async (zip) => {
         // zip - 압축파일 전체 files로 모든 내부 파일 확인 가능
+        console.log(zip.files);
         for(var i in epubInfos) {
             const epubInfo = epubInfos[i];
             await zip.file(epubInfo.filePath).async("uint8array").then(res => {
                 // res - 압축해제 된 uint8array
                 console.log("Encrypted\n", arrayAsString(res));
                 var wordArray = CryptoJS.lib.WordArray.create(res);
-                // console.log(wordArray);
                 decrypt(wordArray, epubInfo.aesKey, epubInfo.iv).then(decryptedBytes => {
                     zip.file(epubInfo.filePath, decryptedBytes, {compression: "DEFLATE"});
-                    // console.log(decryptedBytes);
-                    // console.log(arrayAsString(decryptedBytes));
                 })
             });
         }
