@@ -44,12 +44,34 @@ async function downloadPDF() {
 
 async function pdf_test() {
     await downloadPDF();
+    await lockPdfDownload();
+    const test_data = [
+        {pageNum: 1, aesKey: "abcdefghijklmnopqrstuvwxyzabcdef", iv: "0123456789abcdef"},
+        {pageNum: 10, aesKey: "abcdefghijklmnopqrstuvwxyzabcdef", iv: "0123456789abcdef"},
+        {pageNum: 15, aesKey: "abcdefghijklmnopqrstuvwxyzabcdef", iv: "0123456789abcdef"},
+        {pageNum: 17, aesKey: "abcdefghijklmnopqrstuvwxyzabcdef", iv: "0123456789abcdef"}
+
+    ];
+
     console.log(RNFS.DocumentDirectoryPath);
     RNFS.readDir(RNFS.DocumentDirectoryPath).then(files => {
         console.log(files);
     })
     const filePath = RNFS.DocumentDirectoryPath + "/" + "downloaded.pdf";
-    decryptPages(filePath, [{pageNum: 1, aesKey: "abcdefghijklmnopqrstuvwxyzabcdef", iv: "0123456789abcdef"}]);
+    decryptPages(filePath, test_data);
+}
+
+async function lockPdfDownload() {
+    const lockPdfPath = RNFS.DocumentDirectoryPath + "/" + "lockpage.pdf";
+    const lockPdfDownloadPath = "http://localhost:8081/src/Assets/files/lockpage.pdf"
+    await RNFS.exists(lockPdfPath).then(exist => {
+        if(!exist) {
+            RNFS.downloadFile({
+                fromUrl: lockPdfDownloadPath,
+                toFile: lockPdfPath
+            })
+        }
+    })
 }
 
 async function epub_test() {
@@ -80,7 +102,7 @@ function ReadingBookView({navigation}) {
 
     const pdfFileExample = require('../../Assets/files/example.pdf')
     //const [source, setSource] = useState({ uri: RNFS.DocumentDirectoryPath + "/dec.pdf" });
-    //epub_test();
+    // epub_test();
     // pdf_test();
 
     React.useLayoutEffect(() => {     
