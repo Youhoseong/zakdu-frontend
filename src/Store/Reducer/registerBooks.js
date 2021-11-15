@@ -12,9 +12,11 @@ const INITIAL_STATE = {
         bookName: "",
         bookAuthor: "",
         bookPublisher: "",
-        bookPubDate: "",
+        bookPubDate: new Date(),
         bookIntro: "",
         bookPrice: "",
+        bookRealFirstTocPage: 1,
+        bookTocResult: "",
     }
 }
 
@@ -120,7 +122,22 @@ export const registerBooks = (state = INITIAL_STATE, action) => {
                     }
                 }
             }
-
+            else if(action.key == "bookPageDiff") {
+                return {
+                    bookRegisterObj: {
+                        ...state.bookRegisterObj,
+                        bookPageDiff: action.payload
+                    }
+                }
+            }
+            else if(action.key == "bookTocResult") {
+                return {
+                    bookRegisterObj: {
+                        ...state.bookRegisterObj,
+                        bookTocResult: action.payload
+                    }
+                }
+            }
 
 
 

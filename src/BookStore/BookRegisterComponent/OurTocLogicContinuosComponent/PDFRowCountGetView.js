@@ -11,7 +11,7 @@ import {connect} from 'react-redux';
 import { registerBook } from '../../../Store/Actions';
 
 
-function PDFRowCountGetView({navigation, handleTocRow,bookInfo}) {
+function PDFRowCountGetView({navigation, handleTocRow, handleTocResult ,bookInfo}) {
     const {width, height} = useWindowDimensions();
     
     const styles = StyleSheet.create({
@@ -70,10 +70,8 @@ function PDFRowCountGetView({navigation, handleTocRow,bookInfo}) {
                        // 'Content-Type': 'multipart/form-data'
                 },
         }).then((res)=> {
-            navigation.push('ZakduLogicChecking', 
-            {
-                'tocResult': res.data.data
-            })
+            handleTocResult(res.data.data);
+            navigation.push('ZakduLogicChecking');
         }).catch((err)=> {
             console.error(err);
         })
@@ -192,7 +190,7 @@ function PDFRowCountGetView({navigation, handleTocRow,bookInfo}) {
                         style={({pressed})=>[
                         {
                             backgroundColor: 
-                                !bookInfo.bookPDFRowCount ? 'gray'  : pressed ? '#2A3AC4' : '#3448F3',
+                                !bookInfo.bookPDFRowCount ? 'gray'  : pressed ? '#2A3AC4' : 'blue',
                         }, 
                         {
                             width: width > height ? '40%': '70%',
@@ -202,6 +200,13 @@ function PDFRowCountGetView({navigation, handleTocRow,bookInfo}) {
                             position: 'absolute',
                             bottom: 100,
                             borderRadius: 30,
+                            shadowOffset: {
+                                width: 3,
+                                height: 2
+                            },
+                            shadowOpacity: 0.5,
+                            shadowRadius: 4,
+                            shadowColor: 'gray',
                         
                         }
                     ]}
@@ -227,7 +232,8 @@ function PDFRowCountGetView({navigation, handleTocRow,bookInfo}) {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-    handleTocRow: (value) => (dispatch(registerBook("bookPDFRowCount", value)))
+    handleTocRow: (value) => (dispatch(registerBook("bookPDFRowCount", value))),
+    handleTocResult: (value)=> (dispatch(registerBook("bookTocResult", value)))
 });
 
 const mapStateToProps = (state) => ({

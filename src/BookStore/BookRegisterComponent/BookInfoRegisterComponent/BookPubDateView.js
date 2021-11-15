@@ -5,12 +5,13 @@ import Animation from 'lottie-react-native';
 import HeaderBackButton from '../../../Common/CommonComponent/HeaderBackButton';
 import { registerBook } from '../../../Store/Actions';
 import {connect} from 'react-redux';
+import DatePicker from 'react-native-date-picker';
 
-function BookPubDateView({navigation, route, handleBookPubDate, bookPubDate}) {
-    const {tocResult} = route.params;
+function BookPubDateView({navigation, handleBookPubDate, bookPubDate}) {
     const {width, height} = useWindowDimensions();
 
     React.useLayoutEffect(() => {     
+        console.log(bookPubDate)
         navigation.setOptions({       
             headerStyle: {
                 backgroundColor: 'white',
@@ -42,23 +43,18 @@ function BookPubDateView({navigation, route, handleBookPubDate, bookPubDate}) {
 
                 </View>
 
-                <Animation
-                        style={{width: 300,  height: 300}}
-                        source={require('../../../Assets/json/14663-notifaction-page-loading-page.json')} 
-                        autoPlay
-                        resizeMode= 'cover'/>
+        
 
                 <View style={{
                     width: '100%',
-                    height: '8%',
+                    height: '40%',
                     display: 'flex',
                     flexDirection: 'row',
-            
                     alignItems: 'center',
                     justifyContent: 'center'
                 }}>
 
-                    <TextInput 
+                    {/* <TextInput 
                             style={{
                                 width: '100%',
                                 height: '100%',
@@ -77,6 +73,14 @@ function BookPubDateView({navigation, route, handleBookPubDate, bookPubDate}) {
                             }}
                             
                             placeholder="출판 날짜를 입력해 주세요. (yyyy-mm-dd) "
+                    /> */}
+
+                    <DatePicker 
+                        locale={"ko-KR"}
+                        date={bookPubDate} 
+                        onDateChange={handleBookPubDate} 
+                        mode="date"
+                        maximumDate={new Date()}
                     />
 
 
@@ -107,9 +111,7 @@ function BookPubDateView({navigation, route, handleBookPubDate, bookPubDate}) {
                             
                             }
                         ]}
-                            onPress={()=> navigation.push('GetIntro', {
-                                'tocResult': tocResult
-                            })}>
+                            onPress={()=> navigation.push('GetIntro')}>
                         
                             <Text 
                                 style={{

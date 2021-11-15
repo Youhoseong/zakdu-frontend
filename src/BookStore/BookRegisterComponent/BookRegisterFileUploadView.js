@@ -11,7 +11,7 @@ import {HS_API_END_POINT} from '../../Shared/env';
 import { registerBook } from '../../Store/Actions';
 import {connect} from 'react-redux';
 
-function  BookRegisterFileUploadView ({navigation, handleFileUpdate, fileInfo}) {
+function  BookRegisterFileUploadView ({navigation, handleFileUpdate, fileInfo, handleBookToc}) {
 
     const [fileValidate, setFileValidate] = useState("");
     const {width ,height} = useWindowDimensions();
@@ -35,11 +35,8 @@ function  BookRegisterFileUploadView ({navigation, handleFileUpdate, fileInfo}) 
                 if(res.data.statusEnum === "BOOKMARK_NO_EXIST") {
                     navigation.push('BookMarkEmpty')
                 } else if(res.data.statusEnum === "OK") {
-                    navigation.push('BookMarkChecking', 
-                    {
-                        'bookmarkResult': true,
-                        'tocResult': res.data.data
-                    })
+                    handleBookToc(res.data.data);
+                    navigation.push('BookMarkChecking');
                 }
             }
         }).catch((err)=> {
@@ -197,9 +194,16 @@ function  BookRegisterFileUploadView ({navigation, handleFileUpdate, fileInfo}) 
                         style={({pressed})=>[
                         {
                             backgroundColor: 
-                            !fileInfo ? 'gray'  : pressed ? '#2A3AC4' : '#3448F3',
+                            !fileInfo ? 'gray'  : pressed ? '#2A3AC4' : 'blue',
                         }, 
                         {
+                            shadowOffset: {
+                                width: 3,
+                                height: 2
+                            },
+                            shadowOpacity: 0.5,
+                            shadowRadius: 4,
+                            shadowColor: 'gray',
                             width: '100%',
                             height: width > height ? responsiveScreenHeight(6) : responsiveScreenWidth(6),
                             justifyContent: 'center',
@@ -239,8 +243,11 @@ const mapStateToProps = (state) => ({
     fileInfo: state.registerBooks.bookRegisterObj.bookFile,
 })
 
+
+
 const mapDispatchToProps = (dispatch) => ({
-    handleFileUpdate: (value) => dispatch(registerBook("bookFile", value))
+    handleFileUpdate: (value) => dispatch(registerBook("bookFile", value)),
+    handleBookToc : (value)=> dispatch(registerBook("bookTocResult", value))
 });
 
 

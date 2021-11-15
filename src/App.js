@@ -3,7 +3,7 @@ import {SafeAreaView, StyleSheet, Text} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Navigator from './Navigator';
-import configureStore from './Store/Reducers';
+import configureStore from './Store/Reducer/index'
 import {Provider} from 'react-redux';
 
 const {store} = configureStore();

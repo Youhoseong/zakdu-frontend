@@ -16,8 +16,7 @@ const styles = StyleSheet.create({
     },
 })
 
-function BookCategoryView({navigation, route, handleBookCategory, bookCategory}) {
-    const {tocResult} = route.params;
+function BookCategoryView({navigation, handleBookCategory, bookCategory}) {
     const {width, height} = useWindowDimensions();
 
     React.useLayoutEffect(() => {     
@@ -122,9 +121,7 @@ function BookCategoryView({navigation, route, handleBookCategory, bookCategory})
                             
                             }
                         ]}
-                            onPress={()=> navigation.push('GetCover', {
-                                'tocResult': tocResult
-                            })}>
+                            onPress={()=> navigation.push('GetCover')}>
                         
                             <Text 
                                 style={{
@@ -146,7 +143,7 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state) => ({
-    bookCategory: state.registerBooks.bookRegisterObj.bookCategory
+    bookCategory: state.registerBooks.bookRegisterObj.bookCategory,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(BookCategoryView);

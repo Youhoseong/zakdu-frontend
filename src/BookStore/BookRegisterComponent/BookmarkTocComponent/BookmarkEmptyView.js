@@ -48,7 +48,14 @@ function BookmarkEmptyView({navigation}) {
                 <Pressable 
                     style={({pressed})=>[
                     {
-                        backgroundColor: pressed ? '#2A3AC4' : '#3448F3',
+                        shadowOffset: {
+                            width: 3,
+                            height: 2
+                        },
+                        shadowOpacity: 0.5,
+                        shadowRadius: 4,
+                        shadowColor: 'gray',
+                        backgroundColor: pressed ? '#2A3AC4' : 'blue',
                         width: '100%',
                         height: width > height ? responsiveScreenHeight(6) : responsiveScreenWidth(6),
                         justifyContent: 'center',
