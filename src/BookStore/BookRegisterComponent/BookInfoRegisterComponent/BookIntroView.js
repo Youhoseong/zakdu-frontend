@@ -6,8 +6,7 @@ import HeaderBackButton from '../../../Common/CommonComponent/HeaderBackButton';
 import { registerBook } from '../../../Store/Actions';
 import {connect} from 'react-redux';
 
-function BookIntroView({navigation, route, handleBookIntro, bookIntro}) {
-    const {tocResult} = route.params;
+function BookIntroView({navigation, handleBookIntro, bookIntro}) {
     const {width, height} = useWindowDimensions();
 
     React.useLayoutEffect(() => {     
@@ -63,7 +62,7 @@ function BookIntroView({navigation, route, handleBookIntro, bookIntro}) {
                                 fontSize: responsiveScreenFontSize(0.7),
                                 marginHorizontal: '5%',
                                 borderWidth: 1,
-                                padding: 30,
+                                padding: 10,
                                 borderRadius: 15
                             }}
                             onChangeText={(text)=> {
@@ -74,7 +73,7 @@ function BookIntroView({navigation, route, handleBookIntro, bookIntro}) {
                                 }
                                 
                             }}
-                            
+                            value={bookIntro}
                             placeholder="소개글을 입력해 주세요."
                     />
 
@@ -106,9 +105,7 @@ function BookIntroView({navigation, route, handleBookIntro, bookIntro}) {
                             
                             }
                         ]}
-                            onPress={()=> navigation.push('GetPrice', {
-                                'tocResult': tocResult
-                            })}>
+                            onPress={()=> navigation.push('GetPrice')}>
                         
                             <Text 
                                 style={{

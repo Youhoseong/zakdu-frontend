@@ -6,6 +6,10 @@ import HeaderBackButton from '../../../Common/CommonComponent/HeaderBackButton';
 import RNPickerSelect from 'react-native-picker-select';
 import { registerBook } from '../../../Store/Actions';
 import {connect} from 'react-redux';
+import DocumentPicker from 'react-native-document-picker';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+
+
 
 const styles = StyleSheet.create({
     inputIOS: {
@@ -16,9 +20,37 @@ const styles = StyleSheet.create({
     },
 })
 
-function BookCoverView({navigation, route, handleBookCover, bookCover}) {
-    const {tocResult} = route.params;
+function BookCoverView({navigation,handleBookCover, bookCover}) {
+
     const {width, height} = useWindowDimensions();
+    const [fileValidate, setFileValidate] = useState("");
+
+    const filePicker =  async () => {
+        try {
+            const file = await DocumentPicker.pick({
+                type: [DocumentPicker.types.allFiles],
+            
+            });
+        
+            console.log(JSON.stringify(file))
+            file.map((f)=> {
+                if(f.type === "application/epub+zip" || f.type === "application/pdf") {
+                    handleBookCover(f);
+                    setFileValidate("");
+                }else {
+                    setFileValidate("pdf 혹은 epub 확장자만 업로드 가능해요.");
+                }
+                
+            })
+        
+        } catch (error) {
+            if (DocumentPicker.isCancel(error)) {
+                // The user canceled the document picker.
+            } else {
+                throw error;
+            }
+        }
+    }
 
     React.useLayoutEffect(() => {     
         navigation.setOptions({       
@@ -59,40 +91,63 @@ function BookCoverView({navigation, route, handleBookCover, bookCover}) {
                         autoPlay
                         resizeMode= 'cover'/>
 
-                <View style={{
-                    width: '100%',
-                    height: '10%',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    borderWidth:1,
-                    borderRadius: 15,
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                }}>
+             
+              
 
-                <RNPickerSelect
-                    onValueChange={(value)=> {
-                        console.log(value);
-                        if(value === null) {
-                            handleBookCover("");
-                        } else {
-                            handleBookCover(value);
+                {!bookCover ?
+                            <View style={{
+                                width: '100%',
+                                height: '10%', 
+                        
+                                justifyContent: 'center', 
+                                paddingLeft: 15,
+                                borderWidth:1,
+                                borderColor: fileValidate === "" ? 'black' : 'red'
+                            }}> 
+                            <Text>
+                                파일을 선택해주세요.
+                            </Text>
+                            
+                            <Pressable 
+                               style={{
+                                   position: 'absolute',
+                                   right: 5,
+                                   justifyContent: 'center',
+                                   height: '100%'
+                               }}
+                               onPress={() => filePicker()}>
+                                   <MaterialCommunityIcons name="plus-circle" size={27}/>
+                           </Pressable>
+                           </View>
+                           :
+                           <View style={{
+                            width: '100%',
+                            height: '10%', 
+                            justifyContent: 'center', 
+                            paddingLeft: 15,
+                            borderWidth:1,
+                            borderColor: fileValidate  === "" ? 'black' : 'red'
+                        }}> 
+                            <Text>
+                                {bookCover.name}
+                            </Text> 
+                            <Pressable 
+                                   style={{
+                                       position: 'absolute',
+                                       right: 5,
+                                       justifyContent: 'center',
+                                       height: '100%'
+                                   }}
+                                   onPress={() =>{
+                                        handleBookCover("")
+                                   } }>
+                                       <MaterialCommunityIcons name="minus-circle" size={27} color= '#F36B6B'/>
+                            </Pressable>
+                            </View>
+
                         }
-                    }}
-                    items={[
-                        { label: '전공도서', value: '전공도서' },
-                        { label: '문제집', value: '문제집' },
-                        { label: '기타', value: '기타' },
-                    ]}
-                    useNativeAndroidPickerStyle={false}
-                    style={styles}
 
-
-
-                />
-
-                </View>
-
+            
                 <Pressable 
                             disabled= {!bookCover ? true : false}
                             style={({pressed})=>[
@@ -118,9 +173,7 @@ function BookCoverView({navigation, route, handleBookCover, bookCover}) {
                             
                             }
                         ]}
-                            onPress={()=> navigation.push('GetName', {
-                                'tocResult': tocResult
-                            })}>
+                            onPress={()=> navigation.push('GetName')}>
                         
                             <Text 
                                 style={{
@@ -128,7 +181,6 @@ function BookCoverView({navigation, route, handleBookCover, bookCover}) {
                                     fontSize: responsiveScreenFontSize(1.0)
                                 }}>
                                 다음 단계
-
                             </Text>
                 </Pressable>
 

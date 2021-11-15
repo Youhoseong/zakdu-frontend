@@ -130,9 +130,16 @@ function PDFTocPageGetView({navigation, handleTocPage, tocStart, tocEnd}) {
                             style={({pressed})=>[
                             {
                                 backgroundColor: 
-                                !validInputs(tocStart, tocEnd) ? 'gray'  : pressed ? '#2A3AC4' : '#3448F3',
+                                !validInputs(tocStart, tocEnd) ? 'gray'  : pressed ? '#2A3AC4' : 'blue',
                             }, 
                             {
+                                shadowOffset: {
+                                    width: 3,
+                                    height: 2
+                                },
+                                shadowOpacity: 0.5,
+                                shadowRadius: 4,
+                                shadowColor: 'gray',
                                 width: '100%',
                                 height: width > height ? responsiveScreenHeight(6) : responsiveScreenWidth(6),
                                 justifyContent: 'center',

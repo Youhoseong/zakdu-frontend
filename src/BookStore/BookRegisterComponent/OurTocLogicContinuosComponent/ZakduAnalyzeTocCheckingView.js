@@ -6,17 +6,17 @@ import HeaderBackButton from '../../../Common/CommonComponent/HeaderBackButton';
 import BasisButtonComponent from '../BasisButtonComponent';
 import { tocCheckingStyles } from '../BookmarkTocComponent/BookmarkTocCheckingView';
 import DraggableFlatList from 'react-native-draggable-flatlist';
+import {connect} from 'react-redux';
+import {registerBook} from '../../../Store/Actions/index';
 
 
 
-
-function ZakduAnalyzeTocCheckinigView({navigation, route}) {
-    const {tocResult} = route.params;
+function ZakduAnalyzeTocCheckinigView({navigation, handleTocResult ,bookTocResult}) {
 
     const {width ,height} = useWindowDimensions();
     const [editable, setEditable] = useState(false);
     const [test, setTest] = useState(Math.random());
-    const [tResult, setTResult] = useState(tocResult);
+
 
     React.useLayoutEffect(() => {     
         navigation.setOptions({       
@@ -218,9 +218,9 @@ function ZakduAnalyzeTocCheckinigView({navigation, route}) {
     }
 
     const onMinusPress = (index) => {
-        if(tResult){
+        if(bookTocResult){
             console.log(index);
-            tResult.splice(index, 1);  
+            bookTocResult.splice(index, 1);  
         }
         setTest(Math.random());
      }
@@ -266,9 +266,9 @@ function ZakduAnalyzeTocCheckinigView({navigation, route}) {
                     }}>
                     
                         <DraggableFlatList
-                            data={tResult}
+                            data={bookTocResult}
                             onDragEnd={({ data }) => {
-                                setTResult(data);
+                                handleTocResult(data);
                             }}
                             keyExtractor={(item, index) => index.toString()}
                             listKey={(item, index)=> 'D' + index.toString()}
@@ -322,9 +322,7 @@ function ZakduAnalyzeTocCheckinigView({navigation, route}) {
                         }}>
                             <BasisButtonComponent setEditable={setEditable} editable={editable} context={"편집할래요."}/>
                             <Pressable 
-                                 onPress={()=> navigation.push('GetCategory', {
-                                    'tocResult': tResult
-                                })}
+                                 onPress={()=> navigation.push('DiffCheck')}
                                 style={({pressed})=>[
                                         tocCheckingStyles.buttonStyle,
                                         {
@@ -365,4 +363,13 @@ function ZakduAnalyzeTocCheckinigView({navigation, route}) {
 
 
 }
-export default ZakduAnalyzeTocCheckinigView;
+
+const mapStateToProps = (state) => ({
+    bookTocResult: state.registerBooks.bookRegisterObj.bookTocResult
+});
+
+const mapDispatchToProps = (dispatch) => ({
+    handleTocResult: (value) => dispatch(registerBook("bookTocResult", value))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ZakduAnalyzeTocCheckinigView);

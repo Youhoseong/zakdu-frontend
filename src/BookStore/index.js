@@ -16,6 +16,7 @@ import BookPriceView from './BookRegisterComponent/BookInfoRegisterComponent/Boo
 import BookCategoryView from './BookRegisterComponent/BookInfoRegisterComponent/BookCategoryView';
 import BookCoverView from './BookRegisterComponent/BookInfoRegisterComponent/BookCoverView';
 import BookmarkEmptyView from './BookRegisterComponent/BookmarkTocComponent/BookmarkEmptyView';
+import BookPageDiffCheck from './BookRegisterComponent/BookPageDiffCheck';
 
 const Stack = createStackNavigator();
 
@@ -104,6 +105,16 @@ function BookStore ({navigation}) {
                 }
             }}
             component={ZakduAnalyzeTocCheckinigView}/> 
+
+            <Stack.Screen 
+            name="DiffCheck" 
+            options={{
+                title: '책 등록하기',
+                headerStyle: {
+                    backgroundColor: '#F3F3F3'
+                }
+            }}
+            component={BookPageDiffCheck}/> 
 
             <Stack.Screen 
             name="GetName" 

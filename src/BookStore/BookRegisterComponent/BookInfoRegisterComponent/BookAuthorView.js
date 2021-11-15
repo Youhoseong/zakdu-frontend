@@ -6,8 +6,7 @@ import HeaderBackButton from '../../../Common/CommonComponent/HeaderBackButton';
 import { registerBook } from '../../../Store/Actions';
 import {connect} from 'react-redux';
 
-function BookAuthorView({navigation, route, handleBookAuthor, bookAuthor}) {
-    const {tocResult} = route.params;
+function BookAuthorView({navigation, handleBookAuthor, bookAuthor}) {
     const {width, height} = useWindowDimensions();
 
     React.useLayoutEffect(() => {     
@@ -76,7 +75,7 @@ function BookAuthorView({navigation, route, handleBookAuthor, bookAuthor}) {
                                 }
                                 
                             }}
-                            
+                            value={bookAuthor}
                             placeholder="저자를 입력해 주세요."
                     />
 
@@ -108,9 +107,7 @@ function BookAuthorView({navigation, route, handleBookAuthor, bookAuthor}) {
                             
                             }
                         ]}
-                            onPress={()=> navigation.push('GetPublisher', {
-                                'tocResult': tocResult
-                            })}>
+                            onPress={()=> navigation.push('GetPublisher')}>
                         
                             <Text 
                                 style={{

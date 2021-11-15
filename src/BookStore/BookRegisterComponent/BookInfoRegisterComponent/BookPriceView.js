@@ -7,8 +7,8 @@ import { parse } from '@babel/core';
 import { registerBook } from '../../../Store/Actions';
 import {connect} from 'react-redux';
 
-function BookPriceView({navigation, route, handleBookPrice, bookPrice}) {
-    const {tocResult} = route.params;
+function BookPriceView({navigation, handleBookPrice, bookPrice}) {
+
     const {width, height} = useWindowDimensions();
 
     React.useLayoutEffect(() => {     

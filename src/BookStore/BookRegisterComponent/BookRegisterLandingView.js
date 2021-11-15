@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {View, Text, Pressable, useWindowDimensions} from 'react-native';
-
+import { isDisplayHorizontal } from '../../Common/CommonFunction/isDisplayHorizontal';
 import { responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth } from 'react-native-responsive-dimensions';
 import Animation from 'lottie-react-native';
 import HeaderBackButton from '../../Common/CommonComponent/HeaderBackButton';
@@ -82,9 +82,16 @@ import HeaderBackButton from '../../Common/CommonComponent/HeaderBackButton';
                     <Pressable style={({pressed})=>[
                             
                         {
-                            backgroundColor: pressed ? '#2A3AC4' : '#3448F3',
+                            backgroundColor: pressed ? '#2A3AC4' : 'blue',
                         }, 
                         {
+                            shadowOffset: {
+                                width: 3,
+                                height: 2
+                            },
+                            shadowOpacity: 0.5,
+                            shadowRadius: 4,
+                            shadowColor: 'gray',
                             width: '100%',
                             height: width > height ? responsiveScreenHeight(6) : responsiveScreenWidth(6),
                             justifyContent: 'center',

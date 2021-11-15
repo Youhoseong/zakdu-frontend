@@ -5,7 +5,8 @@ import {responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth}
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import HeaderBackButton from '../../../Common/CommonComponent/HeaderBackButton';
 import BasisButtonComponent from '../BasisButtonComponent';
-
+import { registerBook } from '../../../Store/Actions';
+import {connect} from 'react-redux';
 import DraggableFlatList from 'react-native-draggable-flatlist';
 
 
@@ -31,15 +32,11 @@ export const tocCheckingStyles = StyleSheet.create({
 })
 
 
-
-function BookmarkTocCheckingView({navigation, route}) {
-    const {tocResult} = route.params;
+function BookmarkTocCheckingView({navigation, handleTocResult ,bookTocResult}) {
 
     const {width ,height} = useWindowDimensions();
     const [editable, setEditable] = useState(false);
     const [test, setTest] = useState(Math.random());
-    const [tResult, setTResult] = useState(tocResult);
-
 
     React.useLayoutEffect(() => {     
         navigation.setOptions({       
@@ -241,9 +238,9 @@ function BookmarkTocCheckingView({navigation, route}) {
     }
 
     const onMinusPress = (index) => {
-        if(tResult){
+        if(bookTocResult){
             console.log(index);
-            tResult.splice(index, 1);  
+            bookTocResult.splice(index, 1);  
         }
         setTest(Math.random());
      }
@@ -289,9 +286,9 @@ function BookmarkTocCheckingView({navigation, route}) {
                     }}>
                     
                         <DraggableFlatList
-                            data={tResult}
+                            data={bookTocResult}
                             onDragEnd={({ data }) => {
-                                setTResult(data);
+                                handleTocResult(data);
                             }}
                             keyExtractor={(item, index) => index.toString()}
                             listKey={(item, index)=> 'D' + index.toString()}
@@ -345,9 +342,9 @@ function BookmarkTocCheckingView({navigation, route}) {
                         }}>
                             <BasisButtonComponent setEditable={setEditable} editable={editable} context={"편집할래요."}/>
                             <Pressable 
-                                 onPress={()=> navigation.push('GetCategory', {
-                                    'tocResult': tResult
-                                })}
+                                 onPress={()=> {
+                                     navigation.push('DiffCheck')
+                                }}
                                 style={({pressed})=>[
                                         tocCheckingStyles.buttonStyle,
                                         {
@@ -388,5 +385,13 @@ function BookmarkTocCheckingView({navigation, route}) {
 
 }
 
+const mapDispatchToProps = (dispatch) => ({
+    handleTocResult: (value)=>  dispatch(registerBook("bookTocResult", value))
+});
 
-export default BookmarkTocCheckingView;
+const mapStateToProps = (state) => ({
+    bookTocResult : state.registerBooks.bookRegisterObj.bookTocResult
+});
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(BookmarkTocCheckingView);
