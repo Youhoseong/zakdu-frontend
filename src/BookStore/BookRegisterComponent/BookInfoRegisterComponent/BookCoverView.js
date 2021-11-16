@@ -1,14 +1,11 @@
 import React, {useState} from 'react';
-import {View, Text, Pressable, useWindowDimensions, TextInput, StyleSheet} from 'react-native';
+import {View, Text, Pressable, useWindowDimensions, Image,StyleSheet} from 'react-native';
 import {responsiveScreenFontSize, responsiveScreenWidth, responsiveScreenHeight} from 'react-native-responsive-dimensions';
-import Animation from 'lottie-react-native';
 import HeaderBackButton from '../../../Common/CommonComponent/HeaderBackButton';
-import RNPickerSelect from 'react-native-picker-select';
 import { registerBook } from '../../../Store/Actions';
 import {connect} from 'react-redux';
-import DocumentPicker from 'react-native-document-picker';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-
+import { launchImageLibrary } from 'react-native-image-picker';
 
 
 const styles = StyleSheet.create({
@@ -23,34 +20,22 @@ const styles = StyleSheet.create({
 function BookCoverView({navigation,handleBookCover, bookCover}) {
 
     const {width, height} = useWindowDimensions();
-    const [fileValidate, setFileValidate] = useState("");
 
-    const filePicker =  async () => {
-        try {
-            const file = await DocumentPicker.pick({
-                type: [DocumentPicker.types.allFiles],
-            
-            });
-        
-            console.log(JSON.stringify(file))
-            file.map((f)=> {
-                if(f.type === "application/epub+zip" || f.type === "application/pdf") {
-                    handleBookCover(f);
-                    setFileValidate("");
-                }else {
-                    setFileValidate("pdf 혹은 epub 확장자만 업로드 가능해요.");
-                }
-                
-            })
-        
-        } catch (error) {
-            if (DocumentPicker.isCancel(error)) {
-                // The user canceled the document picker.
-            } else {
-                throw error;
-            }
+
+    const getPhotos = async () => {
+  
+        const option = {
+            mediaType: 'photo',
+            selectionLimit: 1
         }
-    }
+
+        launchImageLibrary(option, function(assets) {
+            if(assets.assets) {
+                handleBookCover(assets.assets[0]);
+            }
+        });
+        
+    };
 
     React.useLayoutEffect(() => {     
         navigation.setOptions({       
@@ -85,64 +70,71 @@ function BookCoverView({navigation,handleBookCover, bookCover}) {
 
                 </View>
 
-                <Animation
-                        style={{width: 300,  height: 200}}
-                        source={require('../../../Assets/json/81757-leaf.json')} 
-                        autoPlay
-                        resizeMode= 'cover'/>
-
-             
-              
 
                 {!bookCover ?
                             <View style={{
-                                width: '100%',
-                                height: '10%', 
-                        
+                                marginTop: '30%',
+                                width: responsiveScreenWidth(10),
+                                height: responsiveScreenWidth(10), 
+                                alignItems: 'center',
                                 justifyContent: 'center', 
-                                paddingLeft: 15,
+                    
                                 borderWidth:1,
-                                borderColor: fileValidate === "" ? 'black' : 'red'
                             }}> 
-                            <Text>
-                                파일을 선택해주세요.
-                            </Text>
+                     
                             
                             <Pressable 
                                style={{
-                                   position: 'absolute',
-                                   right: 5,
                                    justifyContent: 'center',
-                                   height: '100%'
+                                   alignItems: 'center',
+                                   width: '100%',
+                                   height: '100%',
+                         
                                }}
-                               onPress={() => filePicker()}>
-                                   <MaterialCommunityIcons name="plus-circle" size={27}/>
+                               onPress={() => getPhotos()}>
+                                   <MaterialCommunityIcons name="camera" color='gray' size={27}/>
                            </Pressable>
                            </View>
                            :
-                           <View style={{
-                            width: '100%',
-                            height: '10%', 
-                            justifyContent: 'center', 
-                            paddingLeft: 15,
-                            borderWidth:1,
-                            borderColor: fileValidate  === "" ? 'black' : 'red'
-                        }}> 
-                            <Text>
-                                {bookCover.name}
-                            </Text> 
-                            <Pressable 
-                                   style={{
-                                       position: 'absolute',
-                                       right: 5,
-                                       justifyContent: 'center',
-                                       height: '100%'
-                                   }}
-                                   onPress={() =>{
-                                        handleBookCover("")
-                                   } }>
-                                       <MaterialCommunityIcons name="minus-circle" size={27} color= '#F36B6B'/>
-                            </Pressable>
+                            <View style={{
+                                marginTop: '20%',
+                                width: responsiveScreenWidth(20),
+                                height: responsiveScreenWidth(20), 
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                borderWidth:1,
+                                borderColor: 'gray',
+                                borderRadius: 15
+                            }}> 
+                                <Image 
+                                    source={{
+                                        uri: bookCover.uri
+                                    }}
+                                    resizeMode='cover'
+                                    style={{
+                                        width: '90%',
+                                        height: '90%'
+                                        
+,                                   }}
+                                />
+                                <Pressable 
+                                    style={{
+                                    
+                                        width:27,
+                                        height: 27,
+                                        top: 0,
+                                        right: 1,
+                                        position: 'absolute'
+                                    }}
+                                    onPress={() =>{
+                                            handleBookCover("")
+                                    } }>
+                                        <MaterialCommunityIcons 
+                                                
+                                                name="close-box" 
+                                                size={30}
+                                                color= 'black'/>
+                                </Pressable>
                             </View>
 
                         }

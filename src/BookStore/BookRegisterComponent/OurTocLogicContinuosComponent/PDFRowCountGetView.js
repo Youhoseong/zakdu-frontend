@@ -13,7 +13,7 @@ import { registerBook } from '../../../Store/Actions';
 
 function PDFRowCountGetView({navigation, handleTocRow, handleTocResult ,bookInfo}) {
     const {width, height} = useWindowDimensions();
-    
+    const [submitDisabled, setSubmitDisabled] = useState(false);
     const styles = StyleSheet.create({
         mainView: {
             width: '100%', 
@@ -50,6 +50,7 @@ function PDFRowCountGetView({navigation, handleTocRow, handleTocResult ,bookInfo
     }, [navigation]);
 
     const onPress = async() => {
+        setSubmitDisabled(true);
         const formData = new FormData();
         let tocAnalyzeData = {
             bookPDFTocStartPage: bookInfo.bookPDFTocStartPage,
@@ -70,9 +71,11 @@ function PDFRowCountGetView({navigation, handleTocRow, handleTocResult ,bookInfo
                        // 'Content-Type': 'multipart/form-data'
                 },
         }).then((res)=> {
+            setSubmitDisabled(false);
             handleTocResult(res.data.data);
             navigation.push('ZakduLogicChecking');
         }).catch((err)=> {
+            setSubmitDisabled(false);
             console.error(err);
         })
     }
@@ -186,11 +189,11 @@ function PDFRowCountGetView({navigation, handleTocRow, handleTocResult ,bookInfo
 
 
             <Pressable 
-                        disabled={!bookInfo.bookPDFRowCount ? true : false} 
+                        disabled={!bookInfo.bookPDFRowCount || submitDisabled ? true : false} 
                         style={({pressed})=>[
                         {
                             backgroundColor: 
-                                !bookInfo.bookPDFRowCount ? 'gray'  : pressed ? '#2A3AC4' : 'blue',
+                                !bookInfo.bookPDFRowCount || submitDisabled ? 'gray'  : pressed ? '#2A3AC4' : 'blue',
                         }, 
                         {
                             width: width > height ? '40%': '70%',
