@@ -42,7 +42,8 @@ function  BookRegisterFileUploadView ({navigation, handleFileUpdate, fileInfo, h
             }
         }).catch((err)=> {
             setSubmitDisabled(false);
-            console.error(err);
+            navigation.push('BookMarkEmpty')
+            //console.error(err);
         })
     }
         
@@ -54,19 +55,31 @@ function  BookRegisterFileUploadView ({navigation, handleFileUpdate, fileInfo, h
             
             });
         
-            console.log(JSON.stringify(file))
+            console.log(file)
             
-            file.map((f)=> {
-                const ext = f.name.split('.').pop().toLowerCase();
+            if(file) {
+                const newUri = file[0].uri.replace(file[0].uri.split('/').pop(), file[0].name);
+                console.log('newuri: ' + newUri);
+                
+                const ext = file[0].name.split('.').pop().toLowerCase();
                 console.log(ext);
+
+                let fileForm = {
+                    name: file[0].name,
+                    uri: newUri,
+                    type: file[0].type
+                }
+
                 if(ext === 'pdf' || ext === 'epub') {
-                    handleFileUpdate(f);
+                    handleFileUpdate(fileForm);
                     setFileValidate("");
                 }else {
                     setFileValidate("pdf 혹은 epub 확장자만 업로드 가능해요.");
                 }
                 
-            })
+            }
+            
+  
         
         } catch (error) {
             if (DocumentPicker.isCancel(error)) {

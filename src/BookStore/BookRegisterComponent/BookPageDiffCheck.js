@@ -69,8 +69,9 @@ const styles = StyleSheet.create({
     }
 });
 
-const PdfComponent = ({handleRealStart, bookRealFirstTocPage, edit}) => {
+const PdfComponent = ({handleRealStart, bookRealFirstTocPage, bookFile , edit}) => {
     const pdfFileExample = require('../../Assets/files/example.pdf')
+    console.log(bookFile);
     return (
         <Pdf
             fitPolicy={1}
@@ -83,7 +84,9 @@ const PdfComponent = ({handleRealStart, bookRealFirstTocPage, edit}) => {
                 }
             ]}
             ref={null}
-            source={pdfFileExample}
+            source={{
+                uri: bookFile.uri
+            }}
             horizontal={true}
             singlePage={!edit}
             page={bookRealFirstTocPage}
@@ -96,7 +99,7 @@ const PdfComponent = ({handleRealStart, bookRealFirstTocPage, edit}) => {
     );
 }
 
-function BookPageDiffCheck({navigation, bookRealFirstTocPage, handleRealStart }) {
+function BookPageDiffCheck({navigation, bookRealFirstTocPage, bookFile, handleRealStart }) {
     const {width, height} = useWindowDimensions();
     const [activateDiff, setActivateDiff] = useState(false);
 
@@ -169,7 +172,7 @@ function BookPageDiffCheck({navigation, bookRealFirstTocPage, handleRealStart })
                 </View>
             }
                 <View style={styles.pdfView}>
-                    <PdfComponent bookRealFirstTocPage={bookRealFirstTocPage} handleRealStart={handleRealStart} edit={activateDiff} />
+                    <PdfComponent bookRealFirstTocPage={bookRealFirstTocPage} bookFile={bookFile} handleRealStart={handleRealStart} edit={activateDiff} />
                 </View>
                 
                 <View>
@@ -245,6 +248,7 @@ function BookPageDiffCheck({navigation, bookRealFirstTocPage, handleRealStart })
 
 const mapStateToProps = (state) => ({
     bookRealFirstTocPage: state.registerBooks.bookRegisterObj.bookRealFirstTocPage,
+    bookFile: state.registerBooks.bookRegisterObj.bookFile
 });
 
 const mapDispatchToProps = (dispatch) => ({
