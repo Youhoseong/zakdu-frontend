@@ -11,7 +11,7 @@ import {registerBook} from '../../../Store/Actions/index';
 
 
 
-function ZakduAnalyzeTocCheckinigView({navigation, handleTocResult ,bookTocResult}) {
+function ZakduAnalyzeTocCheckinigView({navigation, handleTocResult ,bookTocResult, bookMarkExist}) {
 
     const {width ,height} = useWindowDimensions();
     const [editable, setEditable] = useState(false);
@@ -337,21 +337,39 @@ function ZakduAnalyzeTocCheckinigView({navigation, handleTocResult ,bookTocResul
                                     등록하기
                             </Text>
                         </Pressable>
-                        <Pressable 
-                                 onPress={()=> navigation.push('GetBookTitle')}
-                                style={({pressed})=>[
-                                        tocCheckingStyles.buttonStyle,
-                                        {      
-                                            backgroundColor: pressed ? '#E8E8E8': '#F7F7F7',   
-                                            height: width > height ? responsiveScreenHeight(6) : responsiveScreenWidth(6),                                      
-                                            marginHorizontal: width > height ? responsiveScreenWidth(1) : responsiveScreenHeight(1),
-                                        }
-                            ]}>
-                        
-                            <Text style={tocCheckingStyles.buttonTextStyle}>
-                                    아까 결과로 할래요.
-                            </Text>
-                        </Pressable>
+
+                        {bookMarkExist ?
+                            <Pressable 
+                                    onPress={()=> navigation.replace('BookMarkChecking')}
+                                    style={({pressed})=>[
+                                            tocCheckingStyles.buttonStyle,
+                                            {      
+                                                backgroundColor: pressed ? '#E8E8E8': '#F7F7F7',   
+                                                height: width > height ? responsiveScreenHeight(6) : responsiveScreenWidth(6),                                      
+                                                marginHorizontal: width > height ? responsiveScreenWidth(1) : responsiveScreenHeight(1),
+                                            }
+                                ]}>
+                                
+                                <Text style={tocCheckingStyles.buttonTextStyle}>
+                                        아까 결과로 할래요.
+                                </Text>
+                            </Pressable>
+                        : 
+                            <Pressable 
+                            
+                                    style={({pressed})=>[
+                                            tocCheckingStyles.buttonStyle,
+                                            {      
+                                                backgroundColor: '#F7F7F7',   
+                                                height: width > height ? responsiveScreenHeight(6) : responsiveScreenWidth(6),                                      
+                                                marginHorizontal: width > height ? responsiveScreenWidth(1) : responsiveScreenHeight(1),
+                                            }
+                                ]}>
+                    
+                                    <Text style={tocCheckingStyles.buttonTextStyle}>
+                                            -
+                                    </Text>
+                            </Pressable>}
                          </View>
                         }
 
@@ -365,7 +383,8 @@ function ZakduAnalyzeTocCheckinigView({navigation, handleTocResult ,bookTocResul
 }
 
 const mapStateToProps = (state) => ({
-    bookTocResult: state.registerBooks.bookRegisterObj.bookTocResult
+    bookTocResult: state.registerBooks.bookRegisterObj.bookTocResult,
+    bookMarkExist: state.registerBooks.bookRegisterObj.bookMarkExist
 });
 
 const mapDispatchToProps = (dispatch) => ({

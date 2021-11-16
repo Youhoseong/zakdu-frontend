@@ -16,7 +16,7 @@ function BookPriceView({navigation, handleBookPrice, bookPrice, bookObject}) {
         const formData = new FormData();
         setSubmitDisabled(true);
         let bookRegisterDto = {
-            category: bookObject.bookCategory,
+            'category': bookObject.bookCategory,
             'name': bookObject.bookName,
             "author": bookObject.bookAuthor,
             'publisher': bookObject.bookPublisher,
@@ -50,8 +50,10 @@ function BookPriceView({navigation, handleBookPrice, bookPrice, bookObject}) {
             },
         }).then((res)=> {
             setSubmitDisabled(false);
+            navigation.push('RegisterComplete');
         }).catch((err)=> {
             setSubmitDisabled(false);
+            navigation.push('RegisterFail');
             console.error(err);
         })
     }

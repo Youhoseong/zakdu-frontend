@@ -17,6 +17,8 @@ import BookCategoryView from './BookRegisterComponent/BookInfoRegisterComponent/
 import BookCoverView from './BookRegisterComponent/BookInfoRegisterComponent/BookCoverView';
 import BookmarkEmptyView from './BookRegisterComponent/BookmarkTocComponent/BookmarkEmptyView';
 import BookPageDiffCheck from './BookRegisterComponent/BookPageDiffCheck';
+import BookRegisterComplete from './BookRegisterComponent/BookRegisterComplete';
+import BookRegisterFail from './BookRegisterComponent/BookRegisterFail';
 
 const Stack = createStackNavigator();
 
@@ -196,9 +198,27 @@ function BookStore ({navigation}) {
                     backgroundColor: '#F3F3F3'
                 }
             }}
-            component={BookCoverView}/>                         
+            component={BookCoverView}/>    
 
-            
+            <Stack.Screen 
+            name="RegisterComplete" 
+            options={{
+                title: '책 등록하기',
+                headerStyle: {
+                    backgroundColor: '#F3F3F3'
+                }
+            }}
+            component={BookRegisterComplete}/>    
+
+             <Stack.Screen 
+            name="RegisterFail" 
+            options={{
+                title: '책 등록하기',
+                headerStyle: {
+                    backgroundColor: '#F3F3F3'
+                }
+            }}
+            component={BookRegisterFail}/>                 
             
         </Stack.Navigator>
     )

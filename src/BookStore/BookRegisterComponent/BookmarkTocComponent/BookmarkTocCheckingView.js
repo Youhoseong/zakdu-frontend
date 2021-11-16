@@ -32,7 +32,7 @@ export const tocCheckingStyles = StyleSheet.create({
 })
 
 
-function BookmarkTocCheckingView({navigation, handleTocResult ,bookTocResult}) {
+function BookmarkTocCheckingView({navigation, handleTocResult, handleMarkExist ,bookTocResult}) {
 
     const {width ,height} = useWindowDimensions();
     const [editable, setEditable] = useState(false);
@@ -51,6 +51,9 @@ function BookmarkTocCheckingView({navigation, handleTocResult ,bookTocResult}) {
         });   
     }, [navigation]);
 
+    React.useEffect(()=> {
+        handleMarkExist(true);
+    }, [])
 
     const HierarchyDataRender = (item, drag, isActive, index) => {
         const onPlusPress = () => {
@@ -263,7 +266,7 @@ function BookmarkTocCheckingView({navigation, handleTocResult ,bookTocResult}) {
                     }}>
                         
                         <Text style={{ fontSize: responsiveScreenFontSize(1.5), fontWeight: '700'}}>
-                            목차를 찾았어요.  
+                            내장된 목차를 찾았어요.  
                         </Text>
 
                       
@@ -386,7 +389,8 @@ function BookmarkTocCheckingView({navigation, handleTocResult ,bookTocResult}) {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-    handleTocResult: (value)=>  dispatch(registerBook("bookTocResult", value))
+    handleTocResult: (value)=>  dispatch(registerBook("bookTocResult", value)),
+    handleMarkExist: (value)=> dispatch(registerBook("bookMarkExist", value))
 });
 
 const mapStateToProps = (state) => ({
