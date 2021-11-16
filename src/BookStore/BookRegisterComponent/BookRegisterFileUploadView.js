@@ -12,13 +12,13 @@ import { registerBook } from '../../Store/Actions';
 import {connect} from 'react-redux';
 
 function  BookRegisterFileUploadView ({navigation, handleFileUpdate, fileInfo, handleBookToc}) {
-
+    const [submitDisabled, setSubmitDisabled] = useState(false);
     const [fileValidate, setFileValidate] = useState("");
     const {width ,height} = useWindowDimensions();
 
     const onPressUploadFile = async() => {
         const formData = new FormData();
-
+        setSubmitDisabled(true);
         formData.append('files', {
                 name: fileInfo.name,
                 type: fileInfo.type,
@@ -30,6 +30,7 @@ function  BookRegisterFileUploadView ({navigation, handleFileUpdate, fileInfo, h
                         'Content-Type': 'multipart/form-data'
                 },
         }).then((res)=> {
+            setSubmitDisabled(false);
             if(res.data) {
                 console.log(res.data);
                 if(res.data.statusEnum === "BOOKMARK_NO_EXIST") {
@@ -40,6 +41,7 @@ function  BookRegisterFileUploadView ({navigation, handleFileUpdate, fileInfo, h
                 }
             }
         }).catch((err)=> {
+            setSubmitDisabled(false);
             console.error(err);
         })
     }
@@ -53,8 +55,11 @@ function  BookRegisterFileUploadView ({navigation, handleFileUpdate, fileInfo, h
             });
         
             console.log(JSON.stringify(file))
+            
             file.map((f)=> {
-                if(f.type === "application/epub+zip" || f.type === "application/pdf") {
+                const ext = f.name.split('.').pop().toLowerCase();
+                console.log(ext);
+                if(ext === 'pdf' || ext === 'epub') {
                     handleFileUpdate(f);
                     setFileValidate("");
                 }else {
@@ -190,11 +195,11 @@ function  BookRegisterFileUploadView ({navigation, handleFileUpdate, fileInfo, h
 
                     
                     <Pressable 
-                        disabled={!fileInfo ? true : false} 
+                        disabled={!fileInfo || submitDisabled ? true : false} 
                         style={({pressed})=>[
                         {
                             backgroundColor: 
-                            !fileInfo ? 'gray'  : pressed ? '#2A3AC4' : 'blue',
+                            !fileInfo || submitDisabled ? 'gray'  : pressed ? '#2A3AC4' : 'blue',
                         }, 
                         {
                             shadowOffset: {
