@@ -6,10 +6,57 @@ import HeaderBackButton from '../../../Common/CommonComponent/HeaderBackButton';
 import { parse } from '@babel/core';
 import { registerBook } from '../../../Store/Actions';
 import {connect} from 'react-redux';
-
-function BookPriceView({navigation, handleBookPrice, bookPrice}) {
+import axios from 'axios';
+import {HS_API_END_POINT} from '../../../Shared/env';
+function BookPriceView({navigation, handleBookPrice, bookPrice, bookObject}) {
 
     const {width, height} = useWindowDimensions();
+    const [submitDisabled, setSubmitDisabled] = useState(false);
+    const onPressRegisterBook = () => {
+        const formData = new FormData();
+        setSubmitDisabled(true);
+        let bookRegisterDto = {
+            'category': bookObject.bookCategory,
+            'name': bookObject.bookName,
+            "author": bookObject.bookAuthor,
+            'publisher': bookObject.bookPublisher,
+            "pubDate": bookObject.bookPubDate,
+            "intro": bookObject.bookIntro,
+            "price": bookObject.bookPrice,
+            "realStartPage": bookObject.bookRealFirstTocPage,
+            'tocResult': bookObject.bookTocResult,       
+        }
+
+        let bookFile = {
+            name: bookObject.bookFile.name,
+            type: bookObject.bookFile.type,
+            uri: bookObject.bookFile.uri
+        }
+
+        let bookCover = {
+            name: bookObject.bookCover.fileName,
+            type: bookObject.bookCover.type,
+            uri: bookObject.bookCover.uri    
+        }
+
+        formData.append('bookRegisterDto', JSON.stringify(bookRegisterDto));
+        formData.append('bookFile', bookFile);
+        formData.append('bookCover', bookCover);
+        
+
+        axios.post(`${HS_API_END_POINT}/book/test2`, formData ,{
+            headers: {
+                    //'Content-Type': 'multipart/form-data'
+            },
+        }).then((res)=> {
+            setSubmitDisabled(false);
+            navigation.push('RegisterComplete');
+        }).catch((err)=> {
+            setSubmitDisabled(false);
+            navigation.push('RegisterFail');
+            console.error(err);
+        })
+    }
 
     React.useLayoutEffect(() => {     
         navigation.setOptions({       
@@ -96,11 +143,11 @@ function BookPriceView({navigation, handleBookPrice, bookPrice}) {
                 </View>
  
                 <Pressable 
-                            disabled= {!bookPrice ? true : false}
+                            disabled= {!bookPrice || submitDisabled ? true : false}
                             style={({pressed})=>[
                             {
                                backgroundColor: 
-                               !bookPrice ? 'gray' : 'blue'
+                               !bookPrice || submitDisabled ? 'gray' : 'blue'
                             }, 
                             {
                                 shadowOffset :{
@@ -120,6 +167,7 @@ function BookPriceView({navigation, handleBookPrice, bookPrice}) {
                             
                             }
                         ]}
+                        onPress={()=> onPressRegisterBook()}
                            >
                         
                             <Text 
@@ -144,6 +192,7 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state) => ({
+    bookObject: state.registerBooks.bookRegisterObj,
     bookPrice: state.registerBooks.bookRegisterObj.bookPrice
 });
 
