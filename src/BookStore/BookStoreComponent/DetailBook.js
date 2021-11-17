@@ -8,8 +8,8 @@ import {
 } from 'react-native-responsive-dimensions';
 import Carousel from 'react-native-snap-carousel';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-
-
+import { connect } from 'react-redux';
+import { getBook } from '../../Store/Actions';
 
 const BookDetailView = styled.ScrollView`
     width: 90%;
@@ -60,6 +60,38 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 17,
     },  
+
+
+    bookInfoCardView: {      
+        borderColor: 'gray',
+        borderRadius: 20, 
+        width: '100%',
+        height: '30%',
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+
+    bookInfoItem:{
+        height: '100%',
+        width: '20%',
+        justifyContent: 'center'
+    },
+    bookInfoItemTitle:{
+        textAlign: 'center',
+        fontSize: responsiveScreenFontSize(0.6),
+        fontWeight: '600',
+        color: '#A6A6A6',
+    },
+    bookInfoContent: {
+        fontSize: responsiveScreenFontSize(0.8),
+        fontWeight: '600',
+        marginTop: '5%',
+        textAlign: 'center'
+    }
+
+
+    
 })
 
 const IMAGES = {
@@ -69,12 +101,64 @@ const IMAGES = {
 
 
 
-function DetailBook ({bookId, gotoSecond}) {
+function DetailBook ({book, gotoSecond, bookObj, selectedBookObj, selectedBookId}) {
 
     const carouselRef = useRef();
     const {width, height} = useWindowDimensions();
 
+
+        const BookInfoCard = ({item}) => {
+            const date = new Date(item.pubDate)
+            return (
+                <View style={styles.bookInfoCardView}>
+                    <View style={styles.bookInfoItem}>
+                        <Text style={styles.bookInfoItemTitle}>장르</Text>
+                        <Text style={styles.bookInfoContent}>{item.category}</Text>
+                    </View>
+                    <View style={{borderLeftWidth: 1, borderLeftColor: '#C7C7C7', height: '70%'}}/>
+                        
+                    
+                    <View style={styles.bookInfoItem}>
+
+                        <Text style={styles.bookInfoItemTitle}>출시일</Text>
+                        <Text style={styles.bookInfoContent}>{date.getFullYear()}년</Text>
+                        <Text style={{
+                            fontSize: responsiveScreenFontSize(0.6),
+                            fontWeight: '600',
+                            marginTop: '5%',
+                            textAlign: 'center'
+                        }}>{date.getMonth()+1}월 {date.getDate()}일</Text>
+                    </View>
+                    <View style={{borderLeftWidth: 1, borderLeftColor: '#C7C7C7', height: '70%'}}/>
+                    <View style={styles.bookInfoItem}>
+
+                        <Text style={styles.bookInfoItemTitle}>출판사</Text>
+                        <Text numberOfLines={2}
+                        style={styles.bookInfoContent}>{item.publisher}</Text>
+                    </View>
+                    <View style={{borderLeftWidth: 1, borderLeftColor: '#C7C7C7', height: '70%'}}/>
+                    <View style={styles.bookInfoItem}>
+
+                        <Text style={styles.bookInfoItemTitle}>가격</Text>
+                        <Text 
+                            numberOfLines={2}
+                            style={styles.bookInfoContent}>{item.price.toLocaleString("ko-KR", { style: 'currency', currency: 'KRW' })}</Text>
+                    </View>
+                    <View style={{borderLeftWidth: 1, borderLeftColor: '#C7C7C7', height: '70%'}}/>
+                    <View style={styles.bookInfoItem}>
+
+                        <Text style={styles.bookInfoItemTitle}>구매 횟수</Text>
+                        <Text 
+                            numberOfLines={2}
+                        style={styles.bookInfoContent}>10,152회</Text>
+                    </View>
+                </View>
+            )
+        }
+
         const BookDetailCard = ({index, item}) => {
+            const base64Image = 'data:image/png;base64,' + item.bookCoverResource;
+
             return (
                 <View style={{
                     width: '100%',
@@ -86,11 +170,18 @@ function DetailBook ({bookId, gotoSecond}) {
                         <View style={{
                                 width: '40%',
                                 height: '100%',
-                                //borderWidth: 1,
+
                         }}>
                             <Pressable style={{
                                 height: '83%',
-                                marginTop: '17%'
+                                marginTop: '17%',
+                                shadowColor: 'gray',
+                                shadowOffset: {
+                                    width: 3,
+                                    height: 2
+                                },
+                                shadowOpacity: 0.5,
+                                shadowRadius: 20
                             }}>
                                 <Image
                                     resizeMode='cover'
@@ -100,8 +191,12 @@ function DetailBook ({bookId, gotoSecond}) {
                                         alignContent: 'center',
                                         borderWidth:1,
                                         borderColor: '#C2C2C2',
+                                        
+                                        
                                     }}
-                                    source={item.image}
+                                    source={{
+                                        uri: base64Image
+                                    }}
                                 />
                             </Pressable>
                         </View>
@@ -110,14 +205,14 @@ function DetailBook ({bookId, gotoSecond}) {
                         <View style={{
                             width: '60%',
                             height: '100%',
-                            //borderWidth: 1
+      
                         }}>
                                 <Text
                                     style={{
                                         textAlign: 'center',
                                         fontSize: responsiveScreenFontSize(1.2),
                                     }}>
-                                    {item.title}
+                                    {item.name}
                                 </Text>
                                 <View
                                     style={{
@@ -131,7 +226,7 @@ function DetailBook ({bookId, gotoSecond}) {
                                         fontSize: responsiveScreenFontSize(0.7),
                                         lineHeight: 18
                                     }}>
-                                    {item.content}
+                                    {item.intro}
                                 </Text>
 
                                 <View style={styles.buyButtonView}>
@@ -159,12 +254,13 @@ function DetailBook ({bookId, gotoSecond}) {
                         </View>
                     </BookDetailTopHalf>
                     <BookDetailBottomHalf>
+                        <BookInfoCard item={item} />
                         <Text style={{
                             lineHeight: 20,
                             textAlign: 'center',
                             fontSize: responsiveScreenFontSize(0.7),
                         }}
-                        >{item.detailContent}</Text>
+                        >{item.content}</Text>
 
                         
                     </BookDetailBottomHalf>
@@ -215,11 +311,11 @@ function DetailBook ({bookId, gotoSecond}) {
     return (
         <View>
             <Carousel
-                firstItem={Number(bookId)}
+                firstItem={Number(selectedBookId)}
                 scrollEnabled={true}
                 layout='default'
                 inactiveSlideScale={1}
-                data={books}
+                data={selectedBookObj}
                 sliderWidth={width}
                 itemWidth={width > height ? width*0.63 : width* 0.80}
                 renderItem={BookDetailCard}
@@ -229,5 +325,9 @@ function DetailBook ({bookId, gotoSecond}) {
         </View>
     );
 }
+const mapStateToProps = (state) => ({
+    bookObj: state.getBooks.bookObj
+});
 
-export default DetailBook;
+
+export default connect(mapStateToProps)(DetailBook);

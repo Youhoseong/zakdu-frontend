@@ -6,3 +6,9 @@ export const registerBook = (key, value) => ({
     key: key,
     payload: value
 });
+
+export const getBook = (key, value) => ({
+    type: "BOOK_DATA_GET",
+    key: key,
+    payload: value
+});
