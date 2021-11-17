@@ -1,31 +1,28 @@
 import React from 'react';
 import { useWindowDimensions, Pressable, Text, View } from "react-native"
 import { responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth } from "react-native-responsive-dimensions";
-const BasisButtonComponent = ({context,bColor, bFocusColor, setEditable, editable}) => {
+import { tocCheckingStyles} from './BookmarkTocComponent/BookmarkTocCheckingView';
+
+const BasisButtonComponent = ({context, setEditable, editable}) => {
     const {width, height} = useWindowDimensions();
 
     return (
         <Pressable 
                     onPress={()=> setEditable(!editable)}
                     style={({pressed})=>[
-                         
-                            {
-                                backgroundColor: pressed ? bFocusColor : bColor,
-                                width: '30%',
-                                height: width > height ? responsiveScreenHeight(6) : responsiveScreenWidth(6),
-                                justifyContent: 'center',
-                                alignItems: 'center',
+                            tocCheckingStyles.buttonStyle,
+                            {   
+                                backgroundColor: pressed ? '#E8E8E8': '#F7F7F7',
+                                height: width > height ? responsiveScreenHeight(6) : responsiveScreenWidth(6),    
                                 marginHorizontal: width > height ? responsiveScreenWidth(1) : responsiveScreenHeight(1),
-                                borderRadius: 30,
                             }
                         ]}>
                         
-                        <Text style={{color: 'white',fontSize: responsiveScreenFontSize(1.0)}}>
-                                {context}
-                        </Text>
+                    <Text style={tocCheckingStyles.buttonTextStyle}>
+                            {context}
+                    </Text>
         </Pressable>
     )
-
 }
 
 export default BasisButtonComponent;

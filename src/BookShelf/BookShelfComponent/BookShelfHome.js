@@ -1,91 +1,114 @@
-import { createStackNavigator, StackActions } from '@react-navigation/routers';
-import React, {useState, Component} from 'react';
-import {View, Text, Image, StyleSheet, TouchableOpacity, SafeAreaView, FlatList,Pressable} from 'react-native';
-import { ScrollView, State } from 'react-native-gesture-handler';
-import { Dimensions } from 'react-native';
 
-const screenWidth = Dimensions.get('screen').width;
-const screenHeight = Dimensions.get('screen').height;
+import React, {useState} from 'react';
+import {View, Text, Image, StyleSheet, SafeAreaView, FlatList,Pressable, useWindowDimensions} from 'react-native';
+import { responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth } from 'react-native-responsive-dimensions';
 
 const DATA = [
     {
       id: 0,
       image: require('../../Assets/images/img.png'),
-      title: 'First item',
+      title: '쎈 중등수학',
     },
     {
         id: 1,
       image: require('../../Assets/images/images.jpeg'),
-      title: 'Second Item',
+      title: '초등학생을 위한 과학 이야기 356편',
     },
     {
         id: 2,
         image: require('../../Assets/images/img.png'),
-      title: 'Third Item',
+        title: '쎈 중등수학',
     },
     {
         id: 3,
         image: require('../../Assets/images/images.jpeg'),
-        title: '4th item',
+        title: '초등학생을 위한 과학 이야기 356편',
     },
     {
         id: 4,
         image: require('../../Assets/images/img.png'),
-      title: '5th item',
+        title: '쎈 중등수학',
     },
     {
         id: 5,
         image: require('../../Assets/images/images.jpeg'),
-      title: '6th Item',
+        title: '초등학생을 위한 과학 이야기 356편',
     },
     {
         id: 6,
         image: require('../../Assets/images/img.png'),
-      title: '7th Item',
+        title: '쎈 중등수학',
     },
     {
         id: 7,
         image: require('../../Assets/images/images.jpeg'),
-        title: '8th item',
+        title: '초등학생을 위한 과학 이야기 356편',
     },
     
   ];
 
-const IMAGES = {
-    image1: require('../../Assets/images/img.png'),
-    image2: require('../../Assets/images/images.jpeg')
-};
 
-const Item = ({ item, onPress, backgroundColor, textColor }) => (
-    <Pressable onPress={onPress} style={[styles.item2, backgroundColor]}> 
-        <Image source={item.image} style={styles.image}/>
-        <Text style={[styles.title, textColor]}>{item.title}</Text>
-    </Pressable>
+const Item = ({ item, onPress, width, height,  }) => (
+  <View style={{
+        alignItems: 'center',
+        height: width > height ? responsiveScreenHeight(37) : responsiveScreenHeight(25),
+        flex: 1
+    }}>  
+      <Pressable onPress={onPress} style=
+          {({pressed}) => [
+            styles.pressItemStyle, 
+            {
+              padding: pressed ? 10 : 20,
+              width: width > height ? '75%' : '90%',     
+            }
+          ]}>
+
+            <Image 
+              resizeMode="cover" 
+              source={item.image}
+              style={styles.image} />
+               
+        </Pressable>
+        <Text style={[styles.title]}>{item.title}</Text>
+    </View>
   );
   
 const BookShelfHome = ({navigation}) => {
+    const {width, height} = useWindowDimensions();
     const [selectedId, setSelectedId] = useState(null);
     const numColumns = 4;
 
     const renderItem = ({ item }) => {
-      const backgroundColor = item.id === selectedId ? "gray" : null;
-      const color = item.id === selectedId ? 'blue' : 'black';
   
       return (
         <Item
           item={item}
+          width={width}
+          height={height}
           onPress={() => {
             setSelectedId(item.id);
-            navigation.push('HomeScreen')
+            navigation.push('ReadingBook')
           }}
-          backgroundColor={{ backgroundColor }}
-          textColor={{ color }}
+
         />
       );
     };
   
     return (
       <SafeAreaView style={styles.container}>
+
+        <View style={{alignItems: 'center', width: '100%', marginTop: '3%'}}>
+          <Text style={{
+            textAlign: 'left',
+            width: '90%',
+            marginBottom: '1%',
+            fontSize: responsiveScreenFontSize(1.5),
+            fontWeight: '600',
+    
+          }}>보관함 </Text>
+          <View style={{width: '90%', borderBottomWidth: 1, borderBottomColor: 'gray'}}/>
+        </View>
+
         <FlatList
           data={DATA}
           renderItem={renderItem}
@@ -106,78 +129,37 @@ const BookShelfHome = ({navigation}) => {
     },
     container: {
         flex: 1,
-        marginTop: 10,
-        marginHorizontal: 10,
+        backgroundColor: 'white',
+        paddingHorizontal: 30,
     },
-    item2: {
-        flex:1,
+    pressItemStyle: { 
+        height: '90%',
         alignItems:'center',
-        padding: 20,
-        height: screenWidth > screenHeight ? screenHeight*0.43 : screenHeight*0.30,
-        //width: screenWidth > screenHeight ? screenWidth*0.2 : screenWidth*0.30,
-        marginVertical: screenHeight*0.01,
-        //marginHorizontal: 20,
-    },
-    title: {
-        marginTop:5,
-        flex:1,
-        fontSize: screenWidth > screenHeight ? screenHeight*0.02 : screenHeight*0.015,
+        shadowColor: 'gray',
+        shadowOffset: {
+          width: 3,
+          height: 2
+        },
+        shadowOpacity: 0.5,
+        shadowRadius: 30
     },
     image: {
-        //height: 300,
-        flex:9,
-        resizeMode: 'contain',
+      width: '100%',
+      height: '100%',
+  
+      borderRadius: 5
 
     },
+    title: {
+        width: '100%',
+        textAlign: 'center',
+        height: '10%',
+        overflow: 'hidden',
+        fontSize: responsiveScreenFontSize(0.9)
+    },
+
 
 })
 
-
-
-
-
 export default BookShelfHome;
 
-// function BookShelfHome({navigation}) {
-
-//     return (
-//         <ScrollView contentContainerStyle={{flex:1}}>
-
-//             <View style={{
-//                 flex:1,
-//                 flexDirection:'row',
-//                 backgroundColor:'green'
-//                 }}>
-//                 <View style={{flex:1, backgroundColor:'red'}}>
-//                     <TouchableOpacity style={styles.bookBox}>
-//                         <Image source={IMAGES.image1} style={styles.item}/>
-//                         <Text style={styles.text}>쎈 고등수학(상)</Text>
-//                     </TouchableOpacity>
-//                 </View>
-                
-//                 <View style={{flex:1, backgroundColor:'blue'}}>
-//                     <TouchableOpacity style={styles.bookBox}>
-//                         <Image source={IMAGES.image2} style={styles.item}/>
-//                         <Text style={styles.text}>초등학생을 위한 과학이야기</Text>
-//                     </TouchableOpacity>
-//                 </View>
-//                 <View style={{flex:1, backgroundColor:'red'}}>
-//                     <TouchableOpacity style={styles.bookBox}>
-//                         {/* <Image source={IMAGES.image1} style={styles.item}/>
-//                         <Text style={styles.text}>aaaaaaaaaaaaaaa</Text> */}
-//                     </TouchableOpacity>
-//                 </View>
-//                 <View style={{flex:1}}>
-//                     <TouchableOpacity style={styles.bookBox}>
-//                         {/* <Image source={IMAGES.image1} style={styles.item}/>
-//                         <Text style={styles.text}>aaaaaaaaaaaaaaa</Text> */}
-//                     </TouchableOpacity>
-//                 </View>
-//             </View>
-//             <View style={{flex:1}}>
-
-//             </View>
-
-//         </ScrollView>
-//     )
-// }

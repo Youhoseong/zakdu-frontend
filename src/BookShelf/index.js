@@ -19,7 +19,7 @@ function BookShelf () {
                 title: '노제원님의 책장'
             }}/>
             <Stack.Screen 
-            name="HomeScreen" 
+            name="ReadingBook" 
             component={ReadingBookView}
             options={{
                 title: '읽고 있는 책',
