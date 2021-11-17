@@ -101,7 +101,8 @@ function ReadingBookView({navigation}) {
     const pdfRef = useRef(null);
 
     const pdfFileExample = require('../../Assets/files/example.pdf')
-    //const [source, setSource] = useState({ uri: RNFS.DocumentDirectoryPath + "/dec.pdf" });
+    // const [source, setSource] = useState({ uri: RNFS.TemporaryDirectoryPath + "/pdf/" + "downloaded.pdf_dec" });
+    // const source = {uri: RNFS.TemporaryDirectoryPath + "pdf/" + "downloaded.pdf_dec" };
     // epub_test();
     // pdf_test();
 

@@ -8,6 +8,9 @@ import {
 } from 'react-native-responsive-dimensions';
 import Carousel from 'react-native-snap-carousel';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import axios from 'axios';
+import {HS_API_END_POINT} from '../../Shared/env';
+import * as RNFS from 'react-native-fs';
 
 
 
@@ -67,13 +70,24 @@ const IMAGES = {
     image2: require('../../Assets/images/images.jpeg')
 };
 
+const downloadBook = async (id) => {
+    // 책 id 전송해야함!
+    axios.get(HS_API_END_POINT + "/download/pdf_test", {params: {id: 1}}).then(async (res) => {
+        const pdfDirPath = RNFS.DocumentDirectoryPath + "/pdf/";
+        const data = res.data.data;
+        console.log(data);
+        if (!await RNFS.exists(pdfDirPath)) {
+           await RNFS.mkdir(pdfDirPath);
+        }
+        RNFS.writeFile(pdfDirPath + data.fileName, data.bytes, 'base64');
+    })
+}
 
 
 function DetailBook ({bookId, gotoSecond}) {
 
     const carouselRef = useRef();
     const {width, height} = useWindowDimensions();
-
         const BookDetailCard = ({index, item}) => {
             return (
                 <View style={{
@@ -149,7 +163,8 @@ function DetailBook ({bookId, gotoSecond}) {
                                     }}>
                                     <TouchableOpacity 
                                         style={styles.buyButton} 
-                                        onPress={() => Alert.alert('구매하기')}>
+                                        // onPress={() => Alert.alert('구매하기')}>
+                                        onPress={downloadBook}>
                                         <Text style={styles.buyButtonText}>구매하기 </Text>
                                     </TouchableOpacity>
                                     </View>
