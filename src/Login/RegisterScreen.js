@@ -14,7 +14,6 @@ import {
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import RegisterStep1 from './RegisterStep/EnterName';
 
 // import Loader from './Components/Loader';
 
@@ -40,7 +39,7 @@ function RegisterScreen ({navigation}){
                 </View>
                 <View style={{flex:2,justifyContent:'flex-start',alignItems:'center'}}>
                     <TouchableOpacity 
-                        onPress={() => navigation.navigate('EnterName')}
+                        onPress={() => navigation.navigate('EnterType')}
                         style={styles.btn} 
                         activeOpacity={0.5}
                     >

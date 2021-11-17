@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
 import { createStackNavigator, createAppContainer } from "react-navigation";
-import {StyleSheet, ScrollView, TouchableOpacity, Button, View, Text, } from 'react-native';
+import {StyleSheet, ScrollView, TouchableOpacity, Button, View, Text,Image } from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { responsiveFontSize } from 'react-native-responsive-dimensions';
 
 
 
@@ -22,7 +23,9 @@ function MyPageHome({navigation}) {
                 style={styles.profiles}
                 onPress={() => navigation.navigate('Profiles',{originname:username})} 
             >
-                {/* 이미지 삽입 */}
+                <Image 
+                style={{width:'50%',height:'50%',resizeMode:'contain',margin:10}}
+                source={require('../../Assets/images/profileImg.png')} />
                 <Text
                     style={styles.mainText}
                 >
@@ -79,7 +82,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     mainText: {
-        fontSize:30
+        fontSize:responsiveFontSize(1.5)
     },
     innerView: {
         flex:1,
