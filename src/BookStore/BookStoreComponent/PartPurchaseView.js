@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, useWindowDimensions, StyleSheet, Image, Pressable, FlatList, ScrollView} from 'react-native';
+import {Alert, View, Text, useWindowDimensions, StyleSheet, Image, Pressable, FlatList, ScrollView} from 'react-native';
 import { responsiveFontSize, responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth } from 'react-native-responsive-dimensions';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import Modal from 'react-native-modal';

@@ -146,7 +146,8 @@ const BookShelfHome = ({navigation}) => {
     image: {
       width: '100%',
       height: '100%',
-  
+      borderWidth:1,
+      borderColor: '#C2C2C2',
       borderRadius: 5
 
     },

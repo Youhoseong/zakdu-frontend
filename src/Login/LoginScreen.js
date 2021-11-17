@@ -155,7 +155,7 @@ function LoginScreen({navigation}) {
                 onPress={() => navigation.navigate('Register')}
                 style={styles.toRegister}
               >
-                아직 ZakDu의 회원이 아니라면 여기를 눌러 가입해주세요!
+                작두의 회원이 아니신가요?
               </Text>
             </View>
             <View style={{flex: 0.75}}>
