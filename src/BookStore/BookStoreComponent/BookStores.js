@@ -1,5 +1,17 @@
 import React, { useState} from 'react';
-import {View, Text, TextInput, useWindowDimensions, FlatList, Image, Pressable, ScrollView, StyleSheet} from 'react-native';
+import axios from 'axios';
+import {
+    View, 
+    Text, 
+    TextInput, 
+    useWindowDimensions, 
+    FlatList, 
+    Image, 
+    Pressable, 
+    ScrollView, 
+    StyleSheet,
+    RefreshControl
+} from 'react-native';
 import Modal from 'react-native-modal';
 import DetailBook from './DetailBook';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -7,6 +19,9 @@ import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import PartPurchaseView from './PartPurchaseView';
 import { responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth } from 'react-native-responsive-dimensions';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { HS_API_END_POINT } from '../../Shared/env';
+import { connect } from 'react-redux';
+import { getBook } from '../../Store/Actions';
 
 const styles = StyleSheet.create({
     imageStyle: {
@@ -53,90 +68,158 @@ const styles = StyleSheet.create({
     }
 })
 
-
-function BookStores({navigation}) {
+function BookStores({navigation, handleBookObj, bookObj}) {
     const [detailBookVisible, setDetailBookVisible] = useState(false);
     const [partBookPurchaseVisible, setPartBookPurchaseVisible] = useState(false);
-    const [selectedBookId, setSelectedBookId] = useState(null);
+    const [selectedBook, setSelectedBook] = useState({});
+    const [selectedCategoryBooks, setSelectedCategoryBooks] = useState([]);
+    const [selectedBookId, setSelectedBookId] = useState(0);
+    const [refreshing, setRefreshing] = useState(false);
 
-    const gotoPartPurchaseView = (currentIndex) => {
-        setSelectedBookId(currentIndex);
+    const gotoPartPurchaseView = (currentbook) => {
+        setSelectedBook(currentbook);
         setDetailBookVisible(false);
         setTimeout(function(){setPartBookPurchaseVisible(true)}, 600);
-        //navigation.push('PartPurchase', {'selectedBook': currentIndex});
     }
-
 
     const {width, height} = useWindowDimensions();
 
-    const IMAGES = {
-        image1: require('../../Assets/images/img.png'),
-        image2: require('../../Assets/images/images.jpeg')
-    };
-    
+    const onRefresh = () => {
+        setRefreshing(true);
+        axios.get(`${HS_API_END_POINT}/book-purchase/book-list`)
+                .then((res)=> {      
+                    res.data.data.map(item => {
+                        console.log(item.category)
+                    })
+                    handleBookObj("allBook",res.data.data);
+                    handleBookObj("workBook", res.data.data.filter(item => item.category === '문제집'))
+                    handleBookObj("majorBook", res.data.data.filter(item => item.category === '전공도서'))
+                    handleBookObj("otherBook", res.data.data.filter(item => item.category === '기타'))
+                    setRefreshing(false);
+                })
+                .catch((err)=> {
+                    console.log(err);
+                    setRefreshing(false);
+            })
+    }
+
     const [books, setBooks] = useState([
-        { 
-            id: 0, 
-            image: IMAGES.image1,
-            title: '쎈 중등수학 2(하)',
-            content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-            detailContent: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+        {
+            id: 0,
+            name: '',
+        
         },
         {
             id: 1,
-            image: IMAGES.image1,
-            title: '쎈 중등수학 2(하)',
-            content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-            detailContent: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+            name: '',
+        
         },
 
         {
             id: 2,
-            image: IMAGES.image2,
-            title: '쎈 중등수학 2(하)',
-            content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-            detailContent: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+            name: '',
+        
         },
         {
             id: 3,
-            image: IMAGES.image2,
-            title: '쎈 중등수학 2(하)',
-            content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-            detailContent: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
-        }
+            name: '',
+        },
+        {
+            id: 4,
+            name: '',
+        
+        },
+        {
+            id: 5,
+            name: '',
+        
+        },
+
+        {
+            id: 6,
+            name: '',
+        
+        },
+        {
+            id: 7,
+            name: '',
+        },
+
     
     ]);
 
+    // horizontal flatlist 라서 width
     const BookStoreBookListRender = (item, index) => {
+        const base64Image = 'data:image/png;base64,' + item.bookCoverResource;
         return (
             <View>
                 <Pressable onPress={
                     () => {
-                        setSelectedBookId(item.id);
-                        setDetailBookVisible(true);
+                        setSelectedBook(item);
+                        console.log(index);
+                        setSelectedBookId(index);
+
+                        if(item.category === "문제집")
+                            setSelectedCategoryBooks(bookObj.workBook);       
+                        else if(item.category === "전공도서")
+                            setSelectedCategoryBooks(bookObj.majorBook);
+                        else  
+                            setSelectedCategoryBooks(bookObj.otherBook);
+                        
+                        if(item.category)
+                            setDetailBookVisible(true);
                     }
-                    
                 }
                 style={{
-                    height: '98%'           
-                }}
-                >
-                <Image 
-                    resizeMode='cover'
-                    source={item.image}
-                    style={[
-                        {
-                            width: width > height ? responsiveScreenWidth(14) : responsiveScreenHeight(14),
-                        },
-                        styles.imageStyle
-                    ]}
-                ></Image>
+                    height: '90%',     
+                    width: width > height ? responsiveScreenWidth(16) : responsiveScreenHeight(16), 
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}>
+                
+                    <Image 
+                        resizeMode='cover'
+                        source={{
+                            uri: base64Image
+                        }}
+                        style={[
+                            {
+                                width: '90%'
+                            },
+                            styles.imageStyle
+                        ]}
+                    />
                 </Pressable>
+                <Text 
+                    numberOfLines={1} 
+                    style={{
+                        fontSize: responsiveScreenFontSize(0.9),
+                        marginTop: 5,
+                        textAlign: 'center',
+                        height: '10%', 
+                        width: width > height ? responsiveScreenWidth(16) : responsiveScreenHeight(16), 
+            
+                    }}>{item.name}</Text>
             </View>
     
         );
     }
 
+    React.useEffect(()=> {
+            axios.get(`${HS_API_END_POINT}/book-purchase/book-list`)
+                .then((res)=> {      
+                    res.data.data.map(item => {
+                        console.log(item.category)
+                    })
+                    handleBookObj("allBook",res.data.data);
+                    handleBookObj("workBook", res.data.data.filter(item => item.category === '문제집'))
+                    handleBookObj("majorBook", res.data.data.filter(item => item.category === '전공도서'))
+                    handleBookObj("otherBook", res.data.data.filter(item => item.category === '기타'))
+                })
+                .catch((err)=> {
+                    console.log(err);
+            })
+    },[]);
     
 
     return (
@@ -144,10 +227,14 @@ function BookStores({navigation}) {
             width: '100%',
             height: '100%'
         }}>
-        <ScrollView style={{
-            backgroundColor: 'white',
-            width: '100%'
-        }}>
+        <ScrollView 
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
+                style={{
+                backgroundColor: 'white',
+                width: '100%',
+            }}>
 
             <View style={styles.catergoryViewStyle }>
                 <View style={styles.searchBarViewStyle}> 
@@ -170,14 +257,16 @@ function BookStores({navigation}) {
                     display: 'flex',
                     flexDirection: 'row',
                     width: '100%',
-                    height: width > height ? responsiveScreenHeight(28) : responsiveScreenWidth(28),
-                }}>
-                    <FlatList
+                    height: width > height ? responsiveScreenHeight(30) : responsiveScreenWidth(30),
+                }}>    
+                
+                      <FlatList
                         horizontal
-                        data={books}
+                        data={bookObj.workBook.length > 0 ? bookObj.workBook : books}
                         renderItem={({item,index})=> BookStoreBookListRender(item, index)}
-                        keyExtractor={(item,index)=> item.id.toString()}
-                    />
+                        keyExtractor={(item,index)=> item.id.toString()} />
+                     
+                    
                 </View>
 
                 <View style={{
@@ -221,12 +310,13 @@ function BookStores({navigation}) {
                     height: width > height ? responsiveScreenHeight(28) : responsiveScreenWidth(28),
                    
                 }}>
-                    <FlatList
+
+                      <FlatList
                         horizontal
-                        data={books}
+                        data={bookObj.majorBook.length > 0 ? bookObj.majorBook : books}
                         renderItem={({item,index})=> BookStoreBookListRender(item, index)}
                         keyExtractor={(item,index)=> item.id.toString()}
-                    />
+                    /> 
                 </View>
 
                 <View style={{
@@ -263,7 +353,7 @@ function BookStores({navigation}) {
                     },
                  
                 ]}>
-                    호성이가 만든 책
+                    기타
                 </Text>
                 <View style={{
                     display: 'flex',
@@ -302,19 +392,9 @@ function BookStores({navigation}) {
                     <MaterialCommunityIcons name="chevron-right" size={27} />
                     
                 </Pressable>
-
-
             </View>
-{/* 
-   
-            <View style={{borderWidth:1,bottom:0,alignSelf:'flex-end'}}>
-                <Button
-                    title="Press"
-                    color="#841584"
-                    accessibilityLabel="Press"/>
-            </View> */}
-    
 
+    
             <Modal 
                 isVisible={detailBookVisible}
                 useNativeDriver={true}
@@ -323,15 +403,17 @@ function BookStores({navigation}) {
                 hideModalContentWhileAnimating={true} 
                 onSwipeComplete={()=>setDetailBookVisible(false)}
                 animationIn= "zoomInDown"
-                animationOut="zoomOutUp"
-            >
-            
+                animationOut="zoomOutUp">
                    
-            <TouchableOpacity 
+                <TouchableOpacity 
                         onPress={() => setDetailBookVisible(false)} style={{margin: 5}}>
                         <Icon name="times-circle" size={30} color="white" />
                 </TouchableOpacity>
-                <DetailBook gotoSecond={gotoPartPurchaseView} bookId={selectedBookId}/>
+                <DetailBook gotoSecond={gotoPartPurchaseView} 
+                            book={selectedBook} 
+                            selectedBookObj={selectedCategoryBooks}
+                            selectedBookId={selectedBookId}/>
+                
 
             </Modal>
 
@@ -352,7 +434,7 @@ function BookStores({navigation}) {
                         <Icon name="times-circle" size={30} color="white" />
                 </TouchableOpacity>
 
-                <PartPurchaseView  selectedBook={selectedBookId}/>
+                <PartPurchaseView  selectedBook={selectedBook}/>
 
       
             </Modal>
@@ -362,7 +444,7 @@ function BookStores({navigation}) {
         <Pressable 
             style={({pressed}) => [
             {
-                backgroundColor: pressed ? '#2A3AC4' : '#3448F3',
+                backgroundColor: pressed ? '#121212' : 'black',
             }, 
             {
                 width: 70,
@@ -376,19 +458,16 @@ function BookStores({navigation}) {
             }]}
             onPress={()=> {
                 navigation.push('BookRegister');
-            }}
+            }}>
 
-        >
+        
          <Text style={{
              color: 'white',
              fontSize: responsiveScreenFontSize(2),
              textAlign: 'center',
-   
-
          }}>+</Text>
         </Pressable>
         
-   
 
         </View>
   
@@ -396,4 +475,14 @@ function BookStores({navigation}) {
 
 
 }
-export default BookStores;
+
+
+const mapStateToProps = (state) => ({
+    bookObj: state.getBooks.bookObj
+});
+
+const mapDispatchToProps = (dispatch) => ({
+    handleBookObj: (key, value) => dispatch(getBook(key, value))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(BookStores);

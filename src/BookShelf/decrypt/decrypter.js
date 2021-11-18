@@ -9,6 +9,7 @@ import {
     PDFRef,
 } from "pdf-lib";
 
+
 import {decode} from 'base-64';
 import {Buffer} from 'buffer';
 const atob = decode;
@@ -107,7 +108,7 @@ export async function decryptPages(pdfPath, pageInfos) {
     var pdfBase64 = await RNFS.readFile(pdfPath, 'base64');
     const existingPdfBytes = Buffer.from(pdfBase64, 'base64');
     console.log(existingPdfBytes);
-    
+
     var pdfDoc = await PDFDocument.load(existingPdfBytes);
 
     const pageNum = pdfDoc.getPageCount();

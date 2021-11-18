@@ -19,6 +19,7 @@ import EnterEmail from './Login/RegisterStep/EnterEmail';
 import PasswordCheck from './Login/RegisterStep/PasswordCheck';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import EnterType from './Login/RegisterStep/EnterType';
 
 const Stack = createStackNavigator();
 const LogStack = createStackNavigator();
@@ -120,6 +121,16 @@ const Auth = () => {
             title: '',
             headerBackTitleVisible: false,
           }}
+        />
+
+        {/* 구매자, 판매자 구별 */}
+        <LogStack.Screen
+        name="EnterType"
+        component={EnterType}
+        options={{
+          title: '',
+          headerBackTitleVisible: false,
+        }}
         />
 
         {/* 이름입력 */}
