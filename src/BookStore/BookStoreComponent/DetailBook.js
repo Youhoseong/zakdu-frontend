@@ -8,6 +8,12 @@ import {
 } from 'react-native-responsive-dimensions';
 import Carousel from 'react-native-snap-carousel';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import axios from 'axios';
+import {HS_API_END_POINT} from '../../Shared/env';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as RNFS from 'react-native-fs';
+
+
 import { connect } from 'react-redux';
 import { getBook } from '../../Store/Actions';
 
@@ -99,6 +105,28 @@ const IMAGES = {
     image2: require('../../Assets/images/images.jpeg')
 };
 
+const downloadBook = async (id) => {
+    // 책 id 전송해야함!
+    // key는 "pdf_" + id
+    axios.get(HS_API_END_POINT + "/download/pdf", {params: {id: 1}}).then(async (res) => {
+        const pdfDirPath = RNFS.DocumentDirectoryPath + "/pdf/";
+        console.log(pdfDirPath);
+        const data = res.data.data;
+        console.log(data);
+        if (!await RNFS.exists(pdfDirPath)) {
+           await RNFS.mkdir(pdfDirPath);
+        }
+        RNFS.writeFile(pdfDirPath + data.fileName, data.bytes, 'base64');
+        const localData = {
+            book_id: id,
+            fileName: data.fileName,
+            title: data.title,
+        }
+        await AsyncStorage.setItem("pdf_" + id, JSON.stringify(localData));
+        const tt = await AsyncStorage.getItem("pdf_" + id);
+        console.log(JSON.parse(tt));
+    })
+}
 
 
 function DetailBook ({book, gotoSecond, bookObj, selectedBookObj, selectedBookId}) {
@@ -244,7 +272,8 @@ function DetailBook ({book, gotoSecond, bookObj, selectedBookObj, selectedBookId
                                     }}>
                                     <TouchableOpacity 
                                         style={styles.buyButton} 
-                                        onPress={() => Alert.alert('구매하기')}>
+                                        // onPress={() => Alert.alert('구매하기')}>
+                                        onPress={() => downloadBook(1)}>
                                         <Text style={styles.buyButtonText}>구매하기 </Text>
                                     </TouchableOpacity>
                                     </View>

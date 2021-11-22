@@ -127,7 +127,7 @@ export const registerBooks = (state = INITIAL_STATE, action) => {
                 return {
                     bookRegisterObj: {
                         ...state.bookRegisterObj,
-                        bookPageDiff: action.payload
+                        bookRealFirstTocPage: action.payload
                     }
                 }
             }

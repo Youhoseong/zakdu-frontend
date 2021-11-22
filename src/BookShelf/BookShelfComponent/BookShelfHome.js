@@ -6,8 +6,8 @@ import { responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth
 const DATA = [
     {
       id: 0,
-      image: require('../../Assets/images/img.png'),
-      title: '쎈 중등수학',
+      image: require('../../Assets/images/img2.png'),
+      title: 'Hidden Markov Models',
     },
     {
         id: 1,

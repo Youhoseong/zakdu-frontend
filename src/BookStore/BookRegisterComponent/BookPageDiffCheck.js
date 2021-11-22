@@ -89,7 +89,7 @@ const PdfComponent = ({handleRealStart, bookRealFirstTocPage, bookFile , edit}) 
             }}
             horizontal={true}
             singlePage={!edit}
-            page={bookRealFirstTocPage}
+            
             enablePaging={true}
             onPageChanged={(page)=> {
                 console.log(page);
