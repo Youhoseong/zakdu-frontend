@@ -33,17 +33,24 @@ FileReader.prototype.readAsArrayBuffer = function (blob) {
 }
 
 async function decrypt(encrypted, aesKey, iv) {
-    aesKey = CryptoJS.enc.Utf8.parse(aesKey ? aesKey : "abcdefghijklmnopqrstuvwxyzabcdef");
-    iv = CryptoJS.enc.Utf8.parse(iv ? iv : "0123456789abcdef");
+
+    aesKey = CryptoJS.enc.Utf8.parse(aesKey);
+    iv = CryptoJS.enc.Utf8.parse(iv);
 
     // bytes -> wordArray class 일반적 바이트 배열 아님!
-    var bytes = typeof(encrypted) === "string" ? 
-        CryptoJS.AES.decrypt(encrypted, aesKey, { iv: iv,
-        padding: CryptoJS.pad.Pkcs7,
-        mode: CryptoJS.mode.CBC }) : 
+    var bytes;
+    console.log(typeof(encrypted) === "string");
+    if(typeof(encrypted) === "string") {
+        bytes = CryptoJS.AES.decrypt(encrypted, aesKey, { iv: iv,
+            padding: CryptoJS.pad.Pkcs7,
+            mode: CryptoJS.mode.CBC });
+    }
+    else {
         CryptoJS.AES.decrypt({ciphertext: encrypted}, aesKey, { iv: iv,
-        padding: CryptoJS.pad.Pkcs7,
-        mode: CryptoJS.mode.CBC });
+            padding: CryptoJS.pad.Pkcs7,
+            mode: CryptoJS.mode.CBC });
+    }
+        
     var unit8ByteArray = convert_word_array_to_uint8Array(bytes);
     return unit8ByteArray;
 }
@@ -141,10 +148,10 @@ export async function decryptPages(pdfPath, pageInfos) {
             const stream = page.doc.context.lookup(streamRef);
             const contents = tryToDecodeStream(stream);
             if (contents) {
-                decrypt(contents, pageInfo.aesKey, pageInfo.iv).then(newContents => {
-                    const newStream = page.doc.context.flateStream(newContents);
-                    page.doc.context.assign(streamRef, newStream);
-                });
+                    decrypt(contents, pageInfo.aesKey, pageInfo.iv).then(newContents => {
+                        const newStream = page.doc.context.flateStream(newContents);
+                        page.doc.context.assign(streamRef, newStream);
+                    });
             }
         }
       });
