@@ -17,7 +17,8 @@ const INITIAL_STATE = {
         bookPrice: "",
         bookRealFirstTocPage: 1,
         bookTocResult: "",
-        bookMarkExist: false
+        bookMarkExist: false,
+        bookISBN: ""
     }
 }
 
@@ -144,6 +145,16 @@ export const registerBooks = (state = INITIAL_STATE, action) => {
                     bookRegisterObj: {
                         ...state.bookRegisterObj,
                         bookMarkExist: action.payload
+                    }
+                }
+            }
+            else if(action.key == "bookISBN") {
+                console.log("isbn: " + state.bookRegisterObj.bookISBN);
+                console.log("payload: "+ action.payload);
+                return {
+                    bookRegisterObj: {
+                        ...state.bookRegisterObj,
+                        bookISBN: action.payload
                     }
                 }
             }

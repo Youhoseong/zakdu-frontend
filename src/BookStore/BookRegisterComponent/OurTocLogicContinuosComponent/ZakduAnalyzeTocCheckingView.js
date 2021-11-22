@@ -8,10 +8,10 @@ import { tocCheckingStyles } from '../BookmarkTocComponent/BookmarkTocCheckingVi
 import DraggableFlatList from 'react-native-draggable-flatlist';
 import {connect} from 'react-redux';
 import {registerBook} from '../../../Store/Actions/index';
+import axios from 'axios';
+import {HS_API_END_POINT} from '../../../Shared/env';
 
-
-
-function ZakduAnalyzeTocCheckinigView({navigation, handleTocResult ,bookTocResult, bookMarkExist}) {
+function ZakduAnalyzeTocCheckinigView({navigation, handleTocResult ,bookTocResult, bookMarkExist, fileInfo}) {
 
     const {width ,height} = useWindowDimensions();
     const [editable, setEditable] = useState(false);
@@ -32,16 +32,49 @@ function ZakduAnalyzeTocCheckinigView({navigation, handleTocResult ,bookTocResul
     }, [navigation]);
 
 
-    const HierarchyDataRender = (item, drag, isActive, index) => {
+    const backToBookMarkResult = () => {
+        const formData = new FormData();
+
+        formData.append('files', {
+                name: fileInfo.name,
+                type: fileInfo.type,
+                uri: fileInfo.uri
+        });
+
+        axios.post(`${HS_API_END_POINT}/book/bookmark-analyze`, formData,{
+            headers: {
+                    'Content-Type': 'multipart/form-data'
+            },
+        }).then((res)=> {
+
+            if(res.data) {
+                console.log(res.data);
+                if(res.data.statusEnum === "BOOKMARK_NO_EXIST") {
+                    console.log
+                    navigation.navigate('BookMarkEmpty')
+                } else if(res.data.statusEnum === "OK") {
+                    handleTocResult(res.data.data);
+                    navigation.navigate('BookMarkChecking');
+                }
+            }
+        }).catch((err)=> {
+            console.log(err);
+            navigation.replace('BookMarkEmpty')
+            //console.error(err);
+        })
+    }
+
+
+    const HierarchyDataRender = (items, drag, isActive, index) => {
         const onPlusPress = () => {
-            if(item.childs) {
-                item.childs = [...item.childs, {
+            if(items.childs) {
+                items.childs = [...items.childs, {
                     id: Math.random(),
                     text: '',
                     childs: null
                 }]
             } else {
-                item.childs = [{
+                items.childs = [{
                     id: Math.random(),
                     text: '',
                     childs: null,
@@ -51,11 +84,38 @@ function ZakduAnalyzeTocCheckinigView({navigation, handleTocResult ,bookTocResul
          }
 
          const onMinusPress = (index) => {
-            //console.log(id);
-            if(item.childs){
-                console.log(index);
-                item.childs.splice(index, 1);
-               
+            console.log(items.text);
+
+            if(items.parent){
+                console.log('부모:' + items.parent.text);
+                let childList = items.childs;
+                items.parent.childs.splice(index, 1);
+
+                if(childList) {
+                    childList.map(
+                        c => c.parent = items.parent
+                    );
+                   items.parent.childs = items.parent.childs.slice(0, index)
+                                                            .concat(childList)
+                                                            .concat(items.parent.childs.slice(index));
+                }
+                     
+            } else {
+                bookTocResult.splice(index, 1); 
+                let childList = items.childs;
+                if(childList) {
+                    childList.map(
+                        c => c.parent = null
+                    );
+                    
+
+                   bookTocResult = bookTocResult.slice(0, index)
+                                                            .concat(childList)
+                                                            .concat(bookTocResult.slice(index));
+
+
+                    handleTocResult(bookTocResult);
+                }
             }
             setTest(Math.random());
          }
@@ -70,7 +130,7 @@ function ZakduAnalyzeTocCheckinigView({navigation, handleTocResult ,bookTocResul
                         borderColor: isActive ? 'red': null
                     },
                     {
-                    width: '85%',
+                    width: '90%',
                     marginHorizontal: 20, 
                     marginVertical: 10
                      }
@@ -78,68 +138,76 @@ function ZakduAnalyzeTocCheckinigView({navigation, handleTocResult ,bookTocResul
                 key={index}>    
                         <View style={[
                             {
-                            paddingVertical: 10,
-                            width: '100%',
-                            display:'flex', 
-                            flexDirection: 'row',
-                            borderBottomWidth: 1,
-                            borderColor: 'gray',
-                            alignItems: 'center'
+                                paddingVertical: 10,
+                                width: '100%',
+                                display:'flex', 
+                                flexDirection: 'row',
+                                borderBottomWidth: 1,
+                                borderColor: 'gray',
+                                alignItems: 'center'
                             }
                         ]}>  
-                                <MaterialCommunityIcons name="circle-medium" size={20}/>
+                                <MaterialCommunityIcons name="circle-medium" size={24}/>
 
                                 {editable ?
                                 <View style={{
                                     width: '100%',
-                            
+                                    display: 'flex',
+                                    flexDirection: 'row'
                                 }}>
                                 <TextInput 
                                             editable={true}
                                             onChangeText={(text)=>{
-                                                item.text = text;
+                                                items.text = text;
                                                 console.log(text);
                                                 setTest(Math.random());
                                             }}
-                                            value={item.text}
+                                            value={items.text}
                                             style={{
-                                            width: '65%',
+                                            width: '70%',
                                                 
                                             fontSize: responsiveScreenFontSize(1),      
                                         }}>
 
                                 </TextInput>
                                 <View style={{
-                                    position: 'absolute',
-                                    right: 0,
-                                    width: '20%',
-                                    //borderWidth:1,
+                                    height: '100%',
+                                    width: '30%',
                                     display: 'flex',
-                                    flexDirection: 'row',
-                                  
+                                    flexDirection: 'row',           
                                     alignItems: 'center',
                                     justifyContent: 'center'
                                 }}>
                                     <Pressable 
-                                        onPress={()=> {
-                                                onPlusPress(index); 
-                                        }}
-                                        style={{
-                                            marginHorizontal: 5
-                                        
-                                        }}>
-                                        <MaterialCommunityIcons name="plus-circle-outline" size={24} />
+                                            onPress={()=> {
+                                                    onPlusPress(index); 
+                                            }}
+                                            style={{
+                                                marginHorizontal: 10,                                      
+                                            }}>
+                                        <MaterialCommunityIcons name="plus-circle-outline" size={24} 
+                                            color={isActive ? 'red': 'gray'}/>
                                     </Pressable>
-
+                                    <Pressable  
+                                                style={{
+                                                    marginHorizontal: 10,
+                                                   
+                                                }}
+                                                onPress={()=> onMinusPress(index)}
+                                                >
+                                                 <MaterialCommunityIcons name="backspace-outline" size={22} 
+                                                    color={isActive ? 'red': 'gray'}
+                                        />
+                                               
+                                    </Pressable>
                        
 
                                     <Pressable 
                                         onLongPress={drag}
                                         //disabled={isActive}
                                         style={[
-                                            { 
-    
-                                                marginHorizontal: 5
+                                            {    
+                                                marginHorizontal: 10
                                             },
                                         ]}>
                             
@@ -152,58 +220,43 @@ function ZakduAnalyzeTocCheckinigView({navigation, handleTocResult ,bookTocResul
 
                                 <Text style={{
                                     fontSize: responsiveScreenFontSize(1),      
-                                }} >{item.text}</Text>
+                                }} >{items.text}</Text>
                                 }
                         </View>
         
-
-   
-
-                        {item.childs ? 
+                        {items.childs ? 
                             <View style={{
                                         width: '100%',
                                         display: 'flex',
-                                        flexDirection: 'row',
-                                      
+                                        flexDirection: 'row',                                    
                             }}>
                                 <DraggableFlatList
                                     scrollEnabled={false}
-                                    data={item.childs}
+                                    data={items.childs}
                                     onDragEnd={({ data }) => {
-                                        item.childs = data;
+                                        items.childs = data;
                                         setTest(Math.random());
                         
                                     }}
                                     keyExtractor={(item, index) => index.toString()}
                                     listKey={(item, index)=> 'D' + index.toString()}
-                                    renderItem={({ item, drag, isActive, index }) => (
+                                    renderItem={({ item, drag, isActive, index }) => {
+                                      
+                                        if(!item.parent) {
+                                            item.parent = items;
+                                        }
+
+                                        return (
                                         <View style={{
                                             width: '100%',
                                             display: 'flex',
                                             flexDirection: 'row',
-                                  
                                         }}>
                                     
                                         {HierarchyDataRender(item, drag, isActive, index)}
-                                        {editable ?
-                                        <Pressable  
-                                                style={{
-                                                    marginTop: 24,
-                                                    marginHorizontal: 5,
-                                           
-                                                    width: '10%'
-                                                }}
-                                                onPress={()=> onMinusPress(index)}
-                                                >
-                                                <Text style={{
-                                                    color: 'red'
-                                                }}>삭제</Text>
-                                               
-                                            </Pressable> :
-                                            null
-                                        }
-                                        </View>
-                                    )}
+                                      
+                                        </View>);
+                                    }}
                                 />  
                          
 
@@ -216,15 +269,6 @@ function ZakduAnalyzeTocCheckinigView({navigation, handleTocResult ,bookTocResul
 
         );
     }
-
-    const onMinusPress = (index) => {
-        if(bookTocResult){
-            console.log(index);
-            bookTocResult.splice(index, 1);  
-        }
-        setTest(Math.random());
-     }
-
 
     return (
         <View style={{width: '100%', height: '100%', alignItems: 'center', backgroundColor: 'white'}}>
@@ -242,7 +286,7 @@ function ZakduAnalyzeTocCheckinigView({navigation, handleTocResult ,bookTocResul
                        
                     }}>
                         
-                        <Text style={{ fontSize: responsiveScreenFontSize(1.5), fontWeight: '700'}}>
+                        <Text style={{ fontSize: responsiveScreenFontSize(1.5), fontWeight: '600'}}>
                             작두 알고리즘으로 분석해봤어요.    
                         </Text>
 
@@ -251,7 +295,7 @@ function ZakduAnalyzeTocCheckinigView({navigation, handleTocResult ,bookTocResul
                             style={{
                                 marginTop : 10,
                                 fontSize: responsiveScreenFontSize(1.2),
-                                fontWeight: '100'
+                                fontWeight: '400'
                             }}>
                             목차를 기반으로 도서를 자동 분할 합니다.
                         </Text>
@@ -280,24 +324,8 @@ function ZakduAnalyzeTocCheckinigView({navigation, handleTocResult ,bookTocResul
                           
                                 }}>
                             
-                                {HierarchyDataRender(item, drag, isActive, index)}
-                                {editable ?
-                                <Pressable  
-                                        style={{
-                                            marginTop: 24,
-                                            marginHorizontal: 5,
-                                   
-                                            width: '10%'
-                                        }}
-                                        onPress={()=> onMinusPress(index)}
-                                        >
-                                        <Text style={{
-                                            color: 'red'
-                                        }}>삭제</Text>
-                                       
-                                    </Pressable> :
-                                    null
-                                }
+                                    {HierarchyDataRender(item, drag, isActive, index)}
+                                
                                 </View>
                             )}
                         />
@@ -340,7 +368,8 @@ function ZakduAnalyzeTocCheckinigView({navigation, handleTocResult ,bookTocResul
 
                         {bookMarkExist ?
                             <Pressable 
-                                    onPress={()=> navigation.replace('BookMarkChecking')}
+                                    onPress={()=> backToBookMarkResult()}
+                                    
                                     style={({pressed})=>[
                                             tocCheckingStyles.buttonStyle,
                                             {      
@@ -384,7 +413,8 @@ function ZakduAnalyzeTocCheckinigView({navigation, handleTocResult ,bookTocResul
 
 const mapStateToProps = (state) => ({
     bookTocResult: state.registerBooks.bookRegisterObj.bookTocResult,
-    bookMarkExist: state.registerBooks.bookRegisterObj.bookMarkExist
+    bookMarkExist: state.registerBooks.bookRegisterObj.bookMarkExist,
+    fileInfo:state.registerBooks.bookRegisterObj.bookFile
 });
 
 const mapDispatchToProps = (dispatch) => ({
