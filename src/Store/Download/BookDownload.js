@@ -22,6 +22,7 @@ export async function downloadPdfBook(id) {
             book_id: id,
             fileName: data.fileName,
             title: data.title,
+            realStartPage: data.realStartPage
         }
         await AsyncStorage.setItem(storageKey, JSON.stringify(localData));
         const tt = await AsyncStorage.getItem(storageKey);

@@ -125,7 +125,7 @@ function ReadingBookView({route, navigation}) {
                 var itemData = JSON.parse(item);
                 console.log(itemData);
                 console.log(RNFS.DocumentDirectoryPath + "/pdf/" + itemData.fileName);
-                await decryptPages(RNFS.DocumentDirectoryPath + "/pdf/" + itemData.fileName, itemData.keys);
+                await decryptPages(RNFS.DocumentDirectoryPath + "/pdf/" + itemData.fileName, itemData.keys, itemData.realStartPage);
                 console.log(RNFS.TemporaryDirectoryPath + "pdf/" + itemData.fileName + "_dec");
                 setSource({uri: RNFS.TemporaryDirectoryPath + "pdf/" + itemData.fileName + "_dec"})
             }
