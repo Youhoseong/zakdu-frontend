@@ -87,7 +87,9 @@ const BookShelfHome = ({navigation}) => {
           height={height}
           onPress={() => {
             setSelectedId(item.id);
-            navigation.push('ReadingBook')
+            navigation.push('ReadingBook', {
+              book_id: item.id
+            });
           }}
 
         />

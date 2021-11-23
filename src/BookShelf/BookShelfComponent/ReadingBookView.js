@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {decryptPages, decryptEpub} from '../decrypt/decrypter';
 import {HS_API_END_POINT} from '../../Shared/env';
 import axios from 'axios';
+import {downloadPdfBook} from '../../Store/Download/BookDownload'
 import { arrayAsString } from 'pdf-lib';
 import CryptoJS from 'crypto-js';
 
@@ -101,35 +102,11 @@ async function epub_test() {
     decryptEpub(downloadPath, epubTestData);
 }
 
-const downloadPdfBook = async (id) => {
-    // 책 id 전송해야함!
-    // key는 "pdf_" + id
-    axios.get(HS_API_END_POINT + "/download/pdf", {params: {id: 1}}).then(async (res) => {
-        const pdfDirPath = RNFS.DocumentDirectoryPath + "/pdf/";
-        console.log(pdfDirPath);
-        const data = res.data.data;
-        console.log(data);
-        if (!await RNFS.exists(pdfDirPath)) {
-           await RNFS.mkdir(pdfDirPath);
-        }
-        RNFS.writeFile(pdfDirPath + data.fileName, data.bytes, 'base64');
-        const localData = {
-            book_id: id,
-            fileName: data.fileName,
-            title: data.title,
-        }
-        await AsyncStorage.setItem("pdf_" + id, JSON.stringify(localData));
-        const tt = await AsyncStorage.getItem("pdf_" + id);
-        console.log(JSON.parse(tt));
-    })
-}
-
-function ReadingBookView({navigation}) {
+function ReadingBookView({route, navigation}) {
     const {height, width} = useWindowDimensions();
     const [pageModalVisible, setPageModalVisible] = useState(false);
     const pdfRef = useRef(null);
 
-    const pdfFileExample = require('../../Assets/files/example.pdf')
     const [source, setSource] = useState({ uri: "" });
     const [fileExist, setFileExist] = useState(false);
     //const source = {uri: RNFS.TemporaryDirectoryPath + "pdf/" + "downloaded.pdf_dec" };
@@ -138,44 +115,27 @@ function ReadingBookView({navigation}) {
 
     useEffect(() => {
         // 보관함에 책 눌렀을 때 책 정보에서 받아와야 함
-        const book_id = 1;
-        axios.get(HS_API_END_POINT + "/key" + "/pdf_test", {params: {book_id: book_id}}).then(res => {
-            const keys = res.data.data;
-            for (let i = 0; i < keys.length; i++) {
-                const element = keys[i];
-                const keyWordArray = new TextDecoder().decode(new Uint8Array(element.aesKey));
-                const ivWordArray = new TextDecoder().decode(new Uint8Array(element.iv));
-                keys[i] = {
-                    ...keys[i],
-                    aesKey: keyWordArray,
-                    iv: ivWordArray
-                }
-            }
-            console.log(keys);
-            const storageKey = "pdf_" + book_id;
-            AsyncStorage.getItem(storageKey).then(async (item) => {
+        const {book_id} = route.params
+        const storageKey = "pdf_" + book_id;
+        console.log(storageKey)
+
+        AsyncStorage.getItem(storageKey).then(async (item) => {
+            console.log(storageKey, item)
+            if(item != null) {
                 var itemData = JSON.parse(item);
-                itemData = {
-                    ...itemData,
-                    keys: keys
-                }
                 console.log(itemData);
-                AsyncStorage.mergeItem(storageKey, JSON.stringify(itemData));
                 console.log(RNFS.DocumentDirectoryPath + "/pdf/" + itemData.fileName);
-                await decryptPages(RNFS.DocumentDirectoryPath + "/pdf/" + itemData.fileName, keys);
+                await decryptPages(RNFS.DocumentDirectoryPath + "/pdf/" + itemData.fileName, itemData.keys);
                 console.log(RNFS.TemporaryDirectoryPath + "pdf/" + itemData.fileName + "_dec");
                 setSource({uri: RNFS.TemporaryDirectoryPath + "pdf/" + itemData.fileName + "_dec"})
-            }).catch(e => {
-                // 파일이 없는 경우 처리 필요
-                downloadPdfBook(book_id).then(res => {
-                    setFileExist(true);
-                }).catch(e => {
-                    console.error("book id " + book_id + " 에해당되는 책이 없습니다.", e)
-                })
-                console.error(e)
-            });
-        })
-    }, [fileExist]);
+            }
+        }).catch(e => {
+            // 파일이 없는 경우 처리 필요
+            console.log("파일이 존재하지 않습니다.");
+            // console.log(e);
+            navigation.push("BookShelfHome");
+        });
+    }, []);
 
     React.useLayoutEffect(() => {     
         navigation.setOptions({       
