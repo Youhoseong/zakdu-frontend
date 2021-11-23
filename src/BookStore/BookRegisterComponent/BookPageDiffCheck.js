@@ -65,7 +65,8 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color:'black',
-        fontSize: responsiveFontSize(1.1)                            
+        fontWeight: '500',
+        fontSize: responsiveFontSize(0.8)                            
     }
 });
 
@@ -89,7 +90,6 @@ const PdfComponent = ({handleRealStart, bookRealFirstTocPage, bookFile , edit}) 
             }}
             horizontal={true}
             singlePage={!edit}
-            
             enablePaging={true}
             onPageChanged={(page)=> {
                 console.log(page);

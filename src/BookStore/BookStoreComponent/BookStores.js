@@ -23,6 +23,8 @@ import { HS_API_END_POINT } from '../../Shared/env';
 import { connect } from 'react-redux';
 import { getBook } from '../../Store/Actions';
 
+let parseString = require('react-native-xml2js').parseString;
+
 const styles = StyleSheet.create({
     imageStyle: {
         marginHorizontal: 10,
@@ -88,9 +90,6 @@ function BookStores({navigation, handleBookObj, bookObj}) {
         setRefreshing(true);
         axios.get(`${HS_API_END_POINT}/book-purchase/book-list`)
                 .then((res)=> {      
-                    res.data.data.map(item => {
-                        console.log(item.category)
-                    })
                     handleBookObj("allBook",res.data.data);
                     handleBookObj("workBook", res.data.data.filter(item => item.category === '문제집'))
                     handleBookObj("majorBook", res.data.data.filter(item => item.category === '전공도서'))
@@ -208,9 +207,6 @@ function BookStores({navigation, handleBookObj, bookObj}) {
     React.useEffect(()=> {
             axios.get(`${HS_API_END_POINT}/book-purchase/book-list`)
                 .then((res)=> {      
-                    res.data.data.map(item => {
-                        console.log(item.category)
-                    })
                     handleBookObj("allBook",res.data.data);
                     handleBookObj("workBook", res.data.data.filter(item => item.category === '문제집'))
                     handleBookObj("majorBook", res.data.data.filter(item => item.category === '전공도서'))
@@ -221,6 +217,27 @@ function BookStores({navigation, handleBookObj, bookObj}) {
             })
     },[]);
     
+
+    const handleKeyDown = (e) => {
+        console.log(e.nativeEvent.text)
+        console.log('enter');
+
+        axios.get("https://openapi.naver.com/v1/search/book_adv.xml?d_isbn=9791162401712", {
+            headers: {
+                'X-Naver-Client-Id': '_Xy7aHXVRPYygCjxFI5y',
+                'X-Naver-Client-Secret': '2Loxa7VDeL'
+            }
+        }
+
+      
+        ).then((res)=> {
+            //console.log(res.data);
+            parseString(res.data, function(err, result) {
+               // console.log(result);
+                console.log(JSON.parse(JSON.stringify(result)).rss.channel[0].item[0].author);
+            })
+        });
+    }
 
     return (
         <View style={{
@@ -240,7 +257,8 @@ function BookStores({navigation, handleBookObj, bookObj}) {
                 <View style={styles.searchBarViewStyle}> 
 
                     <View style={styles.searchBarView2Style}>
-                        <TextInput 
+                        <TextInput
+                            onSubmitEditing={handleKeyDown}
                             placeholder="검색..."
                             style={{
                                 width: '90%',
@@ -364,7 +382,7 @@ function BookStores({navigation, handleBookObj, bookObj}) {
                 }}>
                     <FlatList
                         horizontal
-                        data={books}
+                        data={bookObj.otherBook.length > 0 ? bookObj.otherBook : books}
                         renderItem={({item,index})=> BookStoreBookListRender(item, index)}
                         keyExtractor={(item,index)=> item.id.toString()}
                     />
