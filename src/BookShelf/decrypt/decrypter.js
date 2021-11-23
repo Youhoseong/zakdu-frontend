@@ -110,7 +110,7 @@ export const tryToDecodeStream = (maybeStream) => {
  * @param pageInfos - {pageNum, aesKey, iv} 
  * aesKey : 32byte, iv: 16byte
  */
-export async function decryptPages(pdfPath, pageInfos) {
+export async function decryptPages(pdfPath, pageInfos, startPage) {
 
     var pdfBase64 = await RNFS.readFile(pdfPath, 'base64');
     const existingPdfBytes = Buffer.from(pdfBase64, 'base64');
@@ -125,7 +125,7 @@ export async function decryptPages(pdfPath, pageInfos) {
     const lastElement = (array) => {
         return array[array.length - 1];
     }
-    for (let i = 1; i < pageNum - 1; i++) {
+    for (let i = startPage; i < pageNum - 1; i++) {
         if(pageInfos.length <= index || pageInfos[index].pageNum > i) {
             if(lastElement(lockPages) == i - 1 || lastElement(removePageList) == i - 1) {
                 removePageList.push(i);
