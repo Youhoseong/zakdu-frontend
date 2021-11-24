@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, useWindowDimensions, StyleSheet, Image, Pressable, FlatList, ScrollView} from 'react-native';
+import {View, Text, useWindowDimensions, StyleSheet, Image, Pressable, FlatList, ScrollView, Alert} from 'react-native';
 import { responsiveFontSize, responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth } from 'react-native-responsive-dimensions';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import Modal from 'react-native-modal';
@@ -260,8 +260,8 @@ function PartPurchaseView({navigation, selectedBook}) {
     }
 
     const [text, setText] = useState("");
-    const [pagesToBuy,setPagesToBuy] = useState({});
-    const [pageArr, setPageArr] = useState([]);
+    const [pagesToBuy,setPagesToBuy] = useState({}); //스크린에 보여주기 위한 형태 저장
+    const [pageArr, setPageArr] = useState([]); //배열로 DB에 넘길 내용 저장
     const sellByPage = () => setByToc(false);
     const sellByToc = () => {
         setByToc(true);
@@ -283,13 +283,15 @@ function PartPurchaseView({navigation, selectedBook}) {
         for(const x of inputs) {
             const pages = x.split('-');
             if(pages.length===1){
-                const idx = newPageArr.indexOf(pages);
-                newPageArr.splice(idx,1);
+                newPageArr[Number(pages[0])] = false;
+                // const idx = newPageArr.indexOf(pages);
+                // newPageArr.splice(idx,1);
                 //newPageArr = newPageArr.filter((element) => element !== pages);
             } else {
                 for(var i = Number(pages[0]); i<=Number(pages[1]);i++){
-                    const idx = newPageArr.indexOf(String(i));
-                    newPageArr.splice(idx,1);
+                    newPageArr[i]=false;
+                    // const idx = newPageArr.indexOf(String(i));
+                    // newPageArr.splice(idx,1);
                     //newPageArr = newPageArr.filter((element) => element !== String(i));
                 }
             }
@@ -305,6 +307,7 @@ function PartPurchaseView({navigation, selectedBook}) {
     const isRangeValid = range => range.length == 2 && range.every(isNumeric) && isOrdered(range[0], range[1])
     const isSingleValid = single => single.length == 1 && isNumeric(single[0])
 
+    // 유효한 페이지인지 검사한다.    
     const isValidPage = (input) => {
         const inputs = input.split(',').map(x => x.trim());
         for(const x of inputs) {
@@ -333,32 +336,45 @@ function PartPurchaseView({navigation, selectedBook}) {
         }
         return true;
     }
+
+    // 이미 포함된 페이지인지 검사한다.
     const isDuplicatePage = (input) => {
         const inputs = input.split(',').map(x => x.trim());
         var tf=true;
         for(const x of inputs) {
             const pages = x.split('-');
             // console.log("isDuplicatePage pages: " + pages);
-            if(pages.length===1){
-                if(pageArr.includes(pages[0])){
-                    console.log("두번뜨나????");
-                    Alert.alert(pages[0]+" 는 이미 포함되어있습니다!");
+            if(pages.length===1){ //5-10 이런 형식이 아닌 페이지 입력일 경우
+                if(pageArr[Number(pages[0])]){ // 해당 페이지가 있을 경우
+                    Alert.alert(pages[0]+" 쪽은 이미 포함되어있습니다!");
                     setText("");
                     return false;
                 }
-            } else {
+                // if(pageArr.includes(pages[0])){
+                //     console.log("두번뜨나????");
+                //     Alert.alert(pages[0]+" 는 이미 포함되어있습니다!");
+                //     setText("");
+                //     return false;
+                // }
+            } else { //5-10 이런 형식이 들어왔을 경우 해당 범위 안에있는 모든 것을 검사해야한다.
                 for(var i = Number(pages[0]); i<=Number(pages[1]);i++){
-                    if(pageArr.includes(String(i))){
-                        console.log("두번뜨나?");
+                    if(pageArr[i]){
                         Alert.alert(i+" 는 이미 포함되어있습니다!");
                         setText("");
                         return false;
                     }
+                    // if(pageArr.includes(String(i))){
+                    //     console.log("두번뜨나?");
+                    //     Alert.alert(i+" 는 이미 포함되어있습니다!");
+                    //     setText("");
+                    //     return false;
+                    // }
                 }
             }
         }
         return true;
     }
+    //페이지 추가 이벤트 발생 시,
     const addPage = () => {
         console.log("pageArr:",pageArr);
         const inputs = text.split(',').map(x => x.trim());
@@ -367,27 +383,32 @@ function PartPurchaseView({navigation, selectedBook}) {
             // setPageArr([]);
             //console.log(isDuplicatePage(text));
             if(isDuplicatePage(text)){ // true 일때 -> 중복이 아닐경우
-                var temp=[];
+                var temp=[...pageArr];
                 for(const x of inputs) {
                     const pages = x.split('-');
                     if (pages.length===1) {
-                        temp = temp.concat(pages);
+                        temp[Number(pages[0])]=true;
+                        //temp = temp.concat(pages);
                     } else{
                         for(var i = Number(pages[0]); i<=Number(pages[1]);i++){
-                            temp = temp.concat(String(i));
+                            temp[i] = true;
+                            //temp = temp.concat(String(i));
                         }
                     }
                 }
                 console.log("temp:",temp);
-                const newPageArr = [...temp, ...pageArr];
-                setPageArr(newPageArr);
+                setPageArr(temp);
+                //const newPageArr = [...temp, ...pageArr];
+                //setPageArr(newPageArr);
 
                 //페이지가 포함되어있지 않으면 저장
                 const newPages = {
                     ...pagesToBuy, 
                     [Date.now()]: {text},
                 };
+                
                 setPagesToBuy(newPages);
+
             }
             
             
