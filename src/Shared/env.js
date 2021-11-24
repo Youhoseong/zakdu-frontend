@@ -1,3 +1,3 @@
 
 
-export const HS_API_END_POINT = 'http://59.187.226.62:8080';
+export const HS_API_END_POINT = 'http://211.58.89.49:8080';
