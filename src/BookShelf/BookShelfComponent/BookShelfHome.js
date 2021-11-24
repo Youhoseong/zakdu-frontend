@@ -6,8 +6,8 @@ import { responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth
 const DATA = [
     {
       id: 0,
-      image: require('../../Assets/images/img.png'),
-      title: '쎈 중등수학',
+      image: require('../../Assets/images/img2.png'),
+      title: 'Hidden Markov Models',
     },
     {
         id: 1,
@@ -87,7 +87,9 @@ const BookShelfHome = ({navigation}) => {
           height={height}
           onPress={() => {
             setSelectedId(item.id);
-            navigation.push('ReadingBook')
+            navigation.push('ReadingBook', {
+              book_id: item.id
+            });
           }}
 
         />
@@ -146,7 +148,8 @@ const BookShelfHome = ({navigation}) => {
     image: {
       width: '100%',
       height: '100%',
-  
+      borderWidth:1,
+      borderColor: '#C2C2C2',
       borderRadius: 5
 
     },

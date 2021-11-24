@@ -19,6 +19,7 @@ const styles = StyleSheet.create({
 function BookCategoryView({navigation, handleBookCategory, bookCategory}) {
     const {width, height} = useWindowDimensions();
 
+
     React.useLayoutEffect(() => {     
         navigation.setOptions({       
             headerStyle: {
@@ -89,6 +90,7 @@ function BookCategoryView({navigation, handleBookCategory, bookCategory}) {
                     ]}
                     useNativeAndroidPickerStyle={false}
                     style={styles}
+                    value={bookCategory}
 
 
 
@@ -123,13 +125,8 @@ function BookCategoryView({navigation, handleBookCategory, bookCategory}) {
                         ]}
                             onPress={()=> navigation.push('GetCover')}>
                         
-                            <Text 
-                                style={{
-                                    color: 'white',
-                                    fontSize: responsiveScreenFontSize(1.0)
-                                }}>
+                            <Text style={{ color: 'white', fontSize: responsiveScreenFontSize(1.0)}}>
                                 완료
-
                             </Text>
                 </Pressable>
 

@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import { View, useWindowDimensions, StyleSheet, Pressable, TextInput, Button, Image} from 'react-native';
 import Pdf from 'react-native-pdf';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -6,7 +6,14 @@ import Modal from  'react-native-modal';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import PageJumpSelectView from './PageJumpSelectView'
 import * as RNFS from 'react-native-fs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {decryptPages, decryptEpub} from '../decrypt/decrypter';
+import {HS_API_END_POINT} from '../../Shared/env';
+import axios from 'axios';
+import {downloadPdfBook} from '../../Store/Download/BookDownload'
+import { arrayAsString } from 'pdf-lib';
+import CryptoJS from 'crypto-js';
+
 
 
 const styles = StyleSheet.create({
@@ -95,15 +102,40 @@ async function epub_test() {
     decryptEpub(downloadPath, epubTestData);
 }
 
-function ReadingBookView({navigation}) {
+function ReadingBookView({route, navigation}) {
     const {height, width} = useWindowDimensions();
     const [pageModalVisible, setPageModalVisible] = useState(false);
     const pdfRef = useRef(null);
 
-    const pdfFileExample = require('../../Assets/files/example.pdf')
-    //const [source, setSource] = useState({ uri: RNFS.DocumentDirectoryPath + "/dec.pdf" });
+    const [source, setSource] = useState({ uri: "" });
+    const [fileExist, setFileExist] = useState(false);
+    //const source = {uri: RNFS.TemporaryDirectoryPath + "pdf/" + "downloaded.pdf_dec" };
     // epub_test();
-    // pdf_test();
+    //pdf_test();
+
+    useEffect(() => {
+        // 보관함에 책 눌렀을 때 책 정보에서 받아와야 함
+        const {book_id} = route.params
+        const storageKey = "pdf_" + book_id;
+        console.log(storageKey)
+
+        AsyncStorage.getItem(storageKey).then(async (item) => {
+            console.log(storageKey, item)
+            if(item != null) {
+                var itemData = JSON.parse(item);
+                console.log(itemData);
+                console.log(RNFS.DocumentDirectoryPath + "/pdf/" + itemData.fileName);
+                await decryptPages(RNFS.DocumentDirectoryPath + "/pdf/" + itemData.fileName, itemData.keys, itemData.realStartPage);
+                console.log(RNFS.TemporaryDirectoryPath + "pdf/" + itemData.fileName + "_dec");
+                setSource({uri: RNFS.TemporaryDirectoryPath + "pdf/" + itemData.fileName + "_dec"})
+            }
+        }).catch(e => {
+            // 파일이 없는 경우 처리 필요
+            console.log("파일이 존재하지 않습니다.");
+            // console.log(e);
+            navigation.push("BookShelfHome");
+        });
+    }, []);
 
     React.useLayoutEffect(() => {     
         navigation.setOptions({       
@@ -188,7 +220,7 @@ function ReadingBookView({navigation}) {
                
                 <Pdf
                     ref={pdfRef}
-                    source={pdfFileExample}
+                    source={source}
                     onLoadComplete={(numberOfPages,filePath, Dimension, TableOfContent)=>{
                         console.log("Number of Pages: "+numberOfPages);
                         console.log("Path: :"+filePath);
@@ -225,7 +257,7 @@ function ReadingBookView({navigation}) {
                         <Icon name="times-circle" size={30} color="white" />
                 </Pressable>
 
-                <PageJumpSelectView pdfRef={pdfRef} pdfSource={pdfFileExample} setModalVisible={setPageModalVisible}/>
+                <PageJumpSelectView pdfRef={pdfRef} pdfSource={source} setModalVisible={setPageModalVisible}/>
       
             </Modal>
         </View>

@@ -50,7 +50,7 @@ function BookPriceView({navigation, handleBookPrice, bookPrice, bookObject}) {
             },
         }).then((res)=> {
             setSubmitDisabled(false);
-            navigation.push('RegisterComplete');
+            navigation.replace('BookShop');
         }).catch((err)=> {
             setSubmitDisabled(false);
             navigation.push('RegisterFail');
