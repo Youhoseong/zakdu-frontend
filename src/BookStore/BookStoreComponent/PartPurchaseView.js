@@ -123,6 +123,7 @@ function PartPurchaseView({navigation, selectedBook}) {
     const [price ,setPrice] = useState(0);
     const [bookTocData, setBookTocData] = useState([]);
 
+
     const base64Image = 'data:image/png;base64,' + selectedBook.bookCoverResource;
     let resursivePrice = 0;
     const priceCheck = (data) => {
@@ -130,6 +131,8 @@ function PartPurchaseView({navigation, selectedBook}) {
             if(item.tick) {
                 const priceOverhead = parseInt((item.endPage- item.startPage + 1) / selectedBook.pdfPageCount * selectedBook.price);
                 resursivePrice = resursivePrice + priceOverhead;
+
+   
                
             } else {
                 if(item.childs) {
@@ -144,9 +147,10 @@ function PartPurchaseView({navigation, selectedBook}) {
         const formData = new FormData();
 
         let bookPurchaseDto = {
-            //'name': 'me',
-            'bookToc': bookTocData
+            
+            'purchasePageList': pageArr
         }
+        console.log("페이지 수: " + pageArr.filter(value => value == true).length);
 
         formData.append('bookPurchaseStr', JSON.stringify(bookPurchaseDto, getCircularReplacer()));
 
@@ -192,11 +196,20 @@ function PartPurchaseView({navigation, selectedBook}) {
                                         if(!item.tick) {
                                       
                                             onTick(item);
-                                            setReload(Math.random())
+                                            for(let i=item.startPage; i<=item.endPage; i++){
+                                                pageArr[i] = true;
+                                            }
+                                            console.log(pageArr);
+                                            setPageArr(pageArr);
                                         }else {
                                   
                                             unTick(item); 
-                                            setReload(Math.random())
+                                            for(let i=item.startPage; i<=item.endPage; i++){
+                                                pageArr[i] = false;
+                                            }
+                                            console.log(pageArr);
+                                            setPageArr(pageArr);
+
                                         }
                                         resursivePrice = 0;
                                         priceCheck(bookTocData);
@@ -245,9 +258,7 @@ function PartPurchaseView({navigation, selectedBook}) {
         );
     }
 
-    const [text, setText] = useState("");
-    const [pagesToBuy,setPagesToBuy] = useState({}); //스크린에 보여주기 위한 형태 저장
-    const [pageArr, setPageArr] = useState([]); //배열로 DB에 넘길 내용 저장
+
 
     const sellByPage = () => setByToc(false);
     const sellByToc = () => {
@@ -409,6 +420,13 @@ function PartPurchaseView({navigation, selectedBook}) {
                 setBookTocData(res.data.data);
             })
             .catch((err)=> console.log(err));
+
+
+        for(let i=0; i<=selectedBook.pdfPageCount; i++) {
+            pageArr[i] = false;
+        }
+
+        setPageArr(pageArr);
     },[])
 
 
