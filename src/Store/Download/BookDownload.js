@@ -9,7 +9,7 @@ export async function downloadPdfBook(id) {
     // key는 "pdf_" + id
     const storageKey = "pdf_" + id;
 
-    axios.get(HS_API_END_POINT + "/download/pdf", {params: {id: 1}}).then(async (res) => {
+    axios.get(HS_API_END_POINT + "/download/pdf", {params: {id: id}}).then(async (res) => {
         const pdfDirPath = RNFS.DocumentDirectoryPath + "/pdf/";
         console.log(pdfDirPath);
         const data = res.data.data;
