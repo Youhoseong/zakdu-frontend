@@ -16,7 +16,7 @@ import {
 import LottieView from 'lottie-react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions';
-
+import Animation from 'lottie-react-native';
 // import Loader from './Components/Loader';
 
 const screenWidth = Dimensions.get('screen').width;
@@ -44,14 +44,14 @@ function EnterType({navigation}) {
                     <View style={{flex:1, backgroundColor:'white',justifyContent:'flex-end'}}>
                         {/* <LottieView style={{width:'100%',height:'100%',margin:0}} source={require('../../Assets/json/42476-register.json')} autoPlay loop /> */}
                         {/* <Text style={styles.title}>Step 1.</Text> */}
-                        <Text style={styles.title}>ZakDu에서 당신의 역할은 무엇인가요?</Text>
+                        <Text style={styles.title}>역할을 선택해주세요.</Text>
                     </View>
                     <View style={{flex:0.5, padding:10,backgroundColor:'white',justifyContent:'flex-start'}}>
-                        <Text style={styles.subtitle}>당신은 판매자인가요? 구매자인가요?</Text>
+                        <Text style={styles.subtitle}>도서 판매자와 구매자를 고를 수 있어요.</Text>
 
                     </View>
-                    <View style={{flex:4, flexDirection:'row',justifyContent:'flex-start'}}>
-                        <View style={{flex:1, justifyContent:'flex-start',alignItems:'center'}}>
+                    <View style={{flex:4, flexDirection:'row',justifyContent:'center', borderWidth: 1}}>
+                        <View style={{flex:1, justifyContent:'flex-start',alignItems:'center',borderWidth: 1}}>
                             <TouchableOpacity style={{ 
                                 justifyContent:'center',
                                 alignItems:'center', 
@@ -61,8 +61,8 @@ function EnterType({navigation}) {
                                 onPress={() => {gotoNextScreen('seller')}}
                                 
                             >
-                                <LottieView style={{width:screenWidth===bigOne? bigOne*0.3:smallOne*0.6,alignSelf:'center'}} source={require('../../Assets/json/22620-store.json')} autoPlay />
-                                <Text style={{fontSize:responsiveFontSize(2)}}>판매자</Text>
+                                <Animation style={{width:screenWidth===bigOne? bigOne*0.3:smallOne*0.6,alignSelf:'center'}} source={require('../../Assets/json/22620-store.json')} />
+                                <Text style={{fontSize:responsiveFontSize(1.5)}}>판매자</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={{flex:1, justifyContent:'flex-start',alignItems:'center'}}>
@@ -75,7 +75,7 @@ function EnterType({navigation}) {
                                 onPress={() => {gotoNextScreen('customer')}}
                             >
                                 <LottieView style={{width:screenWidth===bigOne? bigOne*0.25:smallOne*0.5,alignSelf:'center'}} source={require('../../Assets/json/71390-shopping-cart-loader.json')} autoPlay loop />
-                                <Text style={{fontSize:responsiveFontSize(2)}}>구매자</Text>
+                                <Text style={{fontSize:responsiveFontSize(1.5)}}>구매자</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

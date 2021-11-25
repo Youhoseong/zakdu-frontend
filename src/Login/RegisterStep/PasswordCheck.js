@@ -39,7 +39,7 @@ function PasswordCheck({navigation, route}) {
                 'user_point' : point
             }));
             Alert.alert(
-                "로그인하여 ZakDu를 시작하세요!",
+                "로그인하여 작두를 시작하세요.",
                 "회원가입이 완료되었습니다.",
                 [{
                     text:"로그인 화면으로",
@@ -87,7 +87,7 @@ function PasswordCheck({navigation, route}) {
                         style={styles.nextBtn} 
                         //activeOpacity={0.5}
                     >
-                        <Text style={[styles.botText, {color: 'white'}]}>완료!!</Text>
+                        <Text style={[styles.botText, {color: 'white'}]}>완료</Text>
                     </TouchableOpacity>
 
                 </View>
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     botText: {
         textAlign:'center',
         fontSize: bigOne*0.017,
-        fontWeight:'bold',
+        fontWeight:'500',
     },
     nextBtn: {
         height: '100%',
@@ -139,7 +139,6 @@ const styles = StyleSheet.create({
         padding: 10,
         borderBottomColor:'blue',
         fontSize:bigOne*0.02,
-        color:'blue'
         
     },
   });

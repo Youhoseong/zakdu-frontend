@@ -53,7 +53,7 @@ function EnterName({navigation, route}) {
                         <Text style={styles.title}>이름을 입력해주세요</Text>
                     </View>
                     <View style={{flex:0.5, backgroundColor:'white',justifyContent:'center'}}>
-                        <Text style={styles.subtitle}>ZakDu는 당신의 이름이 궁금해요!</Text>
+                        <Text style={styles.subtitle}>작두는 당신의 이름이 궁금해요.</Text>
                     </View>
                     <View style={{flex:3,justifyContent:'flex-start',}}>
                         <TextInput 
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
         padding: 10,
         borderBottomColor:'blue',
         fontSize:bigOne*0.02,
-        color:'blue',
+
         
         
     },
