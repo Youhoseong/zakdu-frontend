@@ -125,15 +125,17 @@ function ReadingBookView({route, navigation}) {
                 var itemData = JSON.parse(item);
                 console.log(itemData);
                 console.log(RNFS.DocumentDirectoryPath + "/pdf/" + itemData.fileName);
-                await decryptPages(RNFS.DocumentDirectoryPath + "/pdf/" + itemData.fileName, itemData.keys, itemData.realStartPage);
-                console.log(RNFS.TemporaryDirectoryPath + "pdf/" + itemData.fileName + "_dec");
-                setSource({uri: RNFS.TemporaryDirectoryPath + "pdf/" + itemData.fileName + "_dec"})
+                decryptPages(RNFS.DocumentDirectoryPath + "/pdf/" + itemData.fileName, itemData.keys, itemData.realStartPage)
+                    .then(() => {
+                        console.log(RNFS.TemporaryDirectoryPath + "pdf/" + itemData.fileName + "_dec");
+                        setSource({uri: RNFS.TemporaryDirectoryPath + "pdf/" + itemData.fileName + "_dec"});
+                    });
             }
         }).catch(e => {
             // 파일이 없는 경우 처리 필요
             console.log("파일이 존재하지 않습니다.");
-            // console.log(e);
-            navigation.push("BookShelfHome");
+            console.log(e);
+            navigation.goBack();
         });
     }, []);
 
