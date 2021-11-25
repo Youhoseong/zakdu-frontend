@@ -90,6 +90,7 @@ function BookStores({navigation, handleBookObj, bookObj}) {
         setRefreshing(true);
         axios.get(`${HS_API_END_POINT}/book-purchase/book-list`)
                 .then((res)=> {      
+                    console.log(res.data.data);
                     handleBookObj("allBook",res.data.data);
                     handleBookObj("workBook", res.data.data.filter(item => item.category === '문제집'))
                     handleBookObj("majorBook", res.data.data.filter(item => item.category === '전공도서'))

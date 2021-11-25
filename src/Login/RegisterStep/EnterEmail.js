@@ -35,12 +35,12 @@ function EnterEmail({navigation, route}) {
         const regex = /^(([^<>()\[\].,;:\s@"]+(\.[^<>()\[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/i;
         if(email===""){
             Alert.alert(
-                "이메일을 입력해주세요!"
+                "이메일을 입력해주세요."
             );
         }
         else if(!regex.test(email)){
             Alert.alert(
-                "올바른 형식의 이메일을 입력해주세요!"
+                "올바른 형식의 이메일을 입력해주세요."
             );
         }
         else{
@@ -59,7 +59,7 @@ function EnterEmail({navigation, route}) {
                         <Text style={styles.title}>이메일을 입력해주세요</Text>
                     </View>
                     <View style={{flex:0.5, backgroundColor:'white',justifyContent:'center'}}>
-                        <Text style={styles.subtitle}>ZakDu의 로그인 아이디가 됩니다!</Text>
+                        <Text style={styles.subtitle}>작두의 로그인 아이디가 됩니다.</Text>
                     </View>
                     <View style={{flex:3,justifyContent:'flex-start'}}>
                         <TextInput 
@@ -133,7 +133,6 @@ const styles = StyleSheet.create({
         padding: 10,
         borderBottomColor:'blue',
         fontSize:bigOne*0.02,
-        color:'blue'
         
     },
   });
