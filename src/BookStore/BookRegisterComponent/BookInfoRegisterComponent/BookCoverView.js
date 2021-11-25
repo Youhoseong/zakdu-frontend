@@ -165,7 +165,7 @@ function BookCoverView({navigation,handleBookCover, bookCover}) {
                             
                             }
                         ]}
-                            onPress={()=> navigation.push('GetName')}>
+                            onPress={()=> navigation.push('ISBN')}>
                         
                             <Text 
                                 style={{

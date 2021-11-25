@@ -50,24 +50,21 @@ function  BookRegisterFileUploadView ({navigation, handleFileUpdate, fileInfo, h
   
     const filePicker =  async () => {
         try {
-            const file = await DocumentPicker.pick({
+            const file = await DocumentPicker.pickSingle({
                 type: [DocumentPicker.types.allFiles],
-            
+                copyTo: 'cachesDirectory'
             });
         
             console.log(file)
             
             if(file) {
-                const newUri = file[0].uri.replace(file[0].uri.split('/').pop(), file[0].name);
-                console.log('newuri: ' + newUri);
-                
-                const ext = file[0].name.split('.').pop().toLowerCase();
-                console.log(ext);
-
+                const newUri = file.fileCopyUri.replace(file.uri.split('/').pop(), file.name);
+                const ext = file.name.split('.').pop().toLowerCase();
+           
                 let fileForm = {
-                    name: file[0].name,
+                    name: file.name,
                     uri: newUri,
-                    type: file[0].type
+                    type: file.type
                 }
 
                 if(ext === 'pdf' || ext === 'epub') {

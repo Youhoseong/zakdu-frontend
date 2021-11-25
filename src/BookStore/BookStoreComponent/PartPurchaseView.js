@@ -7,11 +7,13 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import IconFeather from 'react-native-vector-icons/Feather';
 import CheckBox from '@react-native-community/checkbox';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { ImageModal } from '../../Common/CommonComponent/ImageModal';
+import axios from 'axios';
+import { HS_API_END_POINT } from '../../Shared/env';
 const styles = StyleSheet.create({
     PartPurchaseViewStyle: {
         width: '90%',
-
+        
         backgroundColor: 'white',
         borderRadius: 15,
         display: 'flex',
@@ -55,147 +57,107 @@ const styles = StyleSheet.create({
 })
 
 
+const unTick = (data) => {
+
+    data.tick = false;
+    parent(data.parent);
+    if(data.childs){
+        data.childs.map(
+            (item)=> {
+                unTick(item);
+            }
+        )
+      
+    }
+        
+}
+
+const parent = (data) => {
+    if(data && data.childs) {
+        const countNotCheckedItem = data.childs.filter(child => !child.tick);
+
+        if(countNotCheckedItem.length === 0){
+            data.tick = true;
+        }else {
+            data.tick = false;
+        }
+        parent(data.parent);
+    }
+}
+
+const onTick = (data) => {
+    data.tick = true;
+    parent(data.parent);
+    if(data.childs){
+        data.childs.map(
+            (item) => {
+                onTick(item);
+            }
+        )
+        
+    }
+}
+
+
+const getCircularReplacer = () => {
+    const seen = new WeakSet();
+    return (key, value) => {
+    if (typeof value === "object" && value !== null) {
+        if (seen.has(value)) {
+            return;
+        }
+        seen.add(value);
+    }
+    return value;
+    };
+};
 
 function PartPurchaseView({navigation, selectedBook}) {
     const [imageModalVisible, setImageModalVisible] = useState(false);
     const {width, height} = useWindowDimensions();
-    let selectedItem = [];
+    const [text, setText] = useState("");
+    const [pagesToBuy,setPagesToBuy] = useState({});
+    const [pageArr, setPageArr] = useState([]);
     const [byToc, setByToc] = useState(true);
     const [reload, setReload] = useState(Math.random());
-    const [recursiveData, setRecursiveData] = useState([
-        {
-          shopReportName: 'Name 1',
-          shopId: 1,
-          childs: [
-            {
-              shopReportName: 'Name 2',
-              shopId: 2,
-  
-              childs: [
-                {
-                  shopReportName: 'Name 3',
-                  shopId: 3,
-   
-                  childs: [
-                    {
-                      shopReportName: 'Name 4',
-                      shopId: 4,
-         
-                      childs: [{
-                        shopReportName: 'Name 6',
-                        shopId: 6,
-        
-                        childs: [
-                          {
-                            shopReportName: 'Name 7',
-                            shopId: 7,
-             
-                          },
-                          {
-                            shopReportName: 'Name 12',
-                            shopId: 12,
-                          },
-                          {
-                            shopReportName: 'Name 13',
-                            shopId: 13,
-                          },
-                          {
-                            shopReportName: 'Name 14',
-                            shopId: 14,
-                          },
-                          {
-                            shopReportName: 'Name 15',
-                            shopId: 15,
-                          },
-                          {
-                            shopReportName: 'Name 16',
-                            shopId: 16,
-                          },
-                          {
-                            shopReportName: 'Name 17',
-                            shopId: 17,
-                          }
-                        ],
-                      }],
-                    },
-                    {
-                      shopReportName: 'Name 5',
-                      shopId: 5,
-                    },
-                    {
-                      shopReportName: 'Name 8',
-                      shopId: 8,
+    const [price ,setPrice] = useState(0);
+    const [bookTocData, setBookTocData] = useState([]);
 
-                    },
-                  ],
-                },
-              ],
-            },
-            {
-                shopReportName: 'Name 11',
-                shopId: 11
+    const base64Image = 'data:image/png;base64,' + selectedBook.bookCoverResource;
+    let resursivePrice = 0;
+    const priceCheck = (data) => {
+        data.map(item=> {
+            if(item.tick) {
+                const priceOverhead = parseInt((item.endPage- item.startPage + 1) / selectedBook.pdfPageCount * selectedBook.price);
+                resursivePrice = resursivePrice + priceOverhead;
+               
+            } else {
+                if(item.childs) {
+                    priceCheck(item.childs)
+                }
+              
             }
-          ],
-        },
-        {
-            shopReportName: 'Name 9',
-            shopId: 9,
-            childs: [
-                {
-                    shopReportName: 'Name 10',
-                    shopId: 10
-                }
-            ]
-        }
-      ]);
-
-    const unTick = (data) => {
-
-        data.tick = false;
-        parent(data.parent);
-        if(data.childs){
-            data.childs.map(
-                (item)=> {
-                    unTick(item);
-                }
-            )
-          
-        }
-            
+        })    
     }
 
-    const parent = (data) => {
-        if(data && data.childs) {
-            const countNotCheckedItem = data.childs.filter(child => !child.tick);
+    const purchaseButtonOnClick = () => {
+        const formData = new FormData();
 
-            if(countNotCheckedItem.length === 0){
-                data.tick = true;
-            }else {
-                data.tick = false;
-            }
-            parent(data.parent);
+        let bookPurchaseDto = {
+            //'name': 'me',
+            'bookToc': bookTocData
         }
-    }
 
-    const onTick = (data) => {
-        data.tick = true;
-        parent(data.parent);
-        if(data.childs){
-            data.childs.map(
-                (item) => {
-                    onTick(item);
-                }
-            )
-            
-        }
-    }
+        formData.append('bookPurchaseStr', JSON.stringify(bookPurchaseDto, getCircularReplacer()));
 
+        axios.post(`${HS_API_END_POINT}/book-purchase/pdf-book/` + selectedBook.id, formData)
+        .then((res) => console.log(res))
+        .catch((err)=> console.log(err));
+
+    }
 
     const HierarchyDataRender = (item, index) => {
 
-        if (!item.show) {
-            item.show = false;
-        }
         if (!item.tick) {
             item.tick = false;
         }
@@ -225,23 +187,47 @@ function PartPurchaseView({navigation, selectedBook}) {
                                     offAnimationType='fade'
                                     value={item.tick}
                                     onValueChange={()=> {
+                                       const priceOverhead = parseInt((item.endPage- item.startPage) / selectedBook.pdfPageCount * selectedBook.price);
+  
                                         if(!item.tick) {
+                                      
                                             onTick(item);
                                             setReload(Math.random())
                                         }else {
+                                  
                                             unTick(item); 
                                             setReload(Math.random())
                                         }
+                                        resursivePrice = 0;
+                                        priceCheck(bookTocData);
+                                        setPrice(resursivePrice);
 
                                     }} />
                                         
+                            <View style={{
+                                width: '90%',
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center',
 
-                                <Text style={{
-                                    // marginLeft: 3,
+                            }}>
+                                <Text 
+                                    numberOfLines={1}
+                                    style={{
                                     fontSize: responsiveScreenFontSize(1),
-                                    // textAlign: 'center',
-                                    // marginBottom: 10
-                                }} >{item.shopReportName}</Text>
+                                    width: '82%'
+  
+                                }} >{item.text}</Text>
+                                <Text style={{
+                                    textAlign: 'center',
+                                    width: '18%',
+                                    fontSize: responsiveScreenFontSize(0.8),
+                                    position: 'absolute',
+                                    right: 0
+                                }}>
+                                    {item.startPage}
+                                </Text>
+                            </View>
                         </View>
     
                         {item.childs && item.childs.map(
@@ -262,6 +248,7 @@ function PartPurchaseView({navigation, selectedBook}) {
     const [text, setText] = useState("");
     const [pagesToBuy,setPagesToBuy] = useState({}); //스크린에 보여주기 위한 형태 저장
     const [pageArr, setPageArr] = useState([]); //배열로 DB에 넘길 내용 저장
+
     const sellByPage = () => setByToc(false);
     const sellByToc = () => {
         setByToc(true);
@@ -318,7 +305,7 @@ function PartPurchaseView({navigation, selectedBook}) {
                 return false;
             } 
             const pages = x.split('-');
-            //console.log(pages);
+
             if (x==='0'){
                 Alert.alert(
                     "유효하지 않은 페이지 숫자입니다."
@@ -410,27 +397,34 @@ function PartPurchaseView({navigation, selectedBook}) {
                 setPagesToBuy(newPages);
 
             }
-            
-            
-            
-            //await savePage(newPages);
-            //alert(text);
+
         }
 
-        // console.log("pageArr:",pageArr);
         setText("");
     }
+
+    React.useEffect(()=> {
+        axios.get(`${HS_API_END_POINT}/book-purchase/book-toc/` + selectedBook.id)
+            .then((res)=> {
+                setBookTocData(res.data.data);
+            })
+            .catch((err)=> console.log(err));
+    },[])
+
+
+
     return (
         <View style={[
             styles.PartPurchaseViewStyle,
             {
                 height:  width > height ? '100%' : '60%',
+                
             }
         ]}>
                      
         
             <View style={styles.PartPurchaseLeftView}>
-                <Text style={styles.BookTitleTextStyle}> {selectedBook.title}</Text>
+                <Text style={styles.BookTitleTextStyle}> {selectedBook.name}</Text>
 
                 <Pressable onPress={()=> setImageModalVisible(true)} style={{marginTop: '10%'}}> 
                           
@@ -444,7 +438,9 @@ function PartPurchaseView({navigation, selectedBook}) {
                 
                             
                         }}
-                        source={selectedBook.image}
+                        source={{
+                            uri: base64Image
+                        }}
                     
                     ></Image>
                 </Pressable>
@@ -472,11 +468,12 @@ function PartPurchaseView({navigation, selectedBook}) {
                             height: '80%',
                         // borderWidth: 1
                         }}>
+                           
                             
                                 <FlatList
-                                    data={recursiveData}
+                                    data={bookTocData}
                                     renderItem={({item,index})=> HierarchyDataRender(item, index)}
-                                    keyExtractor={(item,index)=> item.shopId.toString()}
+                                    keyExtractor={(item,index)=> item.id.toString()}
                                 >
                                     
                                 </FlatList>
@@ -494,20 +491,20 @@ function PartPurchaseView({navigation, selectedBook}) {
                         }}>
                             <View style={{
                                 display: 'flex',
-                                flexDirection: width > height ? 'row': 'column',
+                                flexDirection: width > height ? 'column': 'column',
                                 paddingHorizontal: 15,
-                                alignItems: width > height ? 'center' : null,
-                                justifyContent: width > height ? null : 'center',
+                          
+                                justifyContent: 'center',
                                 height: '50%',
                                 width: '100%'
                             }}>
-                                <Text style={{
-                                    fontSize: width > height ? responsiveScreenFontSize(2.2) : responsiveScreenFontSize(1.7),
-                                
-                                    width: '30%',
-                                        
+                                <Text 
+                                    numberOfLines={1}
+                                    style={{
+                                        fontSize: width > height ? responsiveScreenFontSize(2.2) : responsiveScreenFontSize(1.7),
+                                        width: '70%',       
                                 }}>
-                                    8,730₩
+                                    {price.toLocaleString("ko-KR", { style: 'currency', currency: 'KRW' })}
                                 </Text>
                                 <Pressable style={{
                                 
@@ -527,7 +524,7 @@ function PartPurchaseView({navigation, selectedBook}) {
                                         backgroundColor: pressed ? '#1440F9' : 'black',
                                     }, 
                                     {
-                                    borderRadius: 25,
+                                    borderRadius: 10,
                             
                                     width: responsiveScreenWidth(13),
                                     height: '80%',
@@ -538,8 +535,11 @@ function PartPurchaseView({navigation, selectedBook}) {
                                     }
                                 ]}
                                     onPress={()=> {
-                                        alert('구매하기 ㅎㅎ');
-                                        console.log(recursiveData);
+                                        if(price == 0) 
+                                            alert('선택한 항목이 없습니다.');
+                                        else {
+                                            purchaseButtonOnClick();
+                                        }
                                     }}>
         
                                     
@@ -713,7 +713,7 @@ function PartPurchaseView({navigation, selectedBook}) {
                                     backgroundColor: pressed ? '#1440F9' : 'black',
                                 }, 
                                 {
-                                borderRadius: 25,
+                                borderRadius: 5,
                         
                                 width: responsiveScreenWidth(13),
                                 height: '80%',
@@ -725,7 +725,6 @@ function PartPurchaseView({navigation, selectedBook}) {
                             ]}
                                 onPress={()=> {
                                     alert('구매하기 ㅎㅎ');
-                                    console.log(recursiveData);
                                 }}>
 
                                 
@@ -739,48 +738,18 @@ function PartPurchaseView({navigation, selectedBook}) {
                         </View>
                     </View>
                 </View>
-                
-                
+                              
                 }
-                {/* }
-                else{
-                    <View>
-                        <Text>hi</Text>
-                    </View>
-                } */}
-            </View>
-
-            <Modal 
-                isVisible={imageModalVisible}
-                useNativeDriver={true}
-                style={{ 
-                    flex: 1,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}
-                hideModalContentWhileAnimating={true} 
-                onSwipeComplete={()=> setImageModalVisible(false)}
-                >
                
-                <TouchableOpacity 
-                        onPress={() => setImageModalVisible(false)}>
-                        <Icon name="times-circle" size={30} color="white" />
-                </TouchableOpacity>
-                <Image
-                    resizeMode='contain'
-                    style={{
-                        margin: 5,
-                        height: '100%',
-                        width: '100%',              
-  
-                    }}
-                    source={selectedBook.image}
-                    
-                />
-            
-            </Modal>
+            </View>
+     
+            <ImageModal imageModalVisible={imageModalVisible}
+                        setImageModalVisible={setImageModalVisible}
+                        base64Image={base64Image} />
         </View>
     );
 }
 
 export default PartPurchaseView;
+
+
