@@ -103,11 +103,12 @@ const styles = StyleSheet.create({
 
 
 
-const downloadBook = async (id) => {
+const downloadBook = (id) => {
     // 책 id 전송해야함!
     // key는 "pdf_" + id
-    await downloadPdfBook(id);
-    downloadPdfKeys(id);
+    downloadPdfBook(id).then(() => {
+        downloadPdfKeys(id);
+    })
 }
 
 
