@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { NavigationContainer } from '@react-navigation/native';
-
+import Animation from 'lottie-react-native';
 // import Loader from './Components/Loader';
 
 const screenWidth = Dimensions.get('screen').width;
@@ -28,14 +28,26 @@ function RegisterScreen ({navigation}){
     return(
         <View style={{flex:1,flexDirection:'row', backgroundColor:'white'}}>
             <View style={{flex:1}}/>
-            <View style={{flex:3}}>
-                <View style={{flex:4,justifyContent:'flex-end',alignItems:'center',alignContent:'center'}}>
-                    <LottieView style={{width:'100%',height:'100%',margin:0}} source={require('../Assets/json/42476-register.json')} autoPlay loop />
+            <View style={{flex:3, borderWidth: 1}}>
+                <View style={{
+                    flex:3,
+                    justifyContent:'center',
+                    alignItems:'center',
+                    borderWidth: 1
+                }}>
+                    <Animation
+                        style={{
+                            width:'100%',
+                            height:'100%',
+                            borderWidth: 1
+
+                        }} 
+                        source={require('../Assets/json/42476-register.json')} />
                     {/* <Text>Hello</Text> */}
                 </View>
                 <View style={{flex:1,justifyContent:'flex-start'}}>
                     <Text style={styles.midText}>쉽고, 간편한 회원가입을 통해</Text>
-                    <Text style={styles.midText}>ZakDu의 회원이 되어보세요!</Text>
+                    <Text style={styles.midText}>작두의 회원이 되어보세요.</Text>
                 </View>
                 <View style={{flex:2,justifyContent:'flex-start',alignItems:'center'}}>
                     <TouchableOpacity 
@@ -43,7 +55,7 @@ function RegisterScreen ({navigation}){
                         style={styles.btn} 
                         activeOpacity={0.5}
                     >
-                        <Text style={[styles.botText, {color: 'white',fontWeight:'bold'}]}>ZakDu 회원가입</Text>
+                        <Text style={[styles.botText, {color: 'white',fontWeight:'500'}]}>회원가입</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -57,7 +69,7 @@ const styles = StyleSheet.create({
     midText: {
         textAlign:'center',
         fontSize: bigOne*0.02,
-        fontWeight:'bold'
+        fontWeight:'500'
     },
     activityIndicator: {
       alignItems: 'center',

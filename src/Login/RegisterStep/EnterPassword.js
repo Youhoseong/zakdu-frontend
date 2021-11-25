@@ -131,9 +131,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 3,
         padding: 10,
         borderBottomColor:'blue',
-        fontSize:bigOne*0.02,
-        color:'blue'
-        
+        fontSize:bigOne*0.02,    
     },
   });
 export default EnterPassword;

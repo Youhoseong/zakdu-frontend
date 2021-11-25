@@ -9,10 +9,13 @@ import {
 import Carousel from 'react-native-snap-carousel';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import {downloadPdfBook, downloadPdfKeys} from '../../Store/Download/BookDownload'
-
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import { connect } from 'react-redux';
 import { getBook } from '../../Store/Actions';
+import axios from 'axios';
+import { HS_API_END_POINT } from '../../Shared/env';
+
 
 const BookDetailView = styled.ScrollView`
     width: 90%;
@@ -28,7 +31,6 @@ const BookDetailTopHalf = styled.View`
     height: ${(props)=> props.width > props.height ? responsiveScreenHeight(40) : responsiveScreenWidth(40)}px;
     display: flex;
     flex-direction: row;
-    //border: solid;
     margin: 6% auto 0 auto;
 `;
 
@@ -36,23 +38,24 @@ const BookDetailBottomHalf = styled.View`
     width: 85%;
     height: 50%;
     margin: 6% auto;
-   // border: solid;
 `;
 
 
 const styles = StyleSheet.create({
     buyButton: {
-        backgroundColor: 'black',
+        backgroundColor: 'white',
         borderRadius: 20,
+        borderWidth: 2,
         width: '100%',
-        paddingVertical: 13,
+        paddingVertical: 11,
         paddingHorizontal: 13,      
     },
 
     buyButtonText: {
         textAlign: 'center',
+        fontWeight: '500',
         fontSize: responsiveScreenFontSize(0.7),
-        color: 'white'
+        color: 'black'
     },
 
     buyButtonView: {
@@ -61,9 +64,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         position: 'absolute',
-        bottom: 17,
+        bottom: '7%',
     },  
-
 
     bookInfoCardView: {      
         borderColor: 'gray',
@@ -113,7 +115,8 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
 
     const carouselRef = useRef();
     const {width, height} = useWindowDimensions();
-
+    const [bookPurchaseInfo, setBookPurchaseInfo] = useState({});
+    const [enableDownload, setEnableDownload] = useState(false);
 
         const BookInfoCard = ({item}) => {
             const date = new Date(item.pubDate)
@@ -170,8 +173,7 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
             return (
                 <View style={{
                     width: '100%',
-                    height: width > height ?'90%' : '70%',
-                   // borderWidth: 1
+                    height: width > height ? '90%' : '70%',
                 }}>
                 <BookDetailView>
                     <BookDetailTopHalf width={width} height={height}>
@@ -197,10 +199,7 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
                                         height: '100%',
                                         width: width > height ? responsiveScreenWidth(16) : responsiveScreenHeight(16),
                                         alignContent: 'center',
-                                        borderWidth:1,
-                                        borderColor: '#C2C2C2',
-                                        
-                                        
+                                        borderColor: '#C2C2C2',         
                                     }}
                                     source={{
                                         uri: base64Image
@@ -212,16 +211,31 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
             
                         <View style={{
                             width: '60%',
-                            height: '100%',
-      
+                            height: '100%',  
                         }}>
+                            <View style={{
+                                width: '100%',
+                                display: 'flex',
+                                flexDirection: 'row',
+
+                            }}>
                                 <Text
                                     style={{
+                                        width: '85%',
                                         textAlign: 'center',
                                         fontSize: responsiveScreenFontSize(1.2),
                                     }}>
                                     {item.name}
                                 </Text>
+                                <Pressable style={{
+                                    width: '15%',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}>
+                                       <MaterialCommunityIcons name="dots-horizontal-circle" size={27} />
+                                </Pressable>
+
+                            </View>
                                 <View
                                     style={{
                                         borderBottomColor: '#CBCACA',
@@ -237,27 +251,64 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
                                     {item.intro}
                                 </Text>
 
+                                <View style={{
+                                        display: 'flex',
+                                        width: '100%',
+                                        flexDirection: 'row',
+                                        justifyContent: 'center',
+                                        position: 'absolute',
+                                        bottom: '22%',
+                                }}>
+                                    <View style={{
+                                        width: '100%',     
+                                    }}>
+                                        <TouchableOpacity
+                                            disabled={enableDownload}
+                                            style={{
+                                                backgroundColor: 'black',
+                                                borderRadius: 20,
+                                        
+                                                width: '100%',
+                                                paddingVertical: 13,
+                                                paddingHorizontal: 13,  
+                                            }} 
+                                            onPress={() => {gotoSecond(selectedBookObj[carouselRef.current.currentIndex])}}>
+                                            <Text style={{
+                                                        textAlign: 'center',
+                                                        fontSize: responsiveScreenFontSize(0.7),
+                                                        color: 'white',
+                                                        fontWeight: '600'
+                                                }}>{bookPurchaseInfo.pageCount}</Text>
+                                        </TouchableOpacity>
+                                    </View>
+            
+             
+                                </View>
+
                                 <View style={styles.buyButtonView}>
                                     <View style={{
-                                        width: '45%'
+                                        width: '47%',
                                     }}>
-                                    <TouchableOpacity 
-                                        style={styles.buyButton} 
-                                        onPress={() => {gotoSecond(selectedBookObj[carouselRef.current.currentIndex])}}>
-                                        <Text style={styles.buyButtonText}>부분 구매하기</Text>
-                                    </TouchableOpacity>
+                                        <TouchableOpacity 
+                                            style={styles.buyButton} 
+                                            onPress={() => {gotoSecond(selectedBookObj[carouselRef.current.currentIndex])}}>
+                                            <Text style={styles.buyButtonText}>부분 구매하기</Text>
+                                        </TouchableOpacity>
                                     </View>
                                     <View style={{
-                                        width: '45%'
+                                        width: '47%'
                                     }}>
-                                    <TouchableOpacity 
-                                        style={styles.buyButton} 
-                                        // onPress={() => Alert.alert('구매하기')}>
-                                        onPress={() => downloadBook(selectedBookId)}>
-                                        <Text style={styles.buyButtonText}>구매하기 </Text>
-                                    </TouchableOpacity>
+                                        <TouchableOpacity 
+                                            style={styles.buyButton} 
+                                            // onPress={() => Alert.alert('구매하기')}>
+                                            onPress={() => downloadBook(selectedBookId)}>
+                                            <Text style={styles.buyButtonText}>구매하기 </Text>
+                                        </TouchableOpacity>
                                     </View>
+
+                                    
                                 </View>
+
                     
 
                         </View>
@@ -281,6 +332,30 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
 
         }
 
+    
+    const onSnapToItem = (bookId) => {
+       // setEnableDownload(true);
+        axios.get(`${HS_API_END_POINT}/book-purchase/info/page/` + bookId + "/" + 1)
+        .then(res => {
+            console.log(res.data.data);
+            setBookPurchaseInfo(res.data.data);
+
+            if(res.data.data.pageCount != 0) 
+                setEnableDownload(false);
+
+        })
+        .catch(err => console.log(err));
+
+    }
+
+    React.useEffect(()=> {
+        if(selectedBookObj[carouselRef.current.currentIndex].type === "pdf") {   
+            onSnapToItem(selectedBookObj[carouselRef.current.currentIndex].id)
+        }else {
+            console.log(selectedBookObj[selectedBookId].type);
+        }
+    },[])
+
     return (
         <View style={{
             height: '90%',
@@ -297,6 +372,19 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
                 itemWidth={width > height ? width*0.63 : width* 0.80}
                 renderItem={BookDetailCard}
                 ref={carouselRef}
+                onSnapToItem={()=> {
+                    if(selectedBookObj[carouselRef.current.currentIndex].type === "pdf") {  
+                        console.log(carouselRef.current.currentIndex)
+                        console.log(selectedBookObj[carouselRef.current.currentIndex].type)
+                        onSnapToItem(selectedBookObj[carouselRef.current.currentIndex].id)
+                    }else {
+                        console.log(selectedBookObj[selectedBookId].type);
+                    }
+                }}
+                onBeforeSnapToItem={()=> {
+                    setEnableDownload(true)
+                }}
+                
             
             />
           
