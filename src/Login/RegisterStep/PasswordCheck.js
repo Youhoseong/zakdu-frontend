@@ -31,7 +31,7 @@ function PasswordCheck({navigation, route}) {
     const onPress = () => {
         if(text === route.params.passwords){
             // 여기에 데이터를 async storage 로 전달
-            const dataToSend = {names:route.params.names, emails:route.params.emails, passwords:route.params.passwords, points:point}
+            const dataToSend = {types: route.params.types, names:route.params.names, emails:route.params.emails, passwords:route.params.passwords, points:point}
             AsyncStorage.setItem('user_information',JSON.stringify({
                 'user_name': route.params.names,
                 'user_id' : route.params.emails,

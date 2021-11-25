@@ -25,21 +25,14 @@ const bigOne = screenWidth > screenHeight ? screenWidth:screenHeight;
 const smallOne = screenWidth < screenHeight ? screenWidth:screenHeight;
 
 function EnterType({navigation}) {
-    const [name, setName] = useState("");
+    const [type, setType] = useState("");
     const [number, onChangeNumber] = React.useState(null);
-    const onChangeText = (name) => {
-        setName(name);
+    const onChangeText = (type) => {
+        setName(type);
     }
     const gotoNextScreen = (type) => {
-        // if(name === ""){
-        //     Alert.alert(
-        //         "이름을 입력해주세요!"
-        //     );
-        // }
-        // else{
-            Alert.alert(type);
-            navigation.navigate('EnterName');
-        //}
+        setType(type)
+        navigation.navigate('EnterName',{types: type});
     }
 
     return (

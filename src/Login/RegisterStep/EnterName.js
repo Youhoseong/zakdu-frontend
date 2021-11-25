@@ -23,7 +23,7 @@ const screenHeight = Dimensions.get('screen').height;
 const bigOne = screenWidth > screenHeight ? screenWidth:screenHeight;
 const smallOne = screenWidth < screenHeight ? screenWidth:screenHeight;
 
-function EnterName({navigation}) {
+function EnterName({navigation, route}) {
     const [name, setName] = useState("");
     const [number, onChangeNumber] = React.useState(null);
     const onChangeText = (name) => {
@@ -37,7 +37,7 @@ function EnterName({navigation}) {
             );
         }
         else{
-            navigation.navigate('EnterEmail',{names: name});
+            navigation.navigate('EnterEmail',{types: route.params.types, names: name});
         }
     }
 

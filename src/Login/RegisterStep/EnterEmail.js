@@ -44,7 +44,7 @@ function EnterEmail({navigation, route}) {
             );
         }
         else{
-            navigation.navigate('EnterPassword',{names: route.params.names, emails: email});
+            navigation.navigate('EnterPassword',{types: route.params.types, names: route.params.names, emails: email});
         }
     }
     return (

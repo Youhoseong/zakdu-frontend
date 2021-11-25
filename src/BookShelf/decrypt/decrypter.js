@@ -8,14 +8,9 @@ import {
     arrayAsString,
     PDFRef,
 } from "pdf-lib";
-<<<<<<< HEAD
 import {decode} from 'base-64';
 import {Buffer} from 'buffer';
-=======
->>>>>>> upstream/develop
 
-import {decode} from 'base-64';
-import {Buffer} from 'buffer';
 const atob = decode;
 
 FileReader.prototype.readAsArrayBuffer = function (blob) {
@@ -108,15 +103,8 @@ export const tryToDecodeStream = (maybeStream) => {
  * aesKey : 32byte, iv: 16byte
  */
 export async function decryptPages(pdfPath, pageInfos) {
-<<<<<<< HEAD
     // const existingPdfBytes = await fetch(pdfPath).then((res) => res.arrayBuffer());
-=======
 
-    var pdfBase64 = await RNFS.readFile(pdfPath, 'base64');
-    const existingPdfBytes = Buffer.from(pdfBase64, 'base64');
-    console.log(existingPdfBytes);
->>>>>>> upstream/develop
-    
     var pdfBase64 = await RNFS.readFile(pdfPath, 'base64');
     const existingPdfBytes = Buffer.from(pdfBase64, 'base64');
     console.log(existingPdfBytes);
