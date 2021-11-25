@@ -28,18 +28,17 @@ function RegisterScreen ({navigation}){
     return(
         <View style={{flex:1,flexDirection:'row', backgroundColor:'white'}}>
             <View style={{flex:1}}/>
-            <View style={{flex:3, borderWidth: 1}}>
+            <View style={{flex:3}}>
                 <View style={{
                     flex:3,
                     justifyContent:'center',
                     alignItems:'center',
-                    borderWidth: 1
                 }}>
                     <Animation
                         style={{
                             width:'100%',
                             height:'100%',
-                            borderWidth: 1
+    
 
                         }} 
                         source={require('../Assets/json/42476-register.json')} />

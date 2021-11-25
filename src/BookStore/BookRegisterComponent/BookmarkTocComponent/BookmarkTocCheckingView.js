@@ -221,7 +221,7 @@ function BookmarkTocCheckingView({navigation, handleTocResult, handleMarkExist ,
                                         flexDirection: 'row',                                    
                             }}>
                                 <DraggableFlatList
-                                    scrollEnabled={true}
+                                    scrollEnabled={false}
                                     data={items.childs}
                                     onDragEnd={({ data }) => {
                                         items.childs = data;
@@ -305,14 +305,15 @@ function BookmarkTocCheckingView({navigation, handleTocResult, handleMarkExist ,
                             onDragEnd={({ data }) => {
                                 handleTocResult(data);
                             }}
+                            
                             keyExtractor={(item, index) => index.toString()}
                             listKey={(item, index)=> 'D' + index.toString()}
                             renderItem={({ item, drag, isActive, index }) => (
                                 <View style={{
-                                    width: '100%',
+                                    width: '90%',
                                     display: 'flex',
                                     flexDirection: 'row',
-                          
+                        
                                 }}>
                             
                                 {HierarchyDataRender(item, drag, isActive, index)}
