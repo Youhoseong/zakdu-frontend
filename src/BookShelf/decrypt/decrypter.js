@@ -172,12 +172,12 @@ export async function decryptPages(pdfPath, pageInfos, startPage) {
     const decPdfBytes = await pdfDoc.save();
     const fileName = getFileName(pdfPath);
     const tempDecryptedFilePath = RNFS.TemporaryDirectoryPath + "pdf/" + fileName + "_dec";
-    RNFS.exists(RNFS.TemporaryDirectoryPath + "pdf").then(res =>{
+    return RNFS.exists(RNFS.TemporaryDirectoryPath + "pdf").then(res =>{
         if(!res) {
             console.log("tmp/pdf 생성");
             RNFS.mkdir(RNFS.TemporaryDirectoryPath + "pdf");
         }
-        RNFS.writeFile(tempDecryptedFilePath, arrayAsString(decPdfBytes), 'ascii');
+        return RNFS.writeFile(tempDecryptedFilePath, arrayAsString(decPdfBytes), 'ascii');
     })
 }
 

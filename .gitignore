@@ -9,5 +9,5 @@ ios/Podfile.lock
 
 package-lock.json
 
-
+src/Shared/env.js
 **/DS_Store/**
