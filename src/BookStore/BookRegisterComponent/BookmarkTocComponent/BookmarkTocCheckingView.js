@@ -221,7 +221,7 @@ function BookmarkTocCheckingView({navigation, handleTocResult, handleMarkExist ,
                                         flexDirection: 'row',                                    
                             }}>
                                 <DraggableFlatList
-                                    scrollEnabled={false}
+                                    scrollEnabled={true}
                                     data={items.childs}
                                     onDragEnd={({ data }) => {
                                         items.childs = data;
