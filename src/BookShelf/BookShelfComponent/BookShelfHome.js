@@ -1,8 +1,19 @@
 
-import React, {useState} from 'react';
-import {View, Text, Image, StyleSheet, SafeAreaView, FlatList,Pressable, useWindowDimensions} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, {useState, useEffect} from 'react';
+import {
+    View, 
+    Text, 
+    Image, 
+    StyleSheet, 
+    SafeAreaView, 
+    FlatList,Pressable, 
+    useWindowDimensions,
+    ScrollView,
+    RefreshControl
+} from 'react-native';
 import { responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth } from 'react-native-responsive-dimensions';
-
+import * as RNFS from 'react-native-fs'
 const DATA = [
     {
       id: 0,
@@ -52,7 +63,7 @@ const Item = ({ item, onPress, width, height,  }) => (
   <View style={{
         alignItems: 'center',
         height: width > height ? responsiveScreenHeight(37) : responsiveScreenHeight(25),
-        flex: 1
+        flex: 0.25
     }}>  
       <Pressable onPress={onPress} style=
           {({pressed}) => [
@@ -76,6 +87,8 @@ const Item = ({ item, onPress, width, height,  }) => (
 const BookShelfHome = ({navigation}) => {
     const {width, height} = useWindowDimensions();
     const [selectedId, setSelectedId] = useState(null);
+    const [bookData, setBookData] = useState([]);
+    const [refreshing, setRefreshing] = useState(false);
     const numColumns = 4;
 
     const renderItem = ({ item }) => {
@@ -95,6 +108,39 @@ const BookShelfHome = ({navigation}) => {
         />
       );
     };
+
+    const refreshItems = async () => {
+        var existKeys = bookData.map(data => "pdf_" + data.id);
+        var existKeySet = new Set(existKeys);
+
+        var keys = await AsyncStorage.getAllKeys()
+        keys = keys.filter(key => !existKeySet.has(key) && key.includes("pdf_"));
+        
+        addData(keys);
+    }
+
+    const addData = (keys) => {
+        const pdfBookCoverPath = RNFS.DocumentDirectoryPath + "/pdfCover/"
+
+        keys.forEach(async (key) => {
+            const dataStr = await AsyncStorage.getItem(key);
+            const item = JSON.parse(dataStr);
+            console.log(key);
+            console.log(item);
+            if(item === null) return;
+            const data = {
+                id: item.book_id,
+                image: {uri: pdfBookCoverPath + item.coverFileName},
+                title: item.title
+            }
+            setBookData(bookData => [...bookData, data])
+        });
+    } 
+
+    useEffect(() => {
+        refreshItems();
+        console.log(bookData);
+    }, [])
   
     return (
       <SafeAreaView style={styles.container}>
@@ -110,10 +156,12 @@ const BookShelfHome = ({navigation}) => {
           }}>보관함 </Text>
           <View style={{width: '90%', borderBottomWidth: 1, borderBottomColor: 'gray'}}/>
         </View>
-
+        
         <FlatList
-          data={DATA}
+          data={bookData}
           renderItem={renderItem}
+          refreshing={refreshing}
+          onRefresh={refreshItems}
           keyExtractor={(item) => item.id}
           extraData={selectedId}
           numColumns={numColumns}

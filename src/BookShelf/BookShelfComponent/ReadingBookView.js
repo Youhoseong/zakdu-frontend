@@ -8,12 +8,6 @@ import PageJumpSelectView from './PageJumpSelectView'
 import * as RNFS from 'react-native-fs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {decryptPages, decryptEpub} from '../decrypt/decrypter';
-import {HS_API_END_POINT} from '../../Shared/env';
-import axios from 'axios';
-import {downloadPdfBook} from '../../Store/Download/BookDownload'
-import { arrayAsString } from 'pdf-lib';
-import CryptoJS from 'crypto-js';
-
 
 
 const styles = StyleSheet.create({
@@ -120,7 +114,6 @@ function ReadingBookView({route, navigation}) {
         console.log(storageKey)
 
         AsyncStorage.getItem(storageKey).then(async (item) => {
-            console.log(storageKey, item)
             if(item != null) {
                 var itemData = JSON.parse(item);
                 console.log(itemData);

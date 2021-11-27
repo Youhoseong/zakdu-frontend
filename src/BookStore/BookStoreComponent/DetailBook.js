@@ -103,11 +103,9 @@ const styles = StyleSheet.create({
 
 
 
-const downloadBook = (id) => {
-    // 책 id 전송해야함!
-    // key는 "pdf_" + id
-    downloadPdfBook(id).then(() => {
-        downloadPdfKeys(id);
+const downloadBook = (item) => {
+    downloadPdfBook(item).then(() => {
+        downloadPdfKeys(item.id);
     })
 }
 
@@ -314,7 +312,7 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
                                         <TouchableOpacity 
                                             style={styles.buyButton} 
                                             // onPress={() => Alert.alert('구매하기')}>
-                                            onPress={() => downloadBook(selectedBookId)}>
+                                            onPress={() => downloadBook(item)}>
                                             <Text style={styles.buyButtonText}>구매하기 </Text>
                                         </TouchableOpacity>
                                     </View>
