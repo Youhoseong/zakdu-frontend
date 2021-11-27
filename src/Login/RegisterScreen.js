@@ -38,10 +38,8 @@ function RegisterScreen ({navigation}){
                         style={{
                             width:'100%',
                             height:'100%',
-    
-
                         }} 
-                        source={require('../Assets/json/42476-register.json')} />
+                        source={require('../Assets/json/42476-register.json')} autoPlay/>
                     {/* <Text>Hello</Text> */}
                 </View>
                 <View style={{flex:1,justifyContent:'flex-start'}}>

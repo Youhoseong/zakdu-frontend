@@ -12,7 +12,7 @@ import {downloadPdfBook, downloadPdfKeys} from '../../Store/Download/BookDownloa
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import { connect } from 'react-redux';
-import { getBook } from '../../Store/Actions';
+import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import { HS_API_END_POINT } from '../../Shared/env';
 
@@ -264,7 +264,7 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
                                         width: '100%',     
                                     }}>
                                         <TouchableOpacity
-                                            disabled={enableDownload}
+                                            disabled={enableDownload || carouselRef.current.currentIndex != index}
                                             style={{
                                                 backgroundColor: 'black',
                                                 borderRadius: 20,
@@ -273,7 +273,19 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
                                                 paddingVertical: 13,
                                                 paddingHorizontal: 13,  
                                             }} 
-                                            onPress={() => {gotoSecond(selectedBookObj[carouselRef.current.currentIndex])}}>
+                                            onPress={() => {
+                                                
+                                            Toast.show({
+                                                type: 'success',
+                                                text1: 'Hello',
+                                                text2: 'This is some something 👋',
+                            
+
+
+
+                                              });
+
+                                            }}>
                                             <Text style={{
                                                         textAlign: 'center',
                                                         fontSize: responsiveScreenFontSize(0.7),
@@ -327,6 +339,7 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
                     </BookDetailBottomHalf>
             
                 </BookDetailView>
+
                 </View>
             )
 
@@ -374,8 +387,10 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
                 renderItem={BookDetailCard}
                 ref={carouselRef}
                 onSnapToItem={()=> {
+                    
                     if(selectedBookObj[carouselRef.current.currentIndex].type === "pdf") {  
                         console.log(carouselRef.current.currentIndex)
+               
                         console.log(selectedBookObj[carouselRef.current.currentIndex].type)
                         onSnapToItem(selectedBookObj[carouselRef.current.currentIndex].id)
                     }else {
@@ -388,7 +403,8 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
                 
             
             />
-          
+            <Toast position='top' topOffset={0} visibilityTime={1000} />
+                                       
         </View>
     );
 }

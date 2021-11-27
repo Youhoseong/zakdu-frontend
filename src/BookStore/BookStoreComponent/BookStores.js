@@ -22,6 +22,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { HS_API_END_POINT } from '../../Shared/env';
 import { connect } from 'react-redux';
 import { getBook } from '../../Store/Actions';
+import Toast from 'react-native-toast-message';
 
 let parseString = require('react-native-xml2js').parseString;
 
