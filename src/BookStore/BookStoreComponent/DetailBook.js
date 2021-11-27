@@ -104,10 +104,6 @@ const styles = StyleSheet.create({
 
 
 const downloadBook = (item) => {
-    // 책 id 전송해야함!
-    // key는 "pdf_" + id
-    console.log(item);
-    //item.bookCoverResource
     downloadPdfBook(item).then(() => {
         downloadPdfKeys(item.id);
     })
