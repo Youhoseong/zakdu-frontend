@@ -137,13 +137,6 @@ const BookShelfHome = ({navigation}) => {
         });
     } 
 
-    const loadBookData = async () => {
-        var keys = await AsyncStorage.getAllKeys()
-        keys = keys.filter(key => key.includes("pdf_"));
-
-        addData(keys);
-    }
-
     useEffect(() => {
         refreshItems();
         console.log(bookData);
@@ -152,14 +145,6 @@ const BookShelfHome = ({navigation}) => {
     return (
       <SafeAreaView style={styles.container}>
 
-        <ScrollView 
-                refreshControl={
-                    <RefreshControl refreshing={refreshing} onRefresh={refreshItems} />
-                }
-                style={{
-                backgroundColor: 'white',
-                width: '100%',
-        }}>
         <View style={{alignItems: 'center', width: '100%', marginTop: '3%'}}>
           <Text style={{
             textAlign: 'left',
@@ -175,11 +160,12 @@ const BookShelfHome = ({navigation}) => {
         <FlatList
           data={bookData}
           renderItem={renderItem}
+          refreshing={refreshing}
+          onRefresh={refreshItems}
           keyExtractor={(item) => item.id}
           extraData={selectedId}
           numColumns={numColumns}
         />
-        </ScrollView>
       </SafeAreaView>
     );
   };
