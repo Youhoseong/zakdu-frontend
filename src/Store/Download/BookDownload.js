@@ -2,7 +2,7 @@ import {HS_API_END_POINT} from '../../Shared/env';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as RNFS from 'react-native-fs';
-
+import {TextDecoder} from "text-encoding"
 
 export async function downloadPdfBook(item) {
     // 유저 정보 추가로 필요

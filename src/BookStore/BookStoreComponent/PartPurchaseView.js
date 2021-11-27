@@ -10,10 +10,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ImageModal } from '../../Common/CommonComponent/ImageModal';
 import axios from 'axios';
 import { HS_API_END_POINT } from '../../Shared/env';
+import Toast, {BaseToast,ErrorToast} from 'react-native-toast-message';
+
+
 const styles = StyleSheet.create({
     PartPurchaseViewStyle: {
         width: '90%',
-        
         backgroundColor: 'white',
         borderRadius: 15,
         display: 'flex',
@@ -23,8 +25,6 @@ const styles = StyleSheet.create({
     PartPurchaseLeftView: {
         width: '40%',
         height: '100%',
-       // borderRightWidth: 1,
-      //  borderWidth:1,
         alignItems: 'center',
         padding: 20
     },
@@ -33,9 +33,6 @@ const styles = StyleSheet.create({
         width: '60%',
         height: '100%',
         padding: 20,
-       //backgroundColor: 'black'
-
-
     },
 
     BookTitleTextStyle: {
@@ -47,11 +44,29 @@ const styles = StyleSheet.create({
     TocFieldViewStyle : {
         display: 'flex',
         flexDirection: 'row',
-      //  borderWidth: 1,
         alignContent: 'space-between',
         marginVertical: 10,
-
         alignItems: 'center'
+    },
+
+
+    PriceInfoLayout: {
+        backgroundColor: '#D1D1D1', 
+        height: '20%', 
+        borderTopWidth: 1,
+        borderBottomLeftRadius: 15,
+        borderBottomRightRadius: 15,
+        justifyContent: 'center',
+
+    },
+
+    PriceSecondLayout :{
+        display: 'flex',
+        flexDirection: 'column',
+        paddingHorizontal: 15,
+        justifyContent: 'center',
+        height: '50%',
+        width: '100%'
     }
 
 })
@@ -113,6 +128,7 @@ const getCircularReplacer = () => {
 };
 
 function PartPurchaseView({navigation, selectedBook}) {
+    const [purchaseToast, setPurchaseToast] = useState(false);
     const [imageModalVisible, setImageModalVisible] = useState(false);
     const {width, height} = useWindowDimensions();
     const [text, setText] = useState("");
@@ -124,38 +140,81 @@ function PartPurchaseView({navigation, selectedBook}) {
     const [bookTocData, setBookTocData] = useState([]);
 
 
+    const toastConfig = {
+        
+        purchaseSuccessToast: ({ text1, props }) => (
+            <View style={{
+                width: width * 0.81,
+                height: 48,
+                alignItems: 'center'
+            }}>
+                <View style={{   
+                    width: '50%', 
+                    height: '100%', 
+                    backgroundColor: '#242528', 
+                    borderRadius: 8, 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    paddingHorizontal: 16,
+                    display: 'flex',
+                    flexDirection: 'row'
+                }}>
+                    
+                    <Text style={{
+                        fontSize: 16, 
+                        fontWeight: '400', 
+                        borderColor: 'white',
+                        color: 'white'
+                    }}>{text1}</Text>
+                    <Pressable onPress={()=> console.log('다운로드')}>
+                        <Text style={{
+                                fontSize: 16, 
+                                fontWeight: '600', 
+                                borderColor: '#C2CAFC',
+                                color: '#A4B0FB'
+                        }}>다운로드</Text>
+                    </Pressable>
+                </View>
+            </View>
+
+        )
+      };
+
+
     const base64Image = 'data:image/png;base64,' + selectedBook.bookCoverResource;
     let resursivePrice = 0;
     const priceCheck = (data) => {
         data.map(item=> {
             if(item.tick) {
                 const priceOverhead = parseInt((item.endPage- item.startPage + 1) / selectedBook.pdfPageCount * selectedBook.price);
-                resursivePrice = resursivePrice + priceOverhead;
-
-   
-               
+                resursivePrice = resursivePrice + priceOverhead;       
             } else {
                 if(item.childs) {
                     priceCheck(item.childs)
-                }
-              
+                }       
             }
         })    
     }
 
     const purchaseButtonOnClick = () => {
         const formData = new FormData();
+        console.log(width * 0.9 * 0.5);
 
         let bookPurchaseDto = {
-            
             'purchasePageList': pageArr
         }
         console.log("페이지 수: " + pageArr.filter(value => value == true).length);
-
         formData.append('bookPurchaseStr', JSON.stringify(bookPurchaseDto, getCircularReplacer()));
 
         axios.post(`${HS_API_END_POINT}/book-purchase/pdf-book/` + selectedBook.id, formData)
-        .then((res) => console.log(res))
+        .then((res) => {
+      
+            Toast.show({
+                type: 'purchaseSuccessToast',
+                text1: '구매가 완료되었어요.',
+            });
+            console.log(res);
+        })
         .catch((err)=> console.log(err));
 
     }
@@ -259,10 +318,10 @@ function PartPurchaseView({navigation, selectedBook}) {
     }
 
 
-
     const sellByPage = () => setByToc(false);
     const sellByToc = () => {
         setByToc(true);
+        
         setPagesToBuy("");
     }
     const onChangeText = (select) => setText(select);
@@ -282,15 +341,10 @@ function PartPurchaseView({navigation, selectedBook}) {
             const pages = x.split('-');
             if(pages.length===1){
                 newPageArr[Number(pages[0])] = false;
-                // const idx = newPageArr.indexOf(pages);
-                // newPageArr.splice(idx,1);
-                //newPageArr = newPageArr.filter((element) => element !== pages);
+
             } else {
                 for(var i = Number(pages[0]); i<=Number(pages[1]);i++){
                     newPageArr[i]=false;
-                    // const idx = newPageArr.indexOf(String(i));
-                    // newPageArr.splice(idx,1);
-                    //newPageArr = newPageArr.filter((element) => element !== String(i));
                 }
             }
         }
@@ -498,24 +552,8 @@ function PartPurchaseView({navigation, selectedBook}) {
                             
                     
                         </View>
-                        <View style={{
-                            backgroundColor: '#ABAAAA', 
-                            height: '20%', 
-                            borderTopWidth: 1,
-                            borderBottomLeftRadius: 15,
-                            borderBottomRightRadius: 15,
-                            justifyContent: 'center',
-                
-                        }}>
-                            <View style={{
-                                display: 'flex',
-                                flexDirection: width > height ? 'column': 'column',
-                                paddingHorizontal: 15,
-                          
-                                justifyContent: 'center',
-                                height: '50%',
-                                width: '100%'
-                            }}>
+                        <View style={styles.PriceInfoLayout}>
+                            <View style={styles.PriceSecondLayout}>
                                 <Text 
                                     numberOfLines={1}
                                     style={{
@@ -524,22 +562,187 @@ function PartPurchaseView({navigation, selectedBook}) {
                                 }}>
                                     {price.toLocaleString("ko-KR", { style: 'currency', currency: 'KRW' })}
                                 </Text>
-                                <Pressable style={{
-                                
-                                }}>
-                                    <Text 
+                       
+                                <Text 
                                     style={{
                                         color: '#256EDE',
                                         fontWeight: '500'
                                     }}
-                                    onPress={sellByPage}
-                                    >
+                                    onPress={sellByPage}>
                                         페이지 단위로 구매하기
-                                    </Text>
-                                </Pressable>
+                                </Text>
+                         
                                 <Pressable style={({pressed}) => [
                                     {
-                                        backgroundColor: pressed ? '#1440F9' : 'black',
+                                        backgroundColor: pressed ? '#323232' : 'black',
+                                    }, 
+                                    {
+                                        borderRadius: 10,
+                                        width: responsiveScreenWidth(13),
+                                        height: '80%',
+                                        position: 'absolute',
+                                        alignItems: 'center',
+                                        right: 5,
+                                        justifyContent: 'center',
+                                    }
+                                ]}
+                                    onPress={()=> {
+                                        if(price == 0) 
+                                            alert('선택한 항목이 없습니다.');
+                                        else {
+                                            purchaseButtonOnClick();
+                                        }
+                                    }}>
+        
+                                    
+                                <Text 
+                                    style={{
+                                        fontSize: responsiveScreenFontSize(1),
+                                        color: 'white'
+                                }}>구매하기</Text>
+                
+                                </Pressable>
+                            </View>
+                        </View>
+                    </View>
+                }
+                {/* ㅍㅔ이지별로 구매하기 */}
+                {!byToc &&
+                    <View 
+                        isVisible={byToc}
+                        style={{
+                        height: '100%',
+                        borderWidth: 1,
+                        borderRadius: 15
+                    }}>
+                    <View style={{
+                        height: '80%',
+        
+                    }}>
+                        <View style={{
+                            height: '10%',
+                            marginHorizontal:'5%',
+                            marginTop:'5%',
+                            justifyContent:'center',
+         
+                        }}>
+                            <Text style={{
+                                fontSize:responsiveScreenFontSize(1.0),
+                                textAlign:'center',
+                                fontWeight: '600'
+                            }}>
+                                구매하고자 하는 페이지를 입력해주세요.
+                            </Text>
+                        </View>
+                        <View
+                            style={{
+                                flex:1,
+                                justifyContent:'center',
+                                alignContent:'center',
+                                flexDirection:'row'
+                            }}>
+                        
+                            <View style={{
+                                width: '100%', 
+                                justifyContent:'center',
+                                flexDirection: 'row',
+                                display: 'flex',
+                            }}>
+                                <TextInput 
+                                    style={{
+                                        height:'40%',
+                                        width:'60%',
+                                        borderWidth: 1,
+                                        borderRadius: 10,
+                                        paddingLeft:10,
+                                        marginHorizontal: 20
+                                    }}
+                                    onChangeText={onChangeText}
+                                    value={text}
+                                    onSubmitEditing={addPage}
+                                    placeholder=" ex 6,7,8,10-15"
+                                >
+                                </TextInput>
+                                <Pressable style={({pressed}) => [
+                                    {
+                                        backgroundColor: !pressed ? '#323232' : 'black',
+                                    }, 
+                                    {
+                                        height: '40%',
+                                        width:'20%',             
+                                        borderRadius: 10,
+                                        justifyContent:'center',
+                                    }
+                                ]}
+                                    onPress={addPage}>
+                                
+                                    <Text 
+                                        style={{
+                                            textAlign:'center',
+                                            fontSize: responsiveScreenFontSize(1),
+                                            color: 'white',
+                                            fontWeight:'800'
+                                    }}>담기</Text>
+                                </Pressable>
+                            </View>
+
+                        </View>
+                        <View style={{flex:4}}>
+                            <ScrollView>
+                                {Object.keys(pagesToBuy).map((key) => (
+                                <View 
+                                key={key}
+                                style={{
+                                    flexDirection:'row',
+                                    margin:5,
+                                    padding:10,
+                                    paddingLeft:15,
+                                    backgroundColor:'#E6E6E6',
+                                    borderRadius:10,
+                                    alignItems:'center',
+                                    justifyContent:'space-between'
+                                    
+                                }}
+                                >
+                                    <Text style={{
+                                        fontWeight:'500',
+                                        fontSize:responsiveFontSize(0.9),
+                                    }}>{pagesToBuy[key].text}</Text>
+                                    <TouchableOpacity onPress={() => delPage(key)}>
+                                        <IconFeather name="x-square" size={20} color="red" />
+                                    </TouchableOpacity>
+                                </View>
+                                ))}
+                            </ScrollView>
+
+
+
+                        </View>
+                
+                    </View>
+                    <View style={styles.PriceInfoLayout}>
+                            <View style={styles.PriceSecondLayout}>
+                                <Text 
+                                    numberOfLines={1}
+                                    style={{
+                                        fontSize: width > height ? responsiveScreenFontSize(2.2) : responsiveScreenFontSize(1.7),
+                                        width: '70%',       
+                                }}>
+                                    {price.toLocaleString("ko-KR", { style: 'currency', currency: 'KRW' })}
+                                </Text>
+                           
+                                <Text 
+                                    style={{
+                                        color: '#256EDE',
+                                        fontWeight: '500'
+                                    }}
+                                    onPress={sellByToc}>
+                                        목차 단위로 구매하기
+                                </Text>
+                         
+                            <Pressable style={({pressed}) => [
+                                    {
+                                        backgroundColor: pressed ? '#323232' : 'black',
                                     }, 
                                     {
                                     borderRadius: 10,
@@ -567,191 +770,6 @@ function PartPurchaseView({navigation, selectedBook}) {
                                         color: 'white'
                                 }}>구매하기</Text>
                 
-                                </Pressable>
-                            </View>
-                        </View>
-                    </View>
-                }
-                {/* ㅍㅔ이지별로 구매하기 */}
-                {!byToc &&
-                    <View 
-                    isVisible={byToc}
-                    style={{
-                    height: '100%',
-                    borderWidth: 1,
-                    borderRadius: 15
-                    }}>
-                    <View style={{
-                        height: '80%',
-                    // borderWidth: 1
-                    }}>
-                        <View style={{
-                        height: '10%',
-                        marginHorizontal:'5%',
-                        marginTop:'5%',
-                        justifyContent:'center',
-                        // borderWidth: 1
-                        }}>
-                            <Text style={{
-                                fontSize:responsiveScreenFontSize(1),
-                                textAlign:'center',
-                                }}>
-                                구매하고자 하는 페이지를 입력해주세요.
-                            </Text>
-                        </View>
-                        <View
-                            style={{
-                                flex:1,
-                                justifyContent:'center',
-                                alignContent:'center',
-                                flexDirection:'row'
-                                }}
-                        >
-                            <View style={{flex:4, justifyContent:'center'}}>
-                                <TextInput 
-                                    style={{
-                                    margin:10,
-                                    height: '40%',
-                                    width:'95%',
-                                    borderWidth: 1,
-                                    borderRadius: 15,
-                                    paddingLeft:10,
-                                    }}
-                                    onChangeText={onChangeText}
-                                    value={text}
-                                    onSubmitEditing={addPage}
-                                    placeholder=" ex 6,7,8,10-15"
-                                >
-                                </TextInput>
-                            </View>
-
-                            <View style={{flex:1,justifyContent:'center'}}>
-                                <Pressable style={({pressed}) => [
-                                    {
-                                        backgroundColor: !pressed ? '#1440F9' : 'black',
-                                    }, 
-                                    {
-                                        margin:5,
-                                        height: '40%',
-                                        width:'80%',
-                                        borderWidth: 1,
-                                        borderRadius: 20,
-                                        justifyContent:'center',
-                                        //backgroundColor:'#1440F9',
-                                    }
-                                    ]}
-                                    onPress={addPage}
-                                >
-                                    <Text 
-                                        style={{
-                                            textAlign:'center',
-                                            fontSize: responsiveScreenFontSize(1),
-                                            color: 'white',
-                                            fontWeight:'800'
-                                    }}>담기</Text>
-                                </Pressable>
-                            </View>
-                        </View>
-                        <View style={{flex:4}}>
-                            <ScrollView>
-                                {Object.keys(pagesToBuy).map((key) => (
-                                <View 
-                                key={key}
-                                style={{
-                                    flexDirection:'row',
-                                    margin:5,
-                                    padding:10,
-                                    paddingLeft:15,
-                                    backgroundColor:`#dcdcdc`,
-                                    // borderColor:'black',
-                                    // borderWidth:1,
-                                    borderRadius:10,
-                                    alignItems:'center',
-                                    justifyContent:'space-between'
-                                    
-                                }}
-                                >
-                                    <Text style={{
-                                        fontWeight:'500',
-                                        fontSize:responsiveFontSize(0.9),
-                                    }}>{pagesToBuy[key].text}</Text>
-                                    <TouchableOpacity onPress={() => delPage(key)}>
-                                        <IconFeather name="x-square" size={20} color="red" />
-                                    </TouchableOpacity>
-                                </View>
-                                ))}
-                            </ScrollView>
-
-
-
-                        </View>
-                
-                    </View>
-                    <View style={{
-                        backgroundColor: '#ABAAAA', 
-                        height: '20%', 
-                        borderTopWidth: 1,
-                        borderBottomLeftRadius: 15,
-                        borderBottomRightRadius: 15,
-                        justifyContent: 'center',
-            
-                    }}>
-                        <View style={{
-                            display: 'flex',
-                            flexDirection: width > height ? 'row': 'column',
-                            paddingHorizontal: 15,
-                            alignItems: width > height ? 'center' : null,
-                            justifyContent: width > height ? null : 'center',
-                            height: '50%',
-                            width: '100%',
-                        }}>
-                            <Text style={{
-                                fontSize: width > height ? responsiveScreenFontSize(2.2) : responsiveScreenFontSize(1.7),
-                            
-                                width: '30%',
-                                    
-                            }}>
-                                8,730₩
-                            </Text>
-                            <Pressable style={{
-                            
-                            }}>
-                                <Text 
-                                style={{
-                                    color: '#256EDE',
-                                    fontWeight: '500'
-                                }}
-                                onPress={sellByToc}
-                                >
-                                    목차 단위로 구매하기
-                                </Text>
-                            </Pressable>
-                            <Pressable style={({pressed}) => [
-                                {
-                                    backgroundColor: pressed ? '#1440F9' : 'black',
-                                }, 
-                                {
-                                borderRadius: 5,
-                        
-                                width: responsiveScreenWidth(13),
-                                height: '80%',
-                                position: 'absolute',
-                                alignItems: 'center',
-                                right: 5,
-                                justifyContent: 'center',
-                                }
-                            ]}
-                                onPress={()=> {
-                                    alert('구매하기 ㅎㅎ');
-                                }}>
-
-                                
-                            <Text 
-                                style={{
-                                    fontSize: responsiveScreenFontSize(1),
-                                    color: 'white'
-                            }}>구매하기</Text>
-            
                             </Pressable>
                         </View>
                     </View>
@@ -764,6 +782,8 @@ function PartPurchaseView({navigation, selectedBook}) {
             <ImageModal imageModalVisible={imageModalVisible}
                         setImageModalVisible={setImageModalVisible}
                         base64Image={base64Image} />
+
+            <Toast position='top' topOffset={5}  config={toastConfig}/>    
         </View>
     );
 }
