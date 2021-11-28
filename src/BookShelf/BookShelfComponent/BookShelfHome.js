@@ -9,54 +9,10 @@ import {
     SafeAreaView, 
     FlatList,Pressable, 
     useWindowDimensions,
-    ScrollView,
-    RefreshControl
+
 } from 'react-native';
 import { responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth } from 'react-native-responsive-dimensions';
 import * as RNFS from 'react-native-fs'
-const DATA = [
-    {
-      id: 0,
-      image: require('../../Assets/images/img2.png'),
-      title: 'Hidden Markov Models',
-    },
-    {
-        id: 1,
-      image: require('../../Assets/images/images.jpeg'),
-      title: '초등학생을 위한 과학 이야기 356편',
-    },
-    {
-        id: 2,
-        image: require('../../Assets/images/img.png'),
-        title: '쎈 중등수학',
-    },
-    {
-        id: 3,
-        image: require('../../Assets/images/images.jpeg'),
-        title: '초등학생을 위한 과학 이야기 356편',
-    },
-    {
-        id: 4,
-        image: require('../../Assets/images/img.png'),
-        title: '쎈 중등수학',
-    },
-    {
-        id: 5,
-        image: require('../../Assets/images/images.jpeg'),
-        title: '초등학생을 위한 과학 이야기 356편',
-    },
-    {
-        id: 6,
-        image: require('../../Assets/images/img.png'),
-        title: '쎈 중등수학',
-    },
-    {
-        id: 7,
-        image: require('../../Assets/images/images.jpeg'),
-        title: '초등학생을 위한 과학 이야기 356편',
-    },
-    
-  ];
 
 
 const Item = ({ item, onPress, width, height,  }) => (
@@ -80,7 +36,7 @@ const Item = ({ item, onPress, width, height,  }) => (
               style={styles.image} />
                
         </Pressable>
-        <Text style={[styles.title]}>{item.title}</Text>
+        <Text numberOfLines={1} style={[styles.title]}>{item.title}</Text>
     </View>
   );
   
@@ -110,6 +66,7 @@ const BookShelfHome = ({navigation}) => {
     };
 
     const refreshItems = async () => {
+        setRefreshing(true);
         var existKeys = bookData.map(data => "pdf_" + data.id);
         var existKeySet = new Set(existKeys);
 
@@ -117,6 +74,7 @@ const BookShelfHome = ({navigation}) => {
         keys = keys.filter(key => !existKeySet.has(key) && key.includes("pdf_"));
         
         addData(keys);
+        setRefreshing(false);
     }
 
     const addData = (keys) => {
