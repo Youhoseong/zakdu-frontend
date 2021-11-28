@@ -60,7 +60,7 @@ function  BookRegisterFileUploadView ({navigation, handleFileUpdate, fileInfo, h
             if(file) {
                 const newUri = file.fileCopyUri.replace(file.uri.split('/').pop(), file.name);
                 const ext = file.name.split('.').pop().toLowerCase();
-           
+                console.log(newUri);
                 let fileForm = {
                     name: file.name,
                     uri: newUri,

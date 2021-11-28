@@ -115,7 +115,7 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
     const carouselRef = useRef();
     const {width, height} = useWindowDimensions();
     const [bookPurchaseInfo, setBookPurchaseInfo] = useState({});
-    const [enableDownload, setEnableDownload] = useState(false);
+    const [enableDownload, setEnableDownload] = useState(true);
 
         const BookInfoCard = ({item}) => {
             const date = new Date(item.pubDate)
@@ -272,24 +272,14 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
                                                 paddingHorizontal: 13,  
                                             }} 
                                             onPress={() => {
-                                                
-                                            Toast.show({
-                                                type: 'success',
-                                                text1: 'Hello',
-                                                text2: 'This is some something 👋',
-                            
-
-
-
-                                              });
-
+                                                downloadBook(item)
                                             }}>
                                             <Text style={{
                                                         textAlign: 'center',
                                                         fontSize: responsiveScreenFontSize(0.7),
                                                         color: 'white',
                                                         fontWeight: '600'
-                                                }}>{bookPurchaseInfo.pageCount}</Text>
+                                                }}>다운로드{bookPurchaseInfo.pageCount}</Text>
                                         </TouchableOpacity>
                                     </View>
             
@@ -311,8 +301,8 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
                                     }}>
                                         <TouchableOpacity 
                                             style={styles.buyButton} 
-                                            // onPress={() => Alert.alert('구매하기')}>
-                                            onPress={() => downloadBook(item)}>
+                                            onPress={() => Alert.alert('구매하기')}>
+                             
                                             <Text style={styles.buyButtonText}>구매하기 </Text>
                                         </TouchableOpacity>
                                     </View>
@@ -366,6 +356,7 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
         }else {
             console.log(selectedBookObj[selectedBookId].type);
         }
+        onSnapToItem(selectedBookObj[carouselRef.current.currentIndex].id);
     },[])
 
     return (
@@ -401,7 +392,6 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
                 
             
             />
-            <Toast position='top' topOffset={0} visibilityTime={1000} />
                                        
         </View>
     );
