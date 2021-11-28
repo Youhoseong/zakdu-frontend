@@ -26,76 +26,6 @@ const styles = StyleSheet.create({
     }
 });
 
-async function downloadPDF() {
-    const src = await require("../../Assets/files/example_enc.pdf");
-    var fromPath = Image.resolveAssetSource(src);
-    const downloadPath = RNFS.DocumentDirectoryPath + "/downloaded.pdf";
-
-    var source;
-    console.log(downloadPath);
-    await RNFS.downloadFile({
-        fromUrl: fromPath.uri,
-        toFile: downloadPath
-    }).promise.then(res => {
-        source = res;
-        console.log("download!");
-        console.log(res);
-    });
-}
-
-async function pdf_test() {
-    await downloadPDF();
-    await lockPdfDownload();
-    const test_data = [
-        {pageNum: 1, aesKey: "abcdefghijklmnopqrstuvwxyzabcdef", iv: "0123456789abcdef"},
-        {pageNum: 10, aesKey: "abcdefghijklmnopqrstuvwxyzabcdef", iv: "0123456789abcdef"},
-        {pageNum: 15, aesKey: "abcdefghijklmnopqrstuvwxyzabcdef", iv: "0123456789abcdef"},
-        {pageNum: 17, aesKey: "abcdefghijklmnopqrstuvwxyzabcdef", iv: "0123456789abcdef"}
-
-    ];
-
-    console.log(RNFS.DocumentDirectoryPath);
-    RNFS.readDir(RNFS.DocumentDirectoryPath).then(files => {
-        console.log(files);
-    })
-    const filePath = RNFS.DocumentDirectoryPath + "/" + "downloaded.pdf";
-    decryptPages(filePath, test_data);
-}
-
-async function lockPdfDownload() {
-    const lockPdfPath = RNFS.DocumentDirectoryPath + "/" + "lockpage.pdf";
-    const lockPdfDownloadPath = "http://localhost:8081/src/Assets/files/lockpage.pdf"
-    await RNFS.exists(lockPdfPath).then(exist => {
-        if(!exist) {
-            RNFS.downloadFile({
-                fromUrl: lockPdfDownloadPath,
-                toFile: lockPdfPath
-            })
-        }
-    })
-}
-
-async function epub_test() {
-    const downloadPath = RNFS.DocumentDirectoryPath + "/real.epub";
-
-    RNFS.downloadFile({
-        fromUrl: "http://localhost:8081/src/Assets/files/abc_enc.epub",
-        toFile: downloadPath
-    }).promise.then(res => {
-        console.log("download epub");
-        console.log(res);
-    });
-
-    const epubTestData = [
-        {
-            filePath: "OEBPS/Cath_9780553418828_epub3_itr_r1.xhtml",
-            aesKey: "abcdefghijklmnopqrstuvwxyzabcdef",
-            iv: "0123456789abcdef"
-        }
-    ]
-    decryptEpub(downloadPath, epubTestData);
-}
-
 function ReadingBookView({route, navigation}) {
     const {height, width} = useWindowDimensions();
     const [pageModalVisible, setPageModalVisible] = useState(false);
@@ -103,9 +33,6 @@ function ReadingBookView({route, navigation}) {
 
     const [source, setSource] = useState({ uri: "" });
     const [fileExist, setFileExist] = useState(false);
-    //const source = {uri: RNFS.TemporaryDirectoryPath + "pdf/" + "downloaded.pdf_dec" };
-    // epub_test();
-    //pdf_test();
 
     useEffect(() => {
         // 보관함에 책 눌렀을 때 책 정보에서 받아와야 함
