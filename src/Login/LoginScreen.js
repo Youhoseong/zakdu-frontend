@@ -4,11 +4,8 @@ import {
   TextInput,
   View,
   Text,
-  ScrollView,
-  Image,
   Keyboard,
   TouchableOpacity,
-  KeyboardAvoidingView,
   Alert,
   useWindowDimensions,
 } from 'react-native';
@@ -32,6 +29,7 @@ function LoginScreen({navigation}) {
     const [userPassword, setUserPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [errortext, setErrortext] = useState('');
+    const {width, height} = useWindowDimensions();
 
     const passwordInputRef = createRef();
 
@@ -90,13 +88,13 @@ function LoginScreen({navigation}) {
         const userInfo = JSON.parse(result);             //string화 된 result를 parsing
         //console.log('아이디는' + userInfo.user_id);        // user에 담긴 id출력
         if(userInfo===null){
-          Alert.alert("아이디가 존재하지 않습니다");
+          Alert.alert("아이디가 존재하지 않아요.");
         }
         else if(userEmail===userInfo.user_id && userPassword===userInfo.user_password){
           navigation.replace('BottomNav');
         }
         else{
-          Alert.alert("아이디 또는 비밀번호가 일치하지 않습니다.");
+          Alert.alert("아이디 또는 비밀번호가 일치하지 않아요.");
         }
 
       });
@@ -108,46 +106,43 @@ function LoginScreen({navigation}) {
             <View style={styles.topArea}>
               
                 <View style={styles.titleArea}>
-                  <LottieView style={{alignItems:'center'}} source={require('../Assets/json/34151-book-turner.json')} autoPlay loop />
-                  
-                  {/* <Text style={{textAlign:'center', fontSize:bigOne*0.06}}>ZakDu</Text> */}
-                  
+                  <LottieView style={{alignItems:'center'}} source={require('../Assets/json/85006-cute-cosmonaut.json')} autoPlay loop />               
                 </View>
             </View>
 
-            <View style={styles.formArea}>
+            <View style={[styles.formArea, {width: width > height ? '40%': '55%'}]}>
                   <TextInput
-                    style={styles.textFormTop}
-                    onChangeText={(UserEmail) =>
-                      setUserEmail(UserEmail)
-                    }
-                    placeholder="Enter Email" //dummy@abc.com
-                    placeholderTextColor="#8b9cb5"
-                    autoCapitalize="none"
-                    keyboardType="email-address"
-                    returnKeyType="next"
-                    onSubmitEditing={() =>
-                      passwordInputRef.current &&
-                      passwordInputRef.current.focus()
-                    }
-                    underlineColorAndroid="#f000"
-                    blurOnSubmit={false}
+                      style={[styles.textFormTop, {height: width >height ? '35%' : '25%'}]}
+                      onChangeText={(UserEmail) =>
+                        setUserEmail(UserEmail)
+                      }
+                      placeholder="Enter Email" //dummy@abc.com
+                      placeholderTextColor="#8b9cb5"
+                      autoCapitalize="none"
+                      keyboardType="email-address"
+                      returnKeyType="next"
+                      onSubmitEditing={() =>
+                          passwordInputRef.current &&
+                          passwordInputRef.current.focus()
+                      }
+                      underlineColorAndroid="#f000"
+                      blurOnSubmit={false}
                   />
                   <TextInput
-                  style={styles.textFormBottom}
-                  onChangeText={(UserPassword) =>
-                    setUserPassword(UserPassword)
-                  }
-                  placeholder="Enter Password" //12345
-                  placeholderTextColor="#8b9cb5"
-                  keyboardType="default"
-                  ref={passwordInputRef}
-                  onSubmitEditing={Keyboard.dismiss}
-                  blurOnSubmit={false}
-                  secureTextEntry={true}
-                  underlineColorAndroid="#f000"
-                  returnKeyType="next"
-                />
+                      style={[styles.textFormBottom,{height: width >height ? '35%' : '25%'}]}
+                      onChangeText={(UserPassword) =>
+                        setUserPassword(UserPassword)
+                      }
+                      placeholder="Enter Password" //12345
+                      placeholderTextColor="#8b9cb5"
+                      keyboardType="default"
+                      ref={passwordInputRef}
+                      onSubmitEditing={Keyboard.dismiss}
+                      blurOnSubmit={false}
+                      secureTextEntry={true}
+                      underlineColorAndroid="#f000"
+                      returnKeyType="next"
+                  />
                 {/* <Text style={{...styles.TextValidation}}>유효하지 않은 ID입니다.</Text> */}
             </View>
             <View style={{flex:0.75}}>
@@ -158,8 +153,13 @@ function LoginScreen({navigation}) {
                 작두의 회원이 아니신가요?
               </Text>
             </View>
-            <View style={{flex: 0.75}}>
-                <View style={styles.btnArea}>
+       
+            <View style={
+              [styles.btnArea,  
+                {
+                  width: width > height ? '40%': '55%', 
+                  height:  width > height? '7%' : '6%'
+              }]}>
                     <TouchableOpacity 
                       style={styles.btn} 
                       activeOpacity={0.5}
@@ -167,8 +167,8 @@ function LoginScreen({navigation}) {
                     >
                         <Text style={[styles.Text, {color: 'white'}]}>로그인</Text>
                     </TouchableOpacity>
-                </View>
             </View>
+      
             <View style={{flex: 3}} />
         </View>
     );
@@ -177,11 +177,8 @@ function LoginScreen({navigation}) {
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1, //전체의 공간을 차지한다는 의미
-      flexDirection: 'column',
+      flex: 1, 
       backgroundColor: 'white',
-      paddingLeft: screenWidth*0.07,
-      paddingRight: screenWidth*0.07,
     },
     topArea: {
         flex: 3,
@@ -190,10 +187,9 @@ const styles = StyleSheet.create({
     titleArea: {
       flex: 3,
       justifyContent: 'flex-end',
-      paddingTop: screenWidth*0.03,
     },
     TextArea: {
-        backgroundColor:'blue',
+      backgroundColor:'blue',
       flex: 1,
       justifyContent: 'center',
       backgroundColor: 'white',
@@ -205,46 +201,37 @@ const styles = StyleSheet.create({
     TextValidation: {
       fontSize: screenWidth*0.02,
       color: 'red',
-      paddingTop: screenWidth*0.02,
     },
   
     formArea: {
-      width:screenWidth*0.5,
       justifyContent: 'center',
-      
-      // paddingTop: screenWidth(10),
       flex: 2,
       alignSelf:'center'
     },
     textFormTop: {
       borderWidth: 2,
       borderBottomWidth: 1,
-      borderColor: 'blue',
+      borderColor: '#C9C9C9',
       borderTopLeftRadius: 7,
       borderTopRightRadius: 7,
       width: '100%',
-      height: smallOne*0.07,
       paddingLeft: 10,
       paddingRight: 10,
     },
     textFormBottom: {
       borderWidth: 2,
       borderTopWidth: 1,
-      borderColor: 'blue',
+      borderColor: '#C9C9C9',
       borderBottomRightRadius: 7,
       borderBottomLeftRadius: 7,
       width: '100%',
-      height: smallOne*0.07,
       paddingLeft: 10,
       paddingRight: 10,
     },
     btnArea: {
-      height: smallOne*0.07,
-      // backgroundColor: 'orange',
       justifyContent: 'center',
       alignSelf:'center',
       alignItems: 'center',
-      width:screenWidth*0.5,
       paddingBottom: screenHeight*0.01,
     },
     btn: {

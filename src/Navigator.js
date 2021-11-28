@@ -2,14 +2,13 @@ import React from 'react';
 import {View, Text, StatusBar} from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
-import Home from './Home/index';
-import Test from './Home/HomeComponent/Test';
+
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Styled from 'styled-components';
+
 import BookStore from './BookStore';
 import BookShelf from './BookShelf';
 import MyPage from './MyPage';
-import MainLog from './Login/MainLog';
+
 import LoginScreen from './Login/LoginScreen';
 import RegisterScreen from './Login/RegisterScreen';
 import SplashScreen from './Login/SplashScreen';
@@ -25,9 +24,6 @@ const Stack = createStackNavigator();
 const LogStack = createStackNavigator();
 const BottomTab = createBottomTabNavigator();
 
-// const Placeholder = Styled.View`
-  
-// `;
 
 
 const TabPlaceholder = () => {
@@ -40,17 +36,7 @@ const TabPlaceholder = () => {
 const BottomNavigation = ({navigation}) => {
     return (
         <BottomTab.Navigator>
-            {/* <BottomTab.Screen
-                name="ReadingBook"
-                component={Home}
-                options={{
-                    tabBarLabel: "읽고 있는 책",
-                    headerShown: false,
-                    animationEnabled: false
-                 
-                }}
-            >
-            </BottomTab.Screen> */}
+
             <BottomTab.Screen
                 name="BookShelf"
                 component={BookShelf}
@@ -99,11 +85,7 @@ const BottomNavigation = ({navigation}) => {
 const Auth = () => {
     return (
       <LogStack.Navigator>
-        {/*<Stack.Screen*/}
-        {/*  name="Logout"*/}
-        {/*  component={LogoutScreen}*/}
-        {/*  options={{headerShown: false}}*/}
-        {/*/>*/}
+
 
         <LogStack.Screen
           name="Login"

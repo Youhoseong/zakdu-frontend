@@ -9,6 +9,11 @@ import {
     PDFRef,
 } from "pdf-lib";
 
+
+import {decode} from 'base-64';
+import {Buffer} from 'buffer';
+import axios from 'axios';
+import { HS_API_END_POINT } from '../../Shared/env';
 const atob = decode;
 
 FileReader.prototype.readAsArrayBuffer = function (blob) {
@@ -111,7 +116,8 @@ export async function decryptPages(pdfPath, pageInfos, startPage) {
 
     var pdfBase64 = await RNFS.readFile(pdfPath, 'base64');
     const existingPdfBytes = Buffer.from(pdfBase64, 'base64');
-    console.log(existingPdfBytes);
+    // console.log(existingPdfBytes);
+
     var pdfDoc = await PDFDocument.load(existingPdfBytes);
 
     const pageNum = pdfDoc.getPageCount();
@@ -167,6 +173,19 @@ export async function decryptPages(pdfPath, pageInfos, startPage) {
 }
 
 async function setLockPages(pdfDoc, pages, removePages) {
+    const lockExist = await RNFS.exists(RNFS.DocumentDirectoryPath + "/" + "lockpage.pdf");
+    console.log(RNFS.DocumentDirectoryPath + "/" + "lockpage.pdf")
+    if (!lockExist) {
+        await axios.get(HS_API_END_POINT + "/download/pdf_lock")
+        .then(async (res) => {
+            const pdfDirPath = RNFS.DocumentDirectoryPath;
+            if (!await RNFS.exists(pdfDirPath)) {
+                await RNFS.mkdir(pdfDirPath);
+            }
+            RNFS.writeFile(pdfDirPath + "/lockpage.pdf", res.data.data, 'base64');
+        })
+    }
+        
     const lockPdfPath = RNFS.DocumentDirectoryPath + "/" + "lockpage.pdf";
     const lockPdfBase64 = await RNFS.readFile(lockPdfPath, 'base64');
     const lockPdfBytes = Buffer.from(lockPdfBase64, 'base64');

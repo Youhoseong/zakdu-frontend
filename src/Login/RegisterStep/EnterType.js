@@ -50,8 +50,8 @@ function EnterType({navigation}) {
                         <Text style={styles.subtitle}>도서 판매자와 구매자를 고를 수 있어요.</Text>
 
                     </View>
-                    <View style={{flex:4, flexDirection:'row',justifyContent:'center', borderWidth: 1}}>
-                        <View style={{flex:1, justifyContent:'flex-start',alignItems:'center',borderWidth: 1}}>
+                    <View style={{flex:4, flexDirection:'row',justifyContent:'center'}}>
+                        <View style={{flex:1, justifyContent:'flex-start',alignItems:'center'}}>
                             <TouchableOpacity style={{ 
                                 justifyContent:'center',
                                 alignItems:'center', 
@@ -61,7 +61,7 @@ function EnterType({navigation}) {
                                 onPress={() => {gotoNextScreen('seller')}}
                                 
                             >
-                                <Animation style={{width:screenWidth===bigOne? bigOne*0.3:smallOne*0.6,alignSelf:'center'}} source={require('../../Assets/json/22620-store.json')} />
+                            <LottieView style={{width:screenWidth===bigOne? bigOne*0.3:smallOne*0.6,alignSelf:'center'}} source={require('../../Assets/json/22620-store.json')} autoPlay />
                                 <Text style={{fontSize:responsiveFontSize(1.5)}}>판매자</Text>
                             </TouchableOpacity>
                         </View>
