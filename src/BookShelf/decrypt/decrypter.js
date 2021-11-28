@@ -8,12 +8,6 @@ import {
     arrayAsString,
     PDFRef,
 } from "pdf-lib";
-<<<<<<< HEAD
-import {decode} from 'base-64';
-import {Buffer} from 'buffer';
-=======
-
->>>>>>> origin/develop
 
 const atob = decode;
 
@@ -113,20 +107,11 @@ export const tryToDecodeStream = (maybeStream) => {
  * @param pageInfos - {pageNum, aesKey, iv} 
  * aesKey : 32byte, iv: 16byte
  */
-<<<<<<< HEAD
-export async function decryptPages(pdfPath, pageInfos) {
-    // const existingPdfBytes = await fetch(pdfPath).then((res) => res.arrayBuffer());
-=======
 export async function decryptPages(pdfPath, pageInfos, startPage) {
->>>>>>> origin/develop
 
     var pdfBase64 = await RNFS.readFile(pdfPath, 'base64');
     const existingPdfBytes = Buffer.from(pdfBase64, 'base64');
     console.log(existingPdfBytes);
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/develop
     var pdfDoc = await PDFDocument.load(existingPdfBytes);
 
     const pageNum = pdfDoc.getPageCount();
