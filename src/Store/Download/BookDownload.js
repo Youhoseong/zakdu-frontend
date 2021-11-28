@@ -2,6 +2,7 @@ import {HS_API_END_POINT} from '../../Shared/env';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as RNFS from 'react-native-fs';
+import {TextDecoder} from "text-encoding"
 
 
 export async function downloadPdfBook(item) {
@@ -41,8 +42,6 @@ export async function downloadPdfBook(item) {
         realStartPage: item.realStartPage
     }
     return AsyncStorage.setItem(storageKey, JSON.stringify(localData));
-    const tt = await AsyncStorage.getItem(storageKey);
-    console.log(JSON.parse(tt));
 }
 
 export async function downloadPdfKeys(book_id) {
