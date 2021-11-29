@@ -8,7 +8,7 @@ import {
 } from 'react-native-responsive-dimensions';
 import Carousel from 'react-native-snap-carousel';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import {downloadPdfBook, downloadPdfKeys} from '../../Store/Download/BookDownload'
+import {downloadPdfBook, downloadPdfKeys} from './Download/BookDownload'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import { connect } from 'react-redux';
