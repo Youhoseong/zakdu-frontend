@@ -12,7 +12,7 @@ import {downloadPdfBook, downloadPdfKeys} from './Download/BookDownload'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import { connect } from 'react-redux';
-import { getBook } from '../../Store/Actions';
+import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import { HS_API_END_POINT } from '../../Shared/env';
 
@@ -115,7 +115,7 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
     const carouselRef = useRef();
     const {width, height} = useWindowDimensions();
     const [bookPurchaseInfo, setBookPurchaseInfo] = useState({});
-    const [enableDownload, setEnableDownload] = useState(false);
+    const [enableDownload, setEnableDownload] = useState(true);
 
         const BookInfoCard = ({item}) => {
             const date = new Date(item.pubDate)
@@ -262,7 +262,7 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
                                         width: '100%',     
                                     }}>
                                         <TouchableOpacity
-                                            disabled={enableDownload}
+                                            disabled={enableDownload || carouselRef.current.currentIndex != index}
                                             style={{
                                                 backgroundColor: 'black',
                                                 borderRadius: 20,
@@ -271,13 +271,15 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
                                                 paddingVertical: 13,
                                                 paddingHorizontal: 13,  
                                             }} 
-                                            onPress={() => {gotoSecond(selectedBookObj[carouselRef.current.currentIndex])}}>
+                                            onPress={() => {
+                                                downloadBook(item)
+                                            }}>
                                             <Text style={{
                                                         textAlign: 'center',
                                                         fontSize: responsiveScreenFontSize(0.7),
                                                         color: 'white',
                                                         fontWeight: '600'
-                                                }}>{bookPurchaseInfo.pageCount}</Text>
+                                                }}>다운로드{bookPurchaseInfo.pageCount}</Text>
                                         </TouchableOpacity>
                                     </View>
             
@@ -299,8 +301,8 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
                                     }}>
                                         <TouchableOpacity 
                                             style={styles.buyButton} 
-                                            // onPress={() => Alert.alert('구매하기')}>
-                                            onPress={() => downloadBook(item)}>
+                                            onPress={() => Alert.alert('구매하기')}>
+                             
                                             <Text style={styles.buyButtonText}>구매하기 </Text>
                                         </TouchableOpacity>
                                     </View>
@@ -325,6 +327,7 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
                     </BookDetailBottomHalf>
             
                 </BookDetailView>
+
                 </View>
             )
 
@@ -353,6 +356,7 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
         }else {
             console.log(selectedBookObj[selectedBookId].type);
         }
+        onSnapToItem(selectedBookObj[carouselRef.current.currentIndex].id);
     },[])
 
     return (
@@ -372,8 +376,10 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
                 renderItem={BookDetailCard}
                 ref={carouselRef}
                 onSnapToItem={()=> {
+                    
                     if(selectedBookObj[carouselRef.current.currentIndex].type === "pdf") {  
                         console.log(carouselRef.current.currentIndex)
+               
                         console.log(selectedBookObj[carouselRef.current.currentIndex].type)
                         onSnapToItem(selectedBookObj[carouselRef.current.currentIndex].id)
                     }else {
@@ -386,7 +392,7 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
                 
             
             />
-          
+                                       
         </View>
     );
 }

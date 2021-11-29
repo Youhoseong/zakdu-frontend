@@ -4,7 +4,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as RNFS from 'react-native-fs';
 import {TextDecoder} from "text-encoding"
 
-
 export async function downloadPdfBook(item) {
     // 유저 정보 추가로 필요
     // key는 "pdf_" + id
