@@ -26,12 +26,30 @@ const styles = StyleSheet.create({
     }
 });
 
+const getPageMap = (pages, realStartPage, totalPage) => {
+    let idx = 0;
+    let pageMap = {};
+
+    for (let i = realStartPage - 1; i < totalPage; i++) {
+        var currentPage = pages[idx];
+        if(currentPage == i && pageMap[i - realStartPage + 1] == idx + realStartPage) {
+            idx++;
+        }
+        pageMap[i - realStartPage + 2] = idx + realStartPage;
+        if (currentPage == i) {
+            idx++;
+        }
+    }
+    return pageMap;
+}
+
 function ReadingBookView({route, navigation}) {
     const {height, width} = useWindowDimensions();
     const [pageModalVisible, setPageModalVisible] = useState(false);
     const pdfRef = useRef(null);
 
     const [source, setSource] = useState({ uri: "" });
+    const [pageMap, setPageMap] = useState({});
     const [fileExist, setFileExist] = useState(false);
 
     useEffect(() => {
@@ -45,6 +63,7 @@ function ReadingBookView({route, navigation}) {
                 var itemData = JSON.parse(item);
                 console.log(itemData);
                 console.log(RNFS.DocumentDirectoryPath + "/pdf/" + itemData.fileName);
+                setPageMap(getPageMap(itemData.keys.map(key => key.pageNum), itemData.realStartPage, itemData.totalPage));
                 decryptPages(RNFS.DocumentDirectoryPath + "/pdf/" + itemData.fileName, itemData.keys, itemData.realStartPage)
                     .then(() => {
                         console.log(RNFS.TemporaryDirectoryPath + "pdf/" + itemData.fileName + "_dec");
@@ -108,7 +127,12 @@ function ReadingBookView({route, navigation}) {
 
                                 onSubmitEditing={(e)=> {
                                     if(!isNaN(e.nativeEvent.text) && Number.isInteger(parseInt(e.nativeEvent.text))) {
-                                        pdfRef.current.setPage(parseInt(e.nativeEvent.text));
+                                        console.log(pageMap);
+                                        console.log(pageMap[parseInt(e.nativeEvent.text)]);
+                                        const page = pageMap[parseInt(e.nativeEvent.text)];
+                                        if(page !== undefined) {
+                                            pdfRef.current.setPage(parseInt(pageMap[parseInt(e.nativeEvent.text)]));
+                                        }
                                     }else {
                                         console.log('숫자가아님')
                                     }
@@ -130,7 +154,7 @@ function ReadingBookView({route, navigation}) {
                 )
             }
         });   
-    }, [navigation]);
+    }, [navigation, pageMap]);
 
     return (
         <View style={{
