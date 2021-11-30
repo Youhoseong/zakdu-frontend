@@ -26,74 +26,21 @@ const styles = StyleSheet.create({
     }
 });
 
-async function downloadPDF() {
-    const src = await require("../../Assets/files/example_enc.pdf");
-    var fromPath = Image.resolveAssetSource(src);
-    const downloadPath = RNFS.DocumentDirectoryPath + "/downloaded.pdf";
+const getPageMap = (pages, realStartPage, totalPage) => {
+    let idx = 0;
+    let pageMap = {};
 
-    var source;
-    console.log(downloadPath);
-    await RNFS.downloadFile({
-        fromUrl: fromPath.uri,
-        toFile: downloadPath
-    }).promise.then(res => {
-        source = res;
-        console.log("download!");
-        console.log(res);
-    });
-}
-
-async function pdf_test() {
-    await downloadPDF();
-    await lockPdfDownload();
-    const test_data = [
-        {pageNum: 1, aesKey: "abcdefghijklmnopqrstuvwxyzabcdef", iv: "0123456789abcdef"},
-        {pageNum: 10, aesKey: "abcdefghijklmnopqrstuvwxyzabcdef", iv: "0123456789abcdef"},
-        {pageNum: 15, aesKey: "abcdefghijklmnopqrstuvwxyzabcdef", iv: "0123456789abcdef"},
-        {pageNum: 17, aesKey: "abcdefghijklmnopqrstuvwxyzabcdef", iv: "0123456789abcdef"}
-
-    ];
-
-    console.log(RNFS.DocumentDirectoryPath);
-    RNFS.readDir(RNFS.DocumentDirectoryPath).then(files => {
-        console.log(files);
-    })
-    const filePath = RNFS.DocumentDirectoryPath + "/" + "downloaded.pdf";
-    decryptPages(filePath, test_data);
-}
-
-async function lockPdfDownload() {
-    const lockPdfPath = RNFS.DocumentDirectoryPath + "/" + "lockpage.pdf";
-    const lockPdfDownloadPath = "http://localhost:8081/src/Assets/files/lockpage.pdf"
-    await RNFS.exists(lockPdfPath).then(exist => {
-        if(!exist) {
-            RNFS.downloadFile({
-                fromUrl: lockPdfDownloadPath,
-                toFile: lockPdfPath
-            })
+    for (let i = realStartPage - 1; i < totalPage; i++) {
+        var currentPage = pages[idx];
+        if(currentPage == i && pageMap[i - realStartPage + 1] == idx + realStartPage) {
+            idx++;
         }
-    })
-}
-
-async function epub_test() {
-    const downloadPath = RNFS.DocumentDirectoryPath + "/real.epub";
-
-    RNFS.downloadFile({
-        fromUrl: "http://localhost:8081/src/Assets/files/abc_enc.epub",
-        toFile: downloadPath
-    }).promise.then(res => {
-        console.log("download epub");
-        console.log(res);
-    });
-
-    const epubTestData = [
-        {
-            filePath: "OEBPS/Cath_9780553418828_epub3_itr_r1.xhtml",
-            aesKey: "abcdefghijklmnopqrstuvwxyzabcdef",
-            iv: "0123456789abcdef"
+        pageMap[i - realStartPage + 2] = idx + realStartPage;
+        if (currentPage == i) {
+            idx++;
         }
-    ]
-    decryptEpub(downloadPath, epubTestData);
+    }
+    return pageMap;
 }
 
 function ReadingBookView({route, navigation}) {
@@ -102,10 +49,8 @@ function ReadingBookView({route, navigation}) {
     const pdfRef = useRef(null);
 
     const [source, setSource] = useState({ uri: "" });
+    const [pageMap, setPageMap] = useState({});
     const [fileExist, setFileExist] = useState(false);
-    //const source = {uri: RNFS.TemporaryDirectoryPath + "pdf/" + "downloaded.pdf_dec" };
-    // epub_test();
-    //pdf_test();
 
     useEffect(() => {
         // 보관함에 책 눌렀을 때 책 정보에서 받아와야 함
@@ -118,6 +63,7 @@ function ReadingBookView({route, navigation}) {
                 var itemData = JSON.parse(item);
                 console.log(itemData);
                 console.log(RNFS.DocumentDirectoryPath + "/pdf/" + itemData.fileName);
+                setPageMap(getPageMap(itemData.keys.map(key => key.pageNum), itemData.realStartPage, itemData.totalPage));
                 decryptPages(RNFS.DocumentDirectoryPath + "/pdf/" + itemData.fileName, itemData.keys, itemData.realStartPage)
                     .then(() => {
                         console.log(RNFS.TemporaryDirectoryPath + "pdf/" + itemData.fileName + "_dec");
@@ -181,7 +127,12 @@ function ReadingBookView({route, navigation}) {
 
                                 onSubmitEditing={(e)=> {
                                     if(!isNaN(e.nativeEvent.text) && Number.isInteger(parseInt(e.nativeEvent.text))) {
-                                        pdfRef.current.setPage(parseInt(e.nativeEvent.text));
+                                        console.log(pageMap);
+                                        console.log(pageMap[parseInt(e.nativeEvent.text)]);
+                                        const page = pageMap[parseInt(e.nativeEvent.text)];
+                                        if(page !== undefined) {
+                                            pdfRef.current.setPage(parseInt(pageMap[parseInt(e.nativeEvent.text)]));
+                                        }
                                     }else {
                                         console.log('숫자가아님')
                                     }
@@ -203,7 +154,7 @@ function ReadingBookView({route, navigation}) {
                 )
             }
         });   
-    }, [navigation]);
+    }, [navigation, pageMap]);
 
     return (
         <View style={{
