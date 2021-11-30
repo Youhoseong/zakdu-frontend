@@ -1,26 +1,53 @@
 import React, {useState, useEffect} from 'react';
 import {ActivityIndicator, View, StyleSheet, Image} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { useSelector,useDispatch } from 'react-redux';
 import LottieView from 'lottie-react-native';
 import { Dimensions,Text } from 'react-native';
+import axios from 'axios';
+import { HS_API_END_POINT } from '../Shared/env';
+import { setJwt,setUserInfo } from '../Store/Actions';
+import { connect } from 'react-redux';
 const screenWidth = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
 const bigOne = screenWidth > screenHeight ? screenWidth:screenHeight;
 const smallOne = screenWidth < screenHeight ? screenWidth:screenHeight;
 
-const SplashScreen = ({navigation}) => {
+const SplashScreen = ({navigation,handleUserInfo,user_info}) => {
   //State for ActivityIndicator animation
   const [animating, setAnimating] = useState(true);
 
   useEffect(() => {
-    setTimeout(() => {
+    setTimeout(async () => {
       setAnimating(false);
       //Check if user_id is set or not
       //If not then send for Authentication
       //else send to Home Screen
-      AsyncStorage.getItem('여기를 user_information으로 바꾸면 아이디 있으면 자동로그인').then((value) =>
-        navigation.replace(value === null ? 'Auth' : 'BottomNav'),
+      //AsyncStorage.clear();
+      
+      AsyncStorage.getItem('user_jwt', async (err,result) =>{
+        console.log("error",err);
+        console.log("result",result);
+        if(result == null){
+          navigation.replace('Auth');
+        } else{
+            console.log("result",result);
+            await axios.get(`${HS_API_END_POINT}/user/my-info`,{
+              headers: {
+                'Authorization' : "Bearer " + result
+              }
+            }).then(function(value){
+              console.log("result.data  ",value.data.username);
+              handleUserInfo(value.data);
+            })
+            .catch(function(error){
+              navigation.replace('Auth');
+            });
+              //console.log("res: ",res);
+            navigation.replace('BottomNav');
+        }
+        //navigation.replace(value === null ? 'Auth' : 'BottomNav');
+      }
       );
     }, 1000);
   }, []);
@@ -38,8 +65,16 @@ const SplashScreen = ({navigation}) => {
     </View>
   );
 };
+const mapDispatchToProps = (dispatch) => ({
+  handleJwtResult: (value)=>  dispatch(setJwt(value)),
+  handleUserInfo: (value) => dispatch(setUserInfo(value)),
+});
 
-export default SplashScreen;
+const mapStateToProps = (state) => ({
+  user_info : state.userReducer.userObj
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SplashScreen);
 
 const styles = StyleSheet.create({
   container: {

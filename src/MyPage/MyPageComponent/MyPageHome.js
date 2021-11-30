@@ -4,18 +4,28 @@ import {StyleSheet, ScrollView, TouchableOpacity, Button, View, Text,Image } fro
 import {NavigationContainer} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { responsiveFontSize } from 'react-native-responsive-dimensions';
+import { connect } from 'react-redux';
+import { setJwt } from '../../Store/Actions';
 
 
 
-function MyPageHome({navigation}) {
+function MyPageHome({navigation,user_info,user_email}) {
     const [username,setUsername] = useState("");
     const [point,setPoint] = useState("");
 
-    AsyncStorage.getItem('user_information', (err, result) => {
-        const UserInfo = JSON.parse(result);
-        setUsername(UserInfo.user_name);    
-        setPoint(UserInfo.user_point);    
-    });
+    // AsyncStorage.getItem('user_information', (err, result) => {
+    //     const UserInfo = JSON.parse(result);
+    //     console.log("mypage UserInfo : ",UserInfo);
+    //     setUsername(UserInfo.user_name);    
+    //     setPoint(UserInfo.user_point);    
+    // });
+    console.log("user_name: ",user_info)
+    const logOut = () => {
+        AsyncStorage.clear();
+        navigation.replace('Auth');
+    }
+    
+
     const originname='';
     return (
         <View style={styles.mainView} >
@@ -29,7 +39,7 @@ function MyPageHome({navigation}) {
                 <Text
                     style={styles.mainText}
                 >
-                    {username}
+                    {user_info.username}
                 </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -57,7 +67,7 @@ function MyPageHome({navigation}) {
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.innerView}
-                onPress={() => navigation.replace('Auth')}
+                onPress={logOut}
             >
                 <Text style={styles.text}>로그 아웃</Text>
             </TouchableOpacity>
@@ -97,4 +107,13 @@ const styles = StyleSheet.create({
         fontSize:20
     }
 })
-export default MyPageHome;
+const mapDispatchToProps = (dispatch) => ({
+    handleJwtResult: (value)=>  dispatch(setJwt(value)),
+    handleUserInfo: (value) => dispatch(setUserInfo(value)),
+});
+
+const mapStateToProps = (state) => ({
+    user_info : state.userReducer.userObj,
+    user_email : state.userReducer.userObj.user_email,
+});
+export default connect(mapStateToProps, mapDispatchToProps)(MyPageHome);
