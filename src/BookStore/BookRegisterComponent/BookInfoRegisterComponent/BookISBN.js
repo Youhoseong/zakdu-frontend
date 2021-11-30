@@ -23,14 +23,13 @@ const styles = StyleSheet.create({
             width: 3,
             height: 2
         },
+        marginHorizontal: 10,
         shadowOpacity: 1,
         shadowRadius: 4,
         shadowColor: 'gray',
-        width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
-        position: 'absolute',
-        bottom: 100,
+
         borderRadius: 30,
     }
 });
@@ -133,11 +132,8 @@ function BookISBN({navigation, bookISBN, handleISBN, handleBookInfo}) {
 
 
                 <View style={{
-         
                     width: '100%',
                     height: '8%',
-
-            
                     alignItems: 'center',
                     justifyContent: 'center'
                 }}>              
@@ -172,31 +168,60 @@ function BookISBN({navigation, bookISBN, handleISBN, handleBookInfo}) {
                     />
                     {!validate ? null : <Text style={{marginTop: 8, color: 'red'}}>{validate}</Text> }
 
-
-
                 </View>
- 
-                <Pressable 
-                            disabled= {bookISBN.length >= 10 && !submit ? false : true}
-                            style={({pressed})=>[
-                                styles.button,
-                                {
-                                backgroundColor: 
-                                bookISBN.length >= 10 && !submit  ? 'blue' : 'gray',
-                                height: width > height ? responsiveScreenHeight(6) : responsiveScreenWidth(6),
-                                }, ]}
-                            onPress={()=> getNaverBookSearch()}>
-                                     
-                            <Text 
-                                style={{
-                                    color: 'white',
-                                    fontSize: responsiveScreenFontSize(1.0)
-                                }}>
-                                완료
-
-                            </Text>
-                </Pressable>
-
+                <View style={{
+                    width: '100%', 
+                    position: 'absolute',
+                    bottom: 100,
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'center'
+                }}>
+                    <Pressable 
+                                disabled= {bookISBN.length >= 10 && !submit ? false : true}
+                                style={({pressed})=>[
+                                    styles.button,
+                                    {
+                                    width: !validate ?  '100%' : '45%',            
+                                    backgroundColor: 
+                                    bookISBN.length >= 10 && !submit  ? 'blue' : 'gray',
+                                    height: width > height ? responsiveScreenHeight(6) : responsiveScreenWidth(6),
+                                    }, ]}
+                                onPress={()=> getNaverBookSearch()}>
+                                        
+                                <Text 
+                                    style={{
+                                        color: 'white',
+                                        fontSize: responsiveScreenFontSize(1.0)
+                                    }}>
+                                    완료
+                                </Text>
+                    </Pressable>
+                    {validate ? 
+                        <Pressable 
+                                    disabled= {bookISBN.length >= 10 && !submit ? false : true}
+                                    style={({pressed})=>[
+                                        styles.button,
+                                        {
+                                        width: !validate ?  '100%' : '45%',
+                                        
+                                        backgroundColor: 
+                                        bookISBN.length >= 10 && !submit  ? 'blue' : 'gray',
+                                        height: width > height ? responsiveScreenHeight(6) : responsiveScreenWidth(6),
+                                        }, ]}
+                                    onPress={()=> navigation.push('GetName')}>
+                                            
+                                    <Text 
+                                        style={{
+                                            color: 'white',
+                                            fontSize: responsiveScreenFontSize(1.0),
+                                      
+                                        }}>
+                                        수동 등록
+                                    </Text>
+                        </Pressable> : null
+                    }
+                </View>
             </View>
         </View>
 

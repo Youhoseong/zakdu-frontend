@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import {View, Text, useWindowDimensions, StyleSheet, Image, Pressable, FlatList, ScrollView, Alert} from 'react-native';
 import { responsiveFontSize, responsiveScreenFontSize, responsiveScreenHeight, responsiveScreenWidth } from 'react-native-responsive-dimensions';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
-import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IconFeather from 'react-native-vector-icons/Feather';
 import CheckBox from '@react-native-community/checkbox';
@@ -10,8 +9,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ImageModal } from '../../Common/CommonComponent/ImageModal';
 import axios from 'axios';
 import { HS_API_END_POINT } from '../../Shared/env';
-import Toast, {BaseToast,ErrorToast} from 'react-native-toast-message';
-
+import Toast from 'react-native-toast-message';
+import { connect } from 'react-redux';
+import {downloadPdfBook, downloadPdfKeys} from '../../Store/Download/BookDownload'
 
 const styles = StyleSheet.create({
     PartPurchaseViewStyle: {
@@ -127,21 +127,27 @@ const getCircularReplacer = () => {
     };
 };
 
-function PartPurchaseView({navigation, selectedBook}) {
-    const [purchaseToast, setPurchaseToast] = useState(false);
+
+const downloadBook = (item) => {
+    downloadPdfBook(item).then(() => {
+        downloadPdfKeys(item.id);
+    })
+}
+
+function PartPurchaseView({selectedBook, pdfPurchaseInfo}) {
     const [imageModalVisible, setImageModalVisible] = useState(false);
     const {width, height} = useWindowDimensions();
     const [text, setText] = useState("");
     const [pagesToBuy,setPagesToBuy] = useState({});
     const [pageArr, setPageArr] = useState([]);
     const [byToc, setByToc] = useState(true);
-    const [reload, setReload] = useState(Math.random());
     const [price ,setPrice] = useState(0);
     const [bookTocData, setBookTocData] = useState([]);
 
+    const base64Image = 'data:image/png;base64,' + selectedBook.bookCoverResource;
 
     const toastConfig = {
-        
+            
         purchaseSuccessToast: ({ text1, props }) => (
             <View style={{
                 width: width * 0.81,
@@ -166,7 +172,7 @@ function PartPurchaseView({navigation, selectedBook}) {
                         borderColor: 'white',
                         color: 'white'
                     }}>{text1}</Text>
-                    <Pressable onPress={()=> console.log('다운로드')}>
+                    <Pressable onPress={()=> downloadBook(selectedBook)}>
                         <Text style={{
                                 fontSize: 16, 
                                 fontWeight: '600', 
@@ -178,22 +184,11 @@ function PartPurchaseView({navigation, selectedBook}) {
             </View>
 
         )
-      };
+    };
 
-
-    const base64Image = 'data:image/png;base64,' + selectedBook.bookCoverResource;
-    let resursivePrice = 0;
-    const priceCheck = (data) => {
-        data.map(item=> {
-            if(item.tick) {
-                const priceOverhead = parseInt((item.endPage- item.startPage + 1) / selectedBook.pdfPageCount * selectedBook.price);
-                resursivePrice = resursivePrice + priceOverhead;       
-            } else {
-                if(item.childs) {
-                    priceCheck(item.childs)
-                }       
-            }
-        })    
+    const priceCheck = () => {
+        console.log('구매한 페이지: '+ pageArr.filter(page => page === true).length);
+        setPrice(((pageArr.filter(page => page === true).length) / selectedBook.pdfPageCount) * selectedBook.price);
     }
 
     const purchaseButtonOnClick = () => {
@@ -222,7 +217,21 @@ function PartPurchaseView({navigation, selectedBook}) {
     const HierarchyDataRender = (item, index) => {
 
         if (!item.tick) {
+            let flag = false;
             item.tick = false;
+            item.complete = false;
+            for(let i=item.startPage; i<=item.endPage; i++) {
+                if(!pdfPurchaseInfo.purchasePageList[i]) {
+                    flag = true;
+                    break;
+                }
+            }
+
+            if(!flag) {
+                item.complete = true;
+                item.tick = true;
+            }
+     
         }
  
         return(
@@ -249,30 +258,43 @@ function PartPurchaseView({navigation, selectedBook}) {
                                     onAnimationType='fade'
                                     offAnimationType='fade'
                                     value={item.tick}
+                                    disabled={item.complete}
                                     onValueChange={()=> {
-                                       const priceOverhead = parseInt((item.endPage- item.startPage) / selectedBook.pdfPageCount * selectedBook.price);
+
   
                                         if(!item.tick) {
-                                      
+                                            
                                             onTick(item);
+                                            let flag = false;
                                             for(let i=item.startPage; i<=item.endPage; i++){
-                                                pageArr[i] = true;
+                                                if(pdfPurchaseInfo.purchasePageList[i]) {
+                                                    flag = true;
+                                                }
+                                                else {
+                                                    pageArr[i] = true;
+                                                }
+                                            }
+                                            if(flag) {
+                                                Alert.alert(null,'구매한 페이지가 포함돼있어요. 가격에서는 제외돼요.');
                                             }
                                             console.log(pageArr);
                                             setPageArr(pageArr);
                                         }else {
-                                  
-                                            unTick(item); 
-                                            for(let i=item.startPage; i<=item.endPage; i++){
-                                                pageArr[i] = false;
-                                            }
-                                            console.log(pageArr);
-                                            setPageArr(pageArr);
-
+                              
+                                                unTick(item); 
+                                                for(let i=item.startPage; i<=item.endPage; i++){
+                                                    if(!pdfPurchaseInfo.purchasePageList[i]){
+                                                        pageArr[i] = false;
+                                                    }
+                                                
+                                                }
+                                                console.log(pageArr);
+                                                setPageArr(pageArr);
+                                           
                                         }
-                                        resursivePrice = 0;
-                                        priceCheck(bookTocData);
-                                        setPrice(resursivePrice);
+                                    
+                                        priceCheck();
+                                        
 
                                     }} />
                                         
@@ -318,10 +340,22 @@ function PartPurchaseView({navigation, selectedBook}) {
     }
 
 
-    const sellByPage = () => setByToc(false);
+    const sellByPage = () => {
+        setByToc(false)
+        for(let i=0; i<=selectedBook.pdfPageCount; i++) {
+            pageArr[i] = false;
+        }
+        setPageArr(pageArr);
+        setPrice(0);
+
+    };
     const sellByToc = () => {
         setByToc(true);
-        
+        for(let i=0; i<=selectedBook.pdfPageCount; i++) {
+            pageArr[i] = false;
+        }
+        setPageArr(pageArr);
+        setPrice(0);
         setPagesToBuy("");
     }
     const onChangeText = (select) => setText(select);
@@ -479,6 +513,7 @@ function PartPurchaseView({navigation, selectedBook}) {
         for(let i=0; i<=selectedBook.pdfPageCount; i++) {
             pageArr[i] = false;
         }
+        console.log("페이지정보:" + pdfPurchaseInfo.purchasePageList);
 
         setPageArr(pageArr);
     },[])
@@ -546,8 +581,7 @@ function PartPurchaseView({navigation, selectedBook}) {
                                     data={bookTocData}
                                     renderItem={({item,index})=> HierarchyDataRender(item, index)}
                                     keyExtractor={(item,index)=> item.id.toString()}
-                                >
-                                    
+                                >           
                                 </FlatList>
                             
                     
@@ -788,6 +822,10 @@ function PartPurchaseView({navigation, selectedBook}) {
     );
 }
 
-export default PartPurchaseView;
+const mapStateToProps = (state) => ({
+    pdfPurchaseInfo: state.getPDFBookPurchaseInfos.purchaseDto
+});
+
+export default connect(mapStateToProps)(PartPurchaseView);
 
 

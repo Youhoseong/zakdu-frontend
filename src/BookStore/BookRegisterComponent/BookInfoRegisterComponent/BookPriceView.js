@@ -8,6 +8,22 @@ import { registerBook } from '../../../Store/Actions';
 import {connect} from 'react-redux';
 import axios from 'axios';
 import {HS_API_END_POINT} from '../../../Shared/env';
+
+
+const getCircularReplacer = () => {
+    const seen = new WeakSet();
+    return (key, value) => {
+    if (typeof value === "object" && value !== null) {
+        if (seen.has(value)) {
+            return;
+        }
+        seen.add(value);
+    }
+    return value;
+    };
+};
+
+
 function BookPriceView({navigation, handleBookPrice, bookPrice, bookObject}) {
 
     const {width, height} = useWindowDimensions();
@@ -39,7 +55,7 @@ function BookPriceView({navigation, handleBookPrice, bookPrice, bookObject}) {
             uri: bookObject.bookCover.uri    
         }
 
-        formData.append('bookRegisterDto', JSON.stringify(bookRegisterDto));
+        formData.append('bookRegisterDto', JSON.stringify(bookRegisterDto, getCircularReplacer()));
         formData.append('bookFile', bookFile);
         formData.append('bookCover', bookCover);
         

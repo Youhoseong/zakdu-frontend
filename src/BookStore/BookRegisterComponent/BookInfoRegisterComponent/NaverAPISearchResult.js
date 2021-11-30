@@ -78,7 +78,6 @@ const BookInfoComponent = ({content}) => {
 function NaverAPISearchResult({navigation, bookISBN, handleISBN, bookObj}) {
 
     const {width, height} = useWindowDimensions();
-    const [formattedISBN, setFormattedISBN] = useState("");
     const [submit, setSubmit] = useState(false);
     const formattedPubDate = bookObj.bookPubDate.substring(0,4) + "년 " + 
                             bookObj.bookPubDate.substring(4,6) + "월 " + 
