@@ -1,4 +1,4 @@
-import {HS_API_END_POINT} from '../../Shared/env';
+import {HS_API_END_POINT} from '../../../Shared/env';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as RNFS from 'react-native-fs';
@@ -13,7 +13,7 @@ export async function downloadPdfBook(item) {
     const pdfCoverPath = RNFS.DocumentDirectoryPath + "/pdfCover/";
 
     console.log(id)
-    const res = await axios.get(HS_API_END_POINT + "/download/pdf", {params: {id: id}})
+    const res = await axios.get(HS_API_END_POINT + "/download/pdf", {params: {id: id, maxContentLength:2000000000000}})
     
     console.log(pdfDirPath);
     const data = res.data.data;
@@ -26,8 +26,14 @@ export async function downloadPdfBook(item) {
         await RNFS.mkdir(pdfCoverPath);
     }
     
-    RNFS.writeFile(pdfDirPath + data.fileName, data.bytes, 'base64');
+    //RNFS.writeFile(pdfDirPath + data.fileName, data.bytes, 'base64');
+    const downloadUrl = HS_API_END_POINT + "/download/pdf-2?id=" + id;
+
     RNFS.writeFile(pdfCoverPath + data.coverFileName, item.bookCoverResource, 'base64');
+    RNFS.downloadFile({
+        fromUrl: downloadUrl,
+        toFile: pdfDirPath + data.fileName
+    })
 
     const localData = {
         book_id: id,
@@ -38,11 +44,10 @@ export async function downloadPdfBook(item) {
         price: item.price,
         pubDate: item.pubDate,
         publisher: item.publisher,
-        realStartPage: item.realStartPage
+        realStartPage: item.realStartPage,
+        totalPage: item.pdfPageCount
     }
     return AsyncStorage.setItem(storageKey, JSON.stringify(localData));
-    const tt = await AsyncStorage.getItem(storageKey);
-    console.log(JSON.parse(tt));
 }
 
 export async function downloadPdfKeys(book_id) {
