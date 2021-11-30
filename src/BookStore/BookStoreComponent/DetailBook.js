@@ -10,7 +10,6 @@ import Carousel from 'react-native-snap-carousel';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import {downloadPdfBook, downloadPdfKeys} from './Download/BookDownload'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-
 import { connect } from 'react-redux';
 import axios from 'axios';
 import { HS_API_END_POINT } from '../../Shared/env';
@@ -185,10 +184,11 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId, handlePDFPurc
                                     height: 2
                                 },
                                 shadowOpacity: 0.5,
-                                shadowRadius: 20
+                                shadowRadius: 30
                             }}>
                                 <Image
                                     resizeMode='cover'
+                                    
                                     style={{
                                         height: '100%',
                                         width: width > height ? responsiveScreenWidth(16) : responsiveScreenHeight(16),
