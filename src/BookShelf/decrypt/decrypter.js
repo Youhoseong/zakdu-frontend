@@ -127,7 +127,7 @@ export async function decryptPages(pdfPath, pageInfos, startPage) {
     const lastElement = (array) => {
         return array[array.length - 1];
     }
-    for (let i = startPage; i < pageNum - 1; i++) {
+    for (let i = startPage - 1; i < pageNum - 1; i++) {
         if(pageInfos.length <= index || pageInfos[index].pageNum > i) {
             if(lastElement(lockPages) == i - 1 || lastElement(removePageList) == i - 1) {
                 removePageList.push(i);
@@ -158,7 +158,7 @@ export async function decryptPages(pdfPath, pageInfos, startPage) {
         }
       });
     }
-    await setLockPages(pdfDoc, lockPages, removePageList);
+    await setLockPages(pdfDoc, lockPages, removePageList, startPage);
     await removePages(pdfDoc, removePageList);    
     const decPdfBytes = await pdfDoc.save();
     const fileName = getFileName(pdfPath);
@@ -172,7 +172,7 @@ export async function decryptPages(pdfPath, pageInfos, startPage) {
     })
 }
 
-async function setLockPages(pdfDoc, pages, removePages) {
+async function setLockPages(pdfDoc, pages, removePages, realStartPage) {
     const lockExist = await RNFS.exists(RNFS.DocumentDirectoryPath + "/" + "lockpage.pdf");
     console.log(RNFS.DocumentDirectoryPath + "/" + "lockpage.pdf")
     if (!lockExist) {
@@ -209,8 +209,8 @@ async function setLockPages(pdfDoc, pages, removePages) {
         else {
             endPage = pdfDoc.getPageCount() - 2;
         }
-        startPage = (startPage + 1).toString();
-        endPage = (endPage + 1).toString();
+        startPage = (startPage - realStartPage + 2).toString();
+        endPage = (endPage - realStartPage + 2).toString();
         while(startPage.length < 4) {
             startPage = ' ' + startPage;
         }

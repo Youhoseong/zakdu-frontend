@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     }
 });
 
-const PdfComponent = ({handleRealStart, bookRealFirstTocPage, bookFile , edit}) => {
+const PdfComponent = ({handleRealStart, bookFile , edit}) => {
     const pdfFileExample = require('../../Assets/files/example.pdf')
     console.log(bookFile);
     return (

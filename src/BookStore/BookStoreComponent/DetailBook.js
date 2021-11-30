@@ -8,14 +8,13 @@ import {
 } from 'react-native-responsive-dimensions';
 import Carousel from 'react-native-snap-carousel';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import {downloadPdfBook, downloadPdfKeys} from '../../Store/Download/BookDownload'
+import {downloadPdfBook, downloadPdfKeys} from './Download/BookDownload'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import { connect } from 'react-redux';
-import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import { HS_API_END_POINT } from '../../Shared/env';
-
+import { getPDFBookPurchaseInfo } from '../../Store/Actions';
 
 const BookDetailView = styled.ScrollView`
     width: 90%;
@@ -39,7 +38,6 @@ const BookDetailBottomHalf = styled.View`
     height: 50%;
     margin: 6% auto;
 `;
-
 
 const styles = StyleSheet.create({
     buyButton: {
@@ -102,20 +100,17 @@ const styles = StyleSheet.create({
 })
 
 
-
 const downloadBook = (item) => {
     downloadPdfBook(item).then(() => {
         downloadPdfKeys(item.id);
     })
 }
 
-
-function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
+function DetailBook ({gotoSecond, selectedBookObj, selectedBookId, handlePDFPurchaseInfo}) {
 
     const carouselRef = useRef();
     const {width, height} = useWindowDimensions();
-    const [bookPurchaseInfo, setBookPurchaseInfo] = useState({});
-    const [enableDownload, setEnableDownload] = useState(false);
+    const [enableDownload, setEnableDownload] = useState(true);
 
         const BookInfoCard = ({item}) => {
             const date = new Date(item.pubDate)
@@ -261,36 +256,27 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
                                     <View style={{
                                         width: '100%',     
                                     }}>
+
                                         <TouchableOpacity
                                             disabled={enableDownload || carouselRef.current.currentIndex != index}
                                             style={{
-                                                backgroundColor: 'black',
+                                                backgroundColor: !enableDownload && carouselRef.current.currentIndex == index ? 'black' : '#DEDEDE',
                                                 borderRadius: 20,
-                                        
                                                 width: '100%',
                                                 paddingVertical: 13,
                                                 paddingHorizontal: 13,  
                                             }} 
                                             onPress={() => {
-                                                
-                                            Toast.show({
-                                                type: 'success',
-                                                text1: 'Hello',
-                                                text2: 'This is some something 👋',
-                            
-
-
-
-                                              });
-
+                                                downloadBook(item)
                                             }}>
                                             <Text style={{
                                                         textAlign: 'center',
                                                         fontSize: responsiveScreenFontSize(0.7),
                                                         color: 'white',
                                                         fontWeight: '600'
-                                                }}>{bookPurchaseInfo.pageCount}</Text>
-                                        </TouchableOpacity>
+                                                }}>{!enableDownload && carouselRef.current.currentIndex == index ? "다운로드" : "다운로드 불가"}
+                                            </Text>
+                                        </TouchableOpacity> 
                                     </View>
             
              
@@ -311,8 +297,8 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
                                     }}>
                                         <TouchableOpacity 
                                             style={styles.buyButton} 
-                                            // onPress={() => Alert.alert('구매하기')}>
-                                            onPress={() => downloadBook(item)}>
+                                            onPress={() => Alert.alert('구매하기')}>
+                             
                                             <Text style={styles.buyButtonText}>구매하기 </Text>
                                         </TouchableOpacity>
                                     </View>
@@ -350,7 +336,8 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
         axios.get(`${HS_API_END_POINT}/book-purchase/info/page/` + bookId + "/" + 1)
         .then(res => {
             console.log(res.data.data);
-            setBookPurchaseInfo(res.data.data);
+            handlePDFPurchaseInfo("purchasePageList", res.data.data.purchasePageList);
+            handlePDFPurchaseInfo("pageCount", res.data.data.pageCount);
 
             if(res.data.data.pageCount != 0) 
                 setEnableDownload(false);
@@ -366,6 +353,7 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
         }else {
             console.log(selectedBookObj[selectedBookId].type);
         }
+        onSnapToItem(selectedBookObj[carouselRef.current.currentIndex].id);
     },[])
 
     return (
@@ -401,14 +389,17 @@ function DetailBook ({gotoSecond, selectedBookObj, selectedBookId}) {
                 
             
             />
-            <Toast position='top' topOffset={0} visibilityTime={1000} />
                                        
         </View>
     );
 }
 const mapStateToProps = (state) => ({
-    bookObj: state.getBooks.bookObj
+    bookObj: state.getBooks.bookObj,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+    handlePDFPurchaseInfo: (key, value) => dispatch(getPDFBookPurchaseInfo(key, value))
 });
 
 
-export default connect(mapStateToProps)(DetailBook);
+export default connect(mapStateToProps, mapDispatchToProps)(DetailBook);

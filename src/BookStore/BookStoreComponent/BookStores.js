@@ -157,7 +157,7 @@ function BookStores({navigation, handleBookObj, bookObj}) {
                 <Pressable onPress={
                     () => {
                         setSelectedBook(item);
-                        console.log(index);
+                        console.log(item.id);
                         setSelectedBookId(index);
 
                         if(item.category === "문제집")

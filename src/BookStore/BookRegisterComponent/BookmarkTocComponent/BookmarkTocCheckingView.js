@@ -28,6 +28,15 @@ export const tocCheckingStyles = StyleSheet.create({
         color: 'black',
         fontSize: responsiveScreenFontSize(0.9), 
         fontWeight: '600' 
+    },
+    pageInput: {
+        textAlign: 'center',
+        backgroundColor: '#CDCDCD',
+        borderRadius: 10,
+        color: 'white',
+        width: '40%',   
+        marginRight: 20,
+        fontSize: responsiveScreenFontSize(1),
     }
 })
 
@@ -37,6 +46,7 @@ function BookmarkTocCheckingView({navigation, handleTocResult, handleMarkExist ,
     const {width ,height} = useWindowDimensions();
     const [editable, setEditable] = useState(false);
     const [test, setTest] = useState(Math.random());
+    const [pageEditable, setPageEditable] = useState(false);
 
     React.useLayoutEffect(() => {     
         navigation.setOptions({       
@@ -61,12 +71,16 @@ function BookmarkTocCheckingView({navigation, handleTocResult, handleMarkExist ,
                 items.childs = [...items.childs, {
                     id: Math.random(),
                     text: '',
+                    startPage: 0,
+                    endPage: 0,
                     childs: null
                 }]
             } else {
                 items.childs = [{
                     id: Math.random(),
                     text: '',
+                    startPage: 0,
+                    endPage: 0,
                     childs: null,
                 }]
             }
@@ -98,11 +112,9 @@ function BookmarkTocCheckingView({navigation, handleTocResult, handleMarkExist ,
                         c => c.parent = null
                     );
                     
-
                    bookTocResult = bookTocResult.slice(0, index)
                                                             .concat(childList)
                                                             .concat(bookTocResult.slice(index));
-
 
                     handleTocResult(bookTocResult);
                 }
@@ -139,14 +151,17 @@ function BookmarkTocCheckingView({navigation, handleTocResult, handleMarkExist ,
                         ]}>  
                                 <MaterialCommunityIcons name="circle-medium" size={24}/>
 
-                                {editable ?
+                             
                                 <View style={{
                                     width: '100%',
                                     display: 'flex',
-                                    flexDirection: 'row'
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                         
+                      
                                 }}>
                                 <TextInput 
-                                            editable={true}
+                                            editable={editable}
                                             onChangeText={(text)=>{
                                                 items.text = text;
                                                 console.log(text);
@@ -158,8 +173,51 @@ function BookmarkTocCheckingView({navigation, handleTocResult, handleMarkExist ,
                                                 
                                             fontSize: responsiveScreenFontSize(1),      
                                         }}>
-
                                 </TextInput>
+                                
+                                {pageEditable && editable?
+                                <View style={{
+                                    width: '30%',
+                                    display: 'flex',
+                                    flexDirection: 'row'
+                                }}>
+                                    <TextInput
+                                            editable={editable}
+                                            value={items.startPage.toString()}
+                                            onChangeText={(text)=>{
+
+                                                if(text == "") {
+                                                    items.startPage = 0;
+                                                }else {
+                                                    items.startPage = parseInt(text);
+                                                    console.log(text);
+                                                }
+                                                setTest(Math.random());
+                                            }}
+                                            style={tocCheckingStyles.pageInput}
+                                    /> 
+                              
+
+                                    <TextInput
+                                            editable={editable}
+                                            value={items.endPage.toString()}
+                                            onChangeText={(text)=>{
+                                                if(text == "") {
+                                                    items.endPage = 0;
+                                                }else {
+                                                    items.endPage = parseInt(text);
+                                                    console.log(text);
+                                                }
+                                                setTest(Math.random());
+                                            }}
+                                            style={tocCheckingStyles.pageInput}
+                                    />
+         
+                                    
+                                </View>: null }
+         
+                            
+                                {editable && !pageEditable ?
                                 <View style={{
                                     height: '100%',
                                     width: '30%',
@@ -168,50 +226,30 @@ function BookmarkTocCheckingView({navigation, handleTocResult, handleMarkExist ,
                                     alignItems: 'center',
                                     justifyContent: 'center'
                                 }}>
-                                    <Pressable 
-                                            onPress={()=> {
-                                                    onPlusPress(index); 
-                                            }}
-                                            style={{
-                                                marginHorizontal: 10,                                      
-                                            }}>
-                                        <MaterialCommunityIcons name="plus-circle-outline" size={24} 
-                                            color={isActive ? 'red': 'gray'}/>
-                                    </Pressable>
-                                    <Pressable  
-                                                style={{
-                                                    marginHorizontal: 10,
-                                                   
-                                                }}
-                                                onPress={()=> onMinusPress(index)}
-                                                >
-                                                 <MaterialCommunityIcons name="backspace-outline" size={22} 
-                                                    color={isActive ? 'red': 'gray'}
-                                        />
-                                               
-                                    </Pressable>
-                       
-
-                                    <Pressable 
+                                   
+                                    <MaterialCommunityIcons name="plus-circle-outline" size={24} 
+                                        onPress={()=> onPlusPress(index)}
+                                        color={isActive ? 'red': 'gray'}
+                                        style={{marginHorizontal: 10}}
+                                    />
+                                    
+                                    <MaterialCommunityIcons name="backspace-outline" size={22} 
+                                        color={isActive ? 'red': 'gray'} 
+                                        onPress={()=> onMinusPress(index)}
+                                        style={{marginHorizontal: 10}}
+                                    />
+                                                                     
+                                    <MaterialCommunityIcons name="menu" size={22} 
                                         onLongPress={drag}
-                                        //disabled={isActive}
-                                        style={[
-                                            {    
-                                                marginHorizontal: 10
-                                            },
-                                        ]}>
-                            
-                                        <MaterialCommunityIcons name="menu" size={22} 
-                                            color={isActive ? 'red': 'gray'}
-                                        />
-                                    </Pressable>
-                                </View>
-                                </View> :
+                                        style={{marginHorizontal: 10}}
+                                        color={isActive ? 'red': 'gray'}
+                                    />
+                                   
+                                </View> : null}
+                                </View> 
 
-                                <Text style={{
-                                    fontSize: responsiveScreenFontSize(1),      
-                                }} >{items.text}</Text>
-                                }
+                         
+                                
                         </View>
         
                         {items.childs ? 
@@ -330,10 +368,34 @@ function BookmarkTocCheckingView({navigation, handleTocResult, handleMarkExist ,
                         alignItems: 'center', 
                         justifyContent: 'center',
                         display: 'flex',
-                        flexDirection: 'row'
+                        flexDirection: 'row',
                     }}>
                         {editable ?
-                        <BasisButtonComponent setEditable={setEditable} editable={editable} context={"저장"} bColor='red' bFocusColor='#2A3AC4'/>:
+                        <View style={{
+                            width: '100%',
+                            height: '100%',
+                            justifyContent: 'center',
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center'
+                        }}>
+                              <BasisButtonComponent 
+                                setEditable={setPageEditable} 
+                                editable={pageEditable} 
+                                context={"페이지 편집"} 
+                                bColor='red' 
+                                bFocusColor='#2A3AC4'
+                            />
+                            <BasisButtonComponent 
+                                setEditable={setEditable} 
+                                editable={editable} 
+                                context={"저장"} 
+                                bColor='red' 
+                                bFocusColor='#2A3AC4'
+                            />
+                        </View>
+                        
+                        :
                     
                         <View style={{
                             width: '100%',
