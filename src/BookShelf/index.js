@@ -2,13 +2,13 @@ import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import BookShelfHome from './BookShelfComponent/BookShelfHome';
 import ReadingBookView from './BookShelfComponent/ReadingBookView';
-
+import { connect } from 'react-redux';
 const Stack = createStackNavigator();
 
 
 
 
-function BookShelf () {
+function BookShelf({user_info}){
 
     return (
         <Stack.Navigator>
@@ -16,7 +16,7 @@ function BookShelf () {
             name="BookShelfHome"
             component={BookShelfHome}
             options={{
-                title: '노제원님의 책장'
+                title: user_info.username + " 님의 책장",
             }}/>
             <Stack.Screen 
             name="ReadingBook" 
@@ -32,6 +32,8 @@ function BookShelf () {
         </Stack.Navigator>
     )
 }
+const mapStateToProps = (state) => ({
+    user_info : state.userReducer.userObj
+  });
 
-
-export default BookShelf;
+export default connect(mapStateToProps)(BookShelf);
