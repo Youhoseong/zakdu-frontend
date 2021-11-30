@@ -58,7 +58,7 @@ function EnterType({navigation}) {
                                 width:screenWidth===bigOne? bigOne*0.3:smallOne*0.4,
                                 height:screenHeight===bigOne? bigOne*0.3:smallOne*0.5,
                                 }}
-                                onPress={() => {gotoNextScreen('seller')}}
+                                onPress={() => {gotoNextScreen("seller")}}
                                 
                             >
                             <LottieView style={{width:screenWidth===bigOne? bigOne*0.3:smallOne*0.6,alignSelf:'center'}} source={require('../../Assets/json/22620-store.json')} autoPlay />
@@ -72,7 +72,7 @@ function EnterType({navigation}) {
                                 width:screenWidth===bigOne? bigOne*0.3:smallOne*0.4,
                                 height:screenHeight===bigOne? bigOne*0.3:smallOne*0.5,
                                 }}
-                                onPress={() => {gotoNextScreen('customer')}}
+                                onPress={() => {gotoNextScreen("customer")}}
                             >
                                 <LottieView style={{width:screenWidth===bigOne? bigOne*0.25:smallOne*0.5,alignSelf:'center'}} source={require('../../Assets/json/71390-shopping-cart-loader.json')} autoPlay loop />
                                 <Text style={{fontSize:responsiveFontSize(1.5)}}>구매자</Text>

@@ -12,3 +12,14 @@ export const getBook = (key, value) => ({
     key: key,
     payload: value
 });
+
+export const setJwt = (value) => ({
+    type: "JWT_SET",
+    payload: value
+});
+
+
+export const setUserInfo = (value) => ({
+    type: "USER_INFO_SET",
+    payload: value
+});
