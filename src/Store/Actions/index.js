@@ -12,3 +12,9 @@ export const getBook = (key, value) => ({
     key: key,
     payload: value
 });
+
+export const getPDFBookPurchaseInfo = (key, value ) =>({
+    type: 'BOOK_PURCHASE_GET',
+    key: key,
+    payload: value
+});
