@@ -15,6 +15,8 @@ import {
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { NavigationContainer } from '@react-navigation/native';
+import axios from 'axios';
+import {HS_API_END_POINT} from '../../Shared/env';
 
 // import Loader from './Components/Loader';
 
@@ -25,27 +27,88 @@ const smallOne = screenWidth < screenHeight ? screenWidth:screenHeight;
 
 function EnterEmail({navigation, route}) {
     const [email, setEmail] = useState("");
-    const [number, onChangeNumber] = React.useState(null);
-
-    const onChangeText = (email) => {
-        setEmail(email);
+    const [checkGoNext, setCheckGoNext] = React.useState(false);
+    const [checkError, setCheckError] = useState("이메일을 입력해주세요.");
+    const [coloring, setColoring] = useState("blue");
+    const onChangeText = async (text) => {
+        const regex = /^(([^<>()\[\].,;:\s@"]+(\.[^<>()\[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/i;
+        setEmail(text);
+        if(text===""){
+            setCheckError("이메일을 입력해주세요.");
+            setCheckGoNext(false);
+            setColoring("blue");
+        }
+        else if(!regex.test(text)){
+            setCheckError("올바른 형식의 이메일을 입력해주세요.");
+            setCheckGoNext(false);
+            setColoring("red");
+        }
+        else{
+            const formData = new FormData();
+            let emailData = {
+                email: text
+            }
+            formData.append('duplicateEmailCheckDto',JSON.stringify(emailData));
+            console.log("formData = ",formData);
+            await axios.get(`${HS_API_END_POINT}/user/register/email-check?email=${text}`)
+            .then((res)=>{
+                console.log("*********************",res);
+                if(res.data){
+                    setCheckError("사용가능한 이메일입니다!");
+                    setCheckGoNext(true);
+                    setColoring("blue");
+                }
+                else{
+                    setCheckError("이미 사용중인 이메일이에요!");
+                    setCheckGoNext(false);
+                    setColoring("red");
+                }
+            });
+            
+        }
     }
 
     const gotoNextScreen = () => {
-        const regex = /^(([^<>()\[\].,;:\s@"]+(\.[^<>()\[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/i;
-        if(email===""){
+        if(checkGoNext === true){
+            navigation.navigate('EnterPassword',{types: route.params.types, names: route.params.names, emails: email});
+        }
+        else{                    
             Alert.alert(
-                "이메일을 입력해주세요."
+            "입력하신 이메일을 확인해주세요."
             );
         }
-        else if(!regex.test(email)){
-            Alert.alert(
-                "올바른 형식의 이메일을 입력해주세요."
-            );
-        }
-        else{
-            navigation.navigate('EnterPassword',{names: route.params.names, emails: email});
-        }
+        // const regex = /^(([^<>()\[\].,;:\s@"]+(\.[^<>()\[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/i;
+        // if(email===""){
+        //     Alert.alert(
+        //         "이메일을 입력해주세요."
+        //     );
+        // }
+        // else if(!regex.test(email)){
+        //     Alert.alert(
+        //         "올바른 형식의 이메일을 입력해주세요."
+        //     );
+        // }
+        // else{
+        //     const formData = new FormData();
+        //     formData.append()
+        //     axios.get(`${HS_API_END_POINT}/user/register/email-check`,{
+        //         body: {
+        //             "email":email
+        //         }
+        //     }).then((res)=>{
+        //         if(res === null){
+        //             Alert.alert(
+        //                 "올바른 형식의 이메일을 입력해주세요."
+        //             );
+        //         }
+        //         else{
+        //             navigation.navigate('EnterPassword',{types: route.params.types, names: route.params.names, emails: email});
+        //         }
+        //     })
+
+
+            
+        // }
     }
     return (
         <KeyboardAvoidingView 
@@ -63,7 +126,7 @@ function EnterEmail({navigation, route}) {
                     </View>
                     <View style={{flex:3,justifyContent:'flex-start'}}>
                         <TextInput 
-                            style={styles.input}
+                            style={{...styles.input, borderBottomColor:coloring==="blue"?'blue':'red'}}
                             onChangeText={onChangeText}
                             value={email}
                             placeholder="ex) zakdu@gmail.com"
@@ -71,6 +134,7 @@ function EnterEmail({navigation, route}) {
                             autoCapitalize='none'
                         
                         />
+                        <Text style={{...styles.checkEr, color:coloring==="blue"?'gray':'red'}}>{checkError}</Text>
                     </View>
                 </View>
                 <View 
@@ -135,5 +199,9 @@ const styles = StyleSheet.create({
         fontSize:bigOne*0.02,
         
     },
+    checkEr: {
+        fontSize:15,
+        marginLeft: 12,
+    }
   });
 export default EnterEmail;
