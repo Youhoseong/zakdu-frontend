@@ -5,7 +5,6 @@ import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IconFeather from 'react-native-vector-icons/Feather';
 import CheckBox from '@react-native-community/checkbox';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ImageModal } from '../../Common/CommonComponent/ImageModal';
 import axios from 'axios';
 import { HS_API_END_POINT } from '../../Shared/env';
