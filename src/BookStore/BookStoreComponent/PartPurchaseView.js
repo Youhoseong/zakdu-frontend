@@ -10,7 +10,7 @@ import axios from 'axios';
 import { HS_API_END_POINT } from '../../Shared/env';
 import Toast from 'react-native-toast-message';
 import { connect } from 'react-redux';
-import {downloadPdfBook, downloadPdfKeys} from './Download/BookDownload';
+import {downloadPdfBook, downloadPdfKeys} from './Download/BookDownload'
 
 const styles = StyleSheet.create({
     PartPurchaseViewStyle: {

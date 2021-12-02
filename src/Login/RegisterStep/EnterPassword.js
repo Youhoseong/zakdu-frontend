@@ -43,7 +43,7 @@ function EnterPassword({navigation, route}) {
             );
         }
         else{
-            navigation.navigate('PasswordCheck',{names: route.params.names, emails: route.params.emails, passwords: password});
+            navigation.navigate('PasswordCheck',{types: route.params.types, names: route.params.names, emails: route.params.emails, passwords: password});
         }
     }
     return (
