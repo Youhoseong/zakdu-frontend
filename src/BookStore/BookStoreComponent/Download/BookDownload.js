@@ -31,10 +31,17 @@ export async function downloadPdfBook(item) {
     //RNFS.writeFile(pdfDirPath + data.fileName, data.bytes, 'base64');
     const downloadUrl = HS_API_END_POINT + "/download/pdf-2?id=" + id;
     RNFS.writeFile(pdfCoverPath + data.coverFileName, item.bookCoverResource, 'base64');
-    RNFS.downloadFile({
+    await RNFS.downloadFile({
         fromUrl: downloadUrl,
         toFile: pdfDirPath + data.fileName,
-        headers: jwtHeader
+        headers: jwtHeader,
+        // begin: (res) => {
+        //     console.log(res);
+        // },
+        // progress: (res) => {
+        //     let progressPercent = (res.bytesWritten / res.contentLength)*100;
+        //     console.log(progressPercent);
+        // }
     }).promise.catch(e => console.error(e))
 
     const localData = {
