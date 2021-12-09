@@ -131,8 +131,11 @@ const getCircularReplacer = () => {
 
 
 const downloadBook = (item) => {
+    Toast.show({type: 'downloadToast', text1: "다운로드중입니다..", autoHide: false});
     downloadPdfBook(item).then(() => {
-        downloadPdfKeys(item.id);
+        downloadPdfKeys(item.id).then(res => {
+            Toast.show({type: 'downloadToast', text1: "다운로드가 완료되었습니다."})
+        });
     })
 }
 
@@ -185,6 +188,36 @@ function PartPurchaseView({selectedBook, pdfPurchaseInfo}) {
                                 color: '#A4B0FB'
                         }}>다운로드</Text>
             
+                </View>
+            </View>
+
+        ),
+
+        downloadToast: ({ text1, props }) => (
+            <View style={{
+                width: width * 0.81,
+                height: 48,
+                alignItems: 'center'
+            }}>
+                
+                <View style={{   
+                    width: '50%', 
+                    height: '100%', 
+                    backgroundColor: '#242528', 
+                    borderRadius: 8, 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    paddingHorizontal: 16,
+                    display: 'flex',
+                    flexDirection: 'row'
+                }}>
+                    {/* <LottieView source={require('../../Assets/json/bookdownload.json')} autoPlay loop /> */}
+                    <Text style={{
+                        fontSize: 16, 
+                        fontWeight: '400', 
+                        borderColor: 'white',
+                        color: 'white'
+                    }}>{text1}</Text>
                 </View>
             </View>
 
