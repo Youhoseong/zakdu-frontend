@@ -11,6 +11,7 @@ import { HS_API_END_POINT } from '../../Shared/env';
 import Toast from 'react-native-toast-message';
 import { connect } from 'react-redux';
 import {downloadPdfBook, downloadPdfKeys} from './Download/BookDownload'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const styles = StyleSheet.create({
     PartPurchaseViewStyle: {
@@ -139,7 +140,7 @@ const downloadBook = (item) => {
     })
 }
 
-function PartPurchaseView({selectedBook, pdfPurchaseInfo}) {
+function PartPurchaseView({selectedBook, pdfPurchaseInfo, userInfo}) {
     const [imageModalVisible, setImageModalVisible] = useState(false);
     const {width, height} = useWindowDimensions();
     const [text, setText] = useState("");
@@ -148,7 +149,6 @@ function PartPurchaseView({selectedBook, pdfPurchaseInfo}) {
     const [byToc, setByToc] = useState(true);
     const [price ,setPrice] = useState(0);
     const [bookTocData, setBookTocData] = useState([]);
-    const [temp, setTemp] = useState(1);
 
     const base64Image = 'data:image/png;base64,' + selectedBook.bookCoverResource;
 
@@ -229,7 +229,7 @@ function PartPurchaseView({selectedBook, pdfPurchaseInfo}) {
         setPrice(((pageArr.filter(page => page === true).length) / selectedBook.pdfPageCount) * selectedBook.price);
     }
 
-    const purchaseButtonOnClick = () => {
+    const purchaseButtonOnClick = async() => {
         const formData = new FormData();
 
         let bookPurchaseDto = {
@@ -237,8 +237,14 @@ function PartPurchaseView({selectedBook, pdfPurchaseInfo}) {
         }
         console.log("페이지 수: " + pageArr.filter(value => value == true).length);
         formData.append('bookPurchaseStr', JSON.stringify(bookPurchaseDto, getCircularReplacer()));
-
-        axios.post(`${HS_API_END_POINT}/book-purchase/pdf-book/` + selectedBook.id, formData)
+        console.log(userInfo);
+        const token = await AsyncStorage.getItem('user_jwt');
+        console.log(token);
+        axios.post(`${HS_API_END_POINT}/book-purchase/pdf-book/` + selectedBook.id, formData, {
+            headers: {
+                'Authorization' : "Bearer " + token  
+            }
+        })
         .then((res) => {
       
             Toast.show({
@@ -263,12 +269,10 @@ function PartPurchaseView({selectedBook, pdfPurchaseInfo}) {
                     break;
                 }
             }
-
             if(!flag) {
                 item.complete = true;
                 item.tick = true;
             }
-     
         }
  
         return(
@@ -844,7 +848,8 @@ function PartPurchaseView({selectedBook, pdfPurchaseInfo}) {
 }
 
 const mapStateToProps = (state) => ({
-    pdfPurchaseInfo: state.getPDFBookPurchaseInfos.purchaseDto
+    pdfPurchaseInfo: state.getPDFBookPurchaseInfos.purchaseDto,
+    userInfo: state.userReducer.userObj
 });
 
 export default connect(mapStateToProps)(PartPurchaseView);
