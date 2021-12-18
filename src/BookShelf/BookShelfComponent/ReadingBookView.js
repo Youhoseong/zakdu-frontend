@@ -29,14 +29,18 @@ const styles = StyleSheet.create({
 const getPageMap = (pages, realStartPage, totalPage) => {
     let idx = 0;
     let pageMap = {};
-
+    let prevLock = false;
+    console.log(pages, realStartPage, totalPage);
     for (let i = realStartPage - 1; i < totalPage; i++) {
         var currentPage = pages[idx];
-        if(currentPage == i && pageMap[i - realStartPage + 1] == idx + realStartPage) {
-            idx++;
-        }
-        pageMap[i - realStartPage + 2] = idx + realStartPage;
+
         if (currentPage == i) {
+            prevLock = false;
+            idx++;
+        } 
+        pageMap[i - realStartPage + 2] = idx + realStartPage;
+        if(!prevLock) {
+            prevLock = true;
             idx++;
         }
     }
